@@ -22,12 +22,12 @@ public class SIDPiController {
 	public SIDPiController() {
 		
 		gpioController = new GPIOController(); 
-		gpioController.setup();
+		//	gpioController.setup();
 		
 	}
 	
 	public void setClockSpeed(int speed) {
-		gpioController.setClock(CLK, speed);
+//		gpioController.setClock(CLK, speed);
 	}
 	
 	public void startClock() {
@@ -37,81 +37,4 @@ public class SIDPiController {
 		return gpioController.readByte();
 	}
 	
-	private void setRead() {
-		for(int i=0;i<8;i++) gpioController.setPinMode(DATA[i], GPIOController.MODE_IN);
-	}
-
-	private void setWrite() {
-		for(int i=0;i<8;i++) gpioController.setPinMode(DATA[i], GPIOController.MODE_OUT);
-	}
-
-	public void write(int addr,int data) {
-		
-		addr &= 0x1f;
-		data &= 0xff;
-		setWrite();
-		setAddr(addr);
-		
-		gpioController.writeByte(data);
-		
-		return;
-	}
-	
-	private void waitSID() {
-		//while(gpioController.read(CLK)!=GPIOController.VALUE_HIGH);
-		//while(gpioController.read(CLK)!=GPIOController.VALUE_LOW);
-		
-	}
-	
-	private void setAddr(int addr) {
-		gpioController.setPinMode(ADDR[0],1);
-		gpioController.setPinMode(ADDR[1],1);
-		gpioController.setPinMode(ADDR[2],1);
-		gpioController.setPinMode(ADDR[3],1);
-		gpioController.setPinMode(ADDR[4],1);
-		
-		gpioController.write(ADDR[0], (addr & 1));
-		gpioController.write(ADDR[1], (addr & 2) >> 1);
-		gpioController.write(ADDR[2], (addr & 4) >> 2);
-		gpioController.write(ADDR[3], (addr & 8) >> 3);
-		gpioController.write(ADDR[4], (addr & 16) >> 4);
-		
-	}
-	private void setData(int data) {
-		for(int i=0;i<8;i++) {
-			if(((data >>> i) & 1) == 1) {
-				gpioController.write(DATA[i], GPIOController.VALUE_HIGH);
-			} else {
-				gpioController.write(DATA[i], GPIOController.VALUE_LOW);
-			}
-		}
-	}
-	private int getData() {
-		int data = 0;
-		
-		for(int i=0;i<8;i++) {
-			if(gpioController.read(DATA[i]) == GPIOController.VALUE_HIGH) {
-				data |= (1 << i);
-			} 
-		}
-		return data;
-	}
-	public void reset() {
-		gpioController.write(RW, GPIOController.VALUE_HIGH);
-		gpioController.write(CS, GPIOController.VALUE_LOW);
-		gpioController.write(RES, GPIOController.VALUE_LOW);
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-		}
-		gpioController.write(RES, GPIOController.VALUE_HIGH);
-		gpioController.write(CS, GPIOController.VALUE_HIGH);
-		setWrite();
-		for(int i=0;i<31;i++) {
-			setAddr(i);
-			gpioController.writeByte(0);
-		}
-		
-		return;
-	}
 }
