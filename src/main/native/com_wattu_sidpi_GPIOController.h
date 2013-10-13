@@ -23,7 +23,7 @@ extern "C" {
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_wiringPiSetup
-  (JNIEnv *, jobject);
+  (JNIEnv *, jclass);
 
 /*
  * Class:     com_wattu_sidpi_GPIOController
@@ -72,6 +72,22 @@ JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_readByte
  */
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_writeByte
   (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
+ * Method:    setPins
+ * Signature: ([I[I)V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
+  (JNIEnv *, jobject, jintArray, jintArray);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
+ * Method:    startClock
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_startClock
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }
