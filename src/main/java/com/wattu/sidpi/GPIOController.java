@@ -23,20 +23,18 @@ public class GPIOController {
 	
 	private native static int wiringPiSetup();
 	
-	private native void pinMode(int pin, int mode);
-	
-	private native void digitalWrite(int pin, int value);
-	
-	private native int digitalRead(int pin);
-	
-	private native void gpioClockSet(int pin,int freq);
-	
-	public native int readByte();
-	
-	public native void writeByte(int data);
+	private native void clockSpeed(int pin,int freq);
 	
 	public native void setPins(int pins[],int values[]);
 
-	public native void startClock();
+	public native void setPin(int pin, int value);
+	
+	public native int getPin(int pin);
+	
+	public native int[] getPins(int pins[]);
+	
+	public native void startClock(int pin);
+	
+	public native void stopClock(int pin);
 	
 }

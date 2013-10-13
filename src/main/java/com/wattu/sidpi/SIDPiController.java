@@ -15,7 +15,7 @@ public class SIDPiController {
 			
 	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
 	
-	private int currentSidSpeed;
+	private int currentSidSpeed = 0;
 	
 	private GPIOController gpioController;
 	
@@ -24,17 +24,6 @@ public class SIDPiController {
 		gpioController = new GPIOController(); 
 		//	gpioController.setup();
 		
-	}
-	
-	public void setClockSpeed(int speed) {
-//		gpioController.setClock(CLK, speed);
-	}
-	
-	public void startClock() {
-		gpioController.startClock();
-	}
-	public int read(int addr) {
-		return gpioController.readByte();
 	}
 	
 }
