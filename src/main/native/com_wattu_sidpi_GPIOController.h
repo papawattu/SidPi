@@ -11,7 +11,7 @@ extern "C" {
 #define com_wattu_sidpi_GPIOController_MODE_IN 0L
 #undef com_wattu_sidpi_GPIOController_MODE_OUT
 #define com_wattu_sidpi_GPIOController_MODE_OUT 1L
-#undef com_wattu_sidpi_GPIOController_MODE_CLOCK
+#undef com_wattu_sidpi_GPIOController_M	ODE_CLOCK
 #define com_wattu_sidpi_GPIOController_MODE_CLOCK 3L
 #undef com_wattu_sidpi_GPIOController_VALUE_HIGH
 #define com_wattu_sidpi_GPIOController_VALUE_HIGH 1L
