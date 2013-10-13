@@ -32,7 +32,6 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
   (JNIEnv *env, jobject obj, jintArray pins, jintArray vals) {
 	 // Step 1: Convert the incoming JNI jintarray to C's jint[]
 	   jint *pins_c = (*env)->GetIntArrayElements(env, pins, NULL);
-	   if (NULL == pins_c) return NULL;
 	   jsize length = (*env)->GetArrayLength(env, pins_c);
 	   jint *vals_c = (*env)->GetIntArrayElements(env, vals, NULL);
 	   int i;
