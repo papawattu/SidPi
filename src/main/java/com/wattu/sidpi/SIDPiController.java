@@ -34,7 +34,7 @@ public class SIDPiController {
 		gpioController.startClock();
 	}
 	public int read(int addr) {
-		return gpioController.readByte(addr);
+		return gpioController.readByte();
 	}
 	
 	private void setRead() {

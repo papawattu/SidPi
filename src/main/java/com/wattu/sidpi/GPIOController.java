@@ -32,6 +32,8 @@ public class GPIOController {
 	
 	public native void writeByte(int data);
 	
+	public native void setPins(int pins[],int values[]);
+	
 	//private native void sidWait();
 	
 	public void setup() {
