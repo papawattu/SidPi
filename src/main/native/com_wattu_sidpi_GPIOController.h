@@ -27,51 +27,11 @@ JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_wiringPiSetup
 
 /*
  * Class:     com_wattu_sidpi_GPIOController
- * Method:    pinMode
+ * Method:    clockSpeed
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_pinMode
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_clockSpeed
   (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    digitalWrite
- * Signature: (II)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_digitalWrite
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    digitalRead
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_digitalRead
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    gpioClockSet
- * Signature: (II)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_gpioClockSet
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    readByte
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_readByte
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    writeByte
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_writeByte
-  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     com_wattu_sidpi_GPIOController
@@ -83,11 +43,43 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
 
 /*
  * Class:     com_wattu_sidpi_GPIOController
+ * Method:    setPin
+ * Signature: (II)V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPin
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
+ * Method:    getPin
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_getPin
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
+ * Method:    getPins
+ * Signature: ([I)[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
+  (JNIEnv *, jobject, jintArray);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
  * Method:    startClock
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_startClock
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_wattu_sidpi_GPIOController
+ * Method:    stopClock
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_stopClock
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }
