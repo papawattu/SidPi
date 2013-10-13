@@ -30,7 +30,9 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_clockSpeed
  */
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
   (JNIEnv *env, jobject obj, jintArray pins, jintArray vals) {
-	for(int i =0;i< sizeOf(pins);i++) {
+	int i=0;
+
+	for(i =0;i< sizeOf(pins);i++) {
 		pinMode(pin,com_wattu_sidpi_GPIOController_MODE_OUT);
 		digitalWrite(pins[i],vals[i]);
 	}
