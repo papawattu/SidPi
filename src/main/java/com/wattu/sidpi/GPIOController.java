@@ -55,5 +55,7 @@ public class GPIOController {
 	public void setClock(int pin, int freq) {
 		gpioClockSet(pin,freq);
 	}
+
+	public native void startClock();
 	
 }

@@ -10,37 +10,31 @@ public class SIDPiController {
 										,GPIOController.PIN_NUMBERS[4],GPIOController.PIN_NUMBERS[5],GPIOController.PIN_NUMBERS[6]
 										,GPIOController.PIN_NUMBERS[7],GPIOController.PIN_NUMBERS[8]};
 	
-	private static final int[] ADDR	= {GPIOController.PIN_NUMBERS[9],GPIOController.PIN_NUMBERS[10],GPIOController.PIN_NUMBERS[11]
-										,GPIOController.PIN_NUMBERS[12],GPIOController.PIN_NUMBERS[13]};
+	private static final int[] ADDR	= {GPIOController.PIN_NUMBERS[13],GPIOController.PIN_NUMBERS[12],GPIOController.PIN_NUMBERS[11]
+										,GPIOController.PIN_NUMBERS[10],GPIOController.PIN_NUMBERS[9]};
 			
-	private static final int SID_SPEED_HZ = 1000000;
+	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
+	
+	private int currentSidSpeed;
 	
 	private GPIOController gpioController;
 	
-	public int init() {
+	public SIDPiController() {
 		
-		gpioController = new GPIOController();
-		 
+		gpioController = new GPIOController(); 
 		gpioController.setup();
 		
-		gpioController.setPinMode(CLK, GPIOController.MODE_CLOCK);
-		gpioController.setClock(CLK, SID_SPEED_HZ);
-		
-		gpioController.setPinMode(RES, GPIOController.MODE_OUT);
-		gpioController.setPinMode(RW, GPIOController.MODE_OUT);
-		gpioController.setPinMode(CS, GPIOController.MODE_OUT);		
-		
-		this.reset();
-		
-		return 0;
 	}
 	
+	public void setClockSpeed(int speed) {
+		gpioController.setClock(CLK, speed);
+	}
+	
+	public void startClock() {
+		gpioController.startClock();
+	}
 	public int read(int addr) {
-		int data = 0x0;
-		setRead();
-		setAddr(addr);
-		
-		return gpioController.readByte();
+		return gpioController.readByte(addr);
 	}
 	
 	private void setRead() {

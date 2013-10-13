@@ -4,7 +4,7 @@ public class TestSIDController {
 	public static void main(String[] args) throws InterruptedException {
 		SIDPiController sidPiController = new SIDPiController();
 	
-		sidPiController.init();
+		//sidPiController.init();
 		sidPiController.reset();
 		
 		sidPiController.write(24, 0);
