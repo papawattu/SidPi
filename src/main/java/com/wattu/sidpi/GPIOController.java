@@ -15,10 +15,13 @@ public class GPIOController {
 	public static final int VALUE_LOW = 0;
 	
 	static {
-	      System.loadLibrary("GPIOController"); // hello.dll (Windows) or libhello.so (Unixes)
+	      System.loadLibrary("GPIOController"); 
+	      if(wiringPiSetup() < 0) {
+				throw new RuntimeException("Wiring Pi Setup failed");
+		  }
 	}
 	
-	private native int wiringPiSetup();
+	private native static int wiringPiSetup();
 	
 	private native void pinMode(int pin, int mode);
 	
@@ -33,30 +36,6 @@ public class GPIOController {
 	public native void writeByte(int data);
 	
 	public native void setPins(int pins[],int values[]);
-	
-	//private native void sidWait();
-	
-	public void setup() {
-		if(wiringPiSetup() < 0) {
-			throw new RuntimeException("Wiring Pi Setup failed");
-		}
-	}
-	public void setPinMode(int pin, int mode) {
-		pinMode(pin,mode);
-	}
-	public void write(int pin,int value) {
-		//setPinMode(pin,MODE_OUT);
-		digitalWrite(pin,value);
-	}
-	public int read(int pin) {
-		//setPinMode(pin,MODE_IN);
-		int o = digitalRead(pin) & 0xFF;
-		System.out.println("pin " + pin + " value " + o);
-		return o;
-	}
-	public void setClock(int pin, int freq) {
-		gpioClockSet(pin,freq);
-	}
 
 	public native void startClock();
 	
