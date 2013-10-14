@@ -36,9 +36,9 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
 		jsize length = (*env)->GetArrayLength(env, pins);
 		jint *vals_c = (*env)->GetIntArrayElements(env, vals, NULL);
 
-	   for (i = 0; i < length; i++) {
-	      digitalWrite(pins_c[i],vals_c[i]);
-	   }
+	    for (i = 0; i < length; i++) {
+	    	digitalWrite(pins_c[i],vals_c[i]);
+	    }
 }
 
 
@@ -72,7 +72,19 @@ JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_getPin
  */
 JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
   (JNIEnv *env, jobject obj, jintArray pins) {
-	return (jintArray) 0L;
+
+	int i;
+	jint *pins_c = (*env)->GetIntArrayElements(env, pins, NULL);
+	jsize length = (*env)->GetArrayLength(env, pins);
+
+	jintArray data = (*env)->NewIntArray(env,length);
+	if(NULL == data) return NULL;
+
+    for (i = 0; i < length; i++) {
+    	pinMode(pins_c[i],com_wattu_sidpi_GPIOController_MODE_IN);
+    	data[i] = digitalRead(pins_c[i]);
+    }
+	return data;
 }
 
 /*

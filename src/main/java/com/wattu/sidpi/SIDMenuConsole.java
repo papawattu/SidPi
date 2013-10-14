@@ -9,6 +9,8 @@ public class SIDMenuConsole {
 	
 	private enum COMMANDS {NOP,ADVANCE_CLK,READ_REG,WRITE_REG,SET_CLK,START_CLK,STOP_CLK,RESET,CS_HIGH,CS_LOW,EXIT};
 	private SIDPiController sid = new SIDPiController();
+	private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+	
 	public static void main (String args[]) throws IOException {
 
 		SIDMenuConsole console = new SIDMenuConsole();
@@ -18,7 +20,6 @@ public class SIDMenuConsole {
 
 	private void commandLoop() throws IOException {
 		COMMANDS lastCommand = COMMANDS.NOP;
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 		
 		while(lastCommand != COMMANDS.EXIT) {
 			displayMenu();
@@ -32,7 +33,7 @@ public class SIDMenuConsole {
 		}
 	}
 	
-	private COMMANDS processCommand(char cmd) {
+	private COMMANDS processCommand(char cmd) throws IOException {
 		switch (cmd) {
 			case 'c' : {
 				setClockSpeed();
@@ -77,27 +78,45 @@ public class SIDMenuConsole {
 		
 	}
 	private void lowCS() {
-		// TODO Auto-generated method stub
+		sid.setCSLow();
 		
 	}
 
 	private void highCS() {
-		// TODO Auto-generated method stub
+		sid.setCSHigh();
 		
 	}
 
-	private void readReg() {
-		// TODO Auto-generated method stub
+	private void readReg() throws IOException {
+		System.out.print("Enter address : ");
+		String line = bufferedReader.readLine();
+		int address = Integer.parseInt(line);
+		
+		if(address >= 0 && address < 32) {
+			System.out.println("Value for address '" + address + "' is " + sid.readRegister(address));
+		} else {
+			System.out.println("Error : Invalid input " + line);
+		}
 		
 	}
 
-	private void writeReg() {
-		// TODO Auto-generated method stub
+	private void writeReg() throws IOException {
+		System.out.print("Enter address : ");
+		String line = bufferedReader.readLine();
+		int address = Integer.parseInt(line);
+		System.out.print("Enter value : ");
+		line = bufferedReader.readLine();
+		int value = Integer.parseInt(line);
 		
+		if(address >= 0 && address < 32 && value < 256 && value >= 0) {
+			sid.writeRegister(address,value);
+		} else {
+			System.out.println("Error : Invalid input " + line);
+		}
 	}
 
 	private void reset() {
-		// TODO Auto-generated method stub
+	
 		
 	}
 
@@ -111,9 +130,11 @@ public class SIDMenuConsole {
 		
 	}
 
-	private void setClockSpeed() {
-		// TODO Auto-generated method stub
-		
+	private void setClockSpeed() throws IOException {
+		System.out.print("Enter speed : ");
+		String line = bufferedReader.readLine();
+		int speed = Integer.parseInt(line);
+		sid.setClockSpeed(speed);
 	}
 
 	private void displayMenu() {

@@ -23,7 +23,7 @@ public class GPIOController {
 	
 	private native static int wiringPiSetup();
 	
-	private native void clockSpeed(int pin,int freq);
+	public native void clockSpeed(int pin,int freq);
 	
 	public native void setPins(int pins[],int values[]);
 
@@ -36,5 +36,6 @@ public class GPIOController {
 	public native void startClock(int pin);
 	
 	public native void stopClock(int pin);
+
 	
 }
