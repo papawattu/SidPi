@@ -1,4 +1,8 @@
-package com.wattu.sidpi;
+package com.wattu.sidpi.console;
+
+import com.wattu.sidpi.GPIOController;
+import com.wattu.sidpi.impl.GPIOControllerImpl;
+import com.wattu.test.sidpi.impl.GPIOControllerTestImpl;
 
 public class SIDPiController {
 
@@ -16,29 +20,39 @@ public class SIDPiController {
 	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
 	
 	private int currentSidSpeed = 0;
+	private long currentCycle = 0;
+	private boolean clockRunning = false;
 	
 	private GPIOController gpioController;
 	
 	public SIDPiController() {
 		
-		gpioController = new GPIOController(); 
+		gpioController = new GPIOControllerTestImpl(); 
 		setCSHigh();
 		setResetHigh();
+		setReadMode();
+		clockLow();
 		
 	}
 
+	public void setReadMode() {
+		gpioController.setPin(RW, GPIOController.VALUE_HIGH);
+	}
+	
+	public void setWriteMode() {
+		gpioController.setPin(RW, GPIOController.VALUE_LOW);
+	}
+	
 	private void setResetHigh() {
-		gpioController.setPin(RES, 1);
-		
+		gpioController.setPin(RES, GPIOController.VALUE_HIGH);
 	}
 
 	public void setCSLow() {
-		gpioController.setPin(CS, 0);
-		
+		gpioController.setPin(CS, GPIOController.VALUE_LOW);
 	}
 
 	public void setCSHigh() {
-		gpioController.setPin(CS, 1);
+		gpioController.setPin(CS, GPIOController.VALUE_HIGH);
 	}
 
 	public int readRegister(int address) {
@@ -51,10 +65,12 @@ public class SIDPiController {
 		addr[4] = (address & 16) >> 4;
 		
 		gpioController.setPins(ADDR, addr);
-		gpioController.setPin(RW, 1);
+		setReadMode();
 		setCSLow();
+		clockHigh();
 		int[] data = gpioController.getPins(DATA);
 		setCSHigh();
+		clockLow();
 		
 		int value = data[0] | 
 					(data[1] << 1) |
@@ -79,8 +95,9 @@ public class SIDPiController {
 		addr[4] = (address & 16) >> 4;
 		
 		gpioController.setPins(ADDR, addr);
-		gpioController.setPin(RW, 0);
+		setWriteMode();
 		setCSLow();
+		clockHigh();
 		int[] vals = new int[8];
 		
 		vals[0] = value & 1;
@@ -94,11 +111,83 @@ public class SIDPiController {
 		
 		gpioController.setPins(DATA,vals);
 		setCSHigh();
+		clockLow();
 	}
 
 	public void setClockSpeed(int speed) {
-		gpioController.clockSpeed(CLK, speed);
+		currentSidSpeed = speed;
+	}
+	
+	public boolean isClockRunning() {
+		return clockRunning;
+	}
+	public int getClockSpeed() {
+		return currentSidSpeed;
+	}
+
+	public void reset() {
+		gpioController.setPin(RES, GPIOController.VALUE_LOW);
+		
+		waitForCycles(5);
+		
+		gpioController.setPin(RES, GPIOController.VALUE_HIGH);
 		
 	}
 	
+	private void waitForCycles(int cycles) {
+		if(clockRunning) {
+			
+		} else {
+			advanceClock(5);
+		}
+	}
+	
+	public void advanceClock() {
+		advanceClock(1);
+	}
+	
+	private void advanceClock(int cycles)  {
+		if(!clockRunning) {
+			for(int i=0;i<cycles;i++) {
+				gpioController.setPin(CLK, GPIOController.VALUE_HIGH);
+				delay();
+				gpioController.setPin(CLK, GPIOController.VALUE_LOW);
+			}
+			currentCycle += cycles;
+		}
+	}
+	private void delay() {
+		try {
+			Thread.sleep(1);
+		} catch (InterruptedException e) {
+			
+		}
+	}
+	public long getCurrentCycle() {
+		return currentCycle;
+	}
+
+	private void clockHigh() {
+		if(!clockRunning) {
+			gpioController.setPin(CLK, GPIOController.VALUE_HIGH);
+		}
+	}
+	
+	private void clockLow() {
+		if(!clockRunning) {
+			gpioController.setPin(CLK, GPIOController.VALUE_LOW);
+			currentCycle ++;
+		}
+	}
+
+	public void startClock() {
+		gpioController.clockSpeed(CLK, currentSidSpeed);
+		clockRunning = true;
+	}
+	
+	public void stopClock() {
+		gpioController.setPinMode(CLK,GPIOController.MODE_OUT);
+		gpioController.setPin(CLK, GPIOController.VALUE_LOW);
+		clockRunning = false;
+	}
 }

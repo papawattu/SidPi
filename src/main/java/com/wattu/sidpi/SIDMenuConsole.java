@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.wattu.sidpi.console.SIDPiController;
+
 
 public class SIDMenuConsole {
 	
@@ -47,6 +49,10 @@ public class SIDMenuConsole {
 				stopClock();
 				return COMMANDS.STOP_CLK;
 			}
+			case 'a' : {
+				advanceClock();
+				return COMMANDS.ADVANCE_CLK;
+			}
 			case 'e' : {
 				reset();
 				return COMMANDS.RESET;
@@ -77,6 +83,10 @@ public class SIDMenuConsole {
 		}
 		
 	}
+	private void advanceClock() {
+		sid.advanceClock();
+	}
+
 	private void lowCS() {
 		sid.setCSLow();
 		
@@ -117,7 +127,7 @@ public class SIDMenuConsole {
 
 	private void reset() {
 	
-		
+		sid.reset();
 	}
 
 	private void stopClock() {
@@ -148,8 +158,12 @@ public class SIDMenuConsole {
 		System.out.println("R - Read register");
 		System.out.println("W - Write register");
 		System.out.println("H - Set CS High");
-		System.out.println("L - Set CD Low");
+		System.out.println("L - Set CS Low");
 		System.out.println("X - Exit");
+		System.out.println("========");
+		System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
+		System.out.println("Current Clock Cycle : " + sid.getCurrentCycle());
+		
 	}
 	
 }
