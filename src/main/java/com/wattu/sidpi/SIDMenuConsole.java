@@ -131,13 +131,11 @@ public class SIDMenuConsole {
 	}
 
 	private void stopClock() {
-		// TODO Auto-generated method stub
-		
+		sid.stopClock();
 	}
 
 	private void startClock() {
-		// TODO Auto-generated method stub
-		
+		sid.startClock();
 	}
 
 	private void setClockSpeed() throws IOException {
