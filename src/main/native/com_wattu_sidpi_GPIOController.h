@@ -11,76 +11,12 @@ extern "C" {
 #define com_wattu_sidpi_GPIOController_MODE_IN 0L
 #undef com_wattu_sidpi_GPIOController_MODE_OUT
 #define com_wattu_sidpi_GPIOController_MODE_OUT 1L
-#undef com_wattu_sidpi_GPIOController_M	ODE_CLOCK
+#undef com_wattu_sidpi_GPIOController_MODE_CLOCK
 #define com_wattu_sidpi_GPIOController_MODE_CLOCK 3L
 #undef com_wattu_sidpi_GPIOController_VALUE_HIGH
 #define com_wattu_sidpi_GPIOController_VALUE_HIGH 1L
 #undef com_wattu_sidpi_GPIOController_VALUE_LOW
 #define com_wattu_sidpi_GPIOController_VALUE_LOW 0L
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    wiringPiSetup
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_wiringPiSetup
-  (JNIEnv *, jclass);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    clockSpeed
- * Signature: (II)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_clockSpeed
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    setPins
- * Signature: ([I[I)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
-  (JNIEnv *, jobject, jintArray, jintArray);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    setPin
- * Signature: (II)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPin
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    getPin
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_getPin
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    getPins
- * Signature: ([I)[I
- */
-JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
-  (JNIEnv *, jobject, jintArray);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    startClock
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_startClock
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     com_wattu_sidpi_GPIOController
- * Method:    stopClock
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_stopClock
-  (JNIEnv *, jobject, jint);
-
 #ifdef __cplusplus
 }
 #endif
