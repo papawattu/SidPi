@@ -4,6 +4,10 @@
 
 #include "com_wattu_sidpi_impl_GPIOControllerImpl.h"
 
+#define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_CLOCK 3
+#define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_OUT 1
+#define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_IN 0
+
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
 		return -1;
