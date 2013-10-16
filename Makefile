@@ -17,9 +17,9 @@ all: GPIOController
 GPIOController: GPIOController.h
 	$(CC) $(CFLAGS) -shared -I $(INCLUDE) -l $(LIBS) -o $(OUTPUT)libGPIOController.so $(CSRC)GPIOController.c 
 GPIOController.h: GPIOController.class
-	$(JAVAH) -d $(APPINC) -classpath $(OUTPUT) com.wattu.sidpi.GPIOController
+	$(JAVAH) -d $(APPINC) -classpath $(OUTPUT) com.wattu.sidpi.impl.GPIOControllerImpl
 GPIOController.class:
-	$(JAVAC) -d $(OUTPUT) $(JAVASRC)com/wattu/sidpi/*.java
+	$(JAVAC) -classpath $(OUTPUT) -d $(OUTPUT) $(JAVASRC)com/wattu/test/sidpi/impl/*.java $(JAVASRC)com/wattu/sidpi/impl/*.java $(JAVASRC)com/wattu/sidpi/console/*.java $(JAVASRC)com/wattu/sidpi/*.java
 clean:
 	rm -Rf $(OUTPUT)* 
 	rm -Rf $(APPINC)*.h
