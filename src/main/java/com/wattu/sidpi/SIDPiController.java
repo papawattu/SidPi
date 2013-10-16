@@ -1,4 +1,4 @@
-package com.wattu.sidpi.console;
+package com.wattu.sidpi;
 
 import com.wattu.sidpi.GPIOController;
 import com.wattu.sidpi.impl.GPIOControllerImpl;

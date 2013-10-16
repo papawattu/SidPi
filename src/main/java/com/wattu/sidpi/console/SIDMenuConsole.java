@@ -1,11 +1,10 @@
-package com.wattu.sidpi;
+package com.wattu.sidpi.console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.wattu.sidpi.console.SIDPiController;
-
+import com.wattu.sidpi.SIDPiController;
 
 public class SIDMenuConsole {
 	
