@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <wiringPi.h>
 
-#include "com_wattu_sidpi_GPIOController.h"
+#include "com_wattu_sidpi_impl_GPIOControllerImpl.h"
 
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_wiringPiSetup (JNIEnv *env, jobject thisObj) {
+JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
 		return -1;
 	}
@@ -17,9 +17,9 @@ JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_wiringPiSetup (JNIEnv
  * Method:    clockSpeed
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_clockSpeed
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_clockSpeed
   (JNIEnv * env, jobject obj, jint pin, jint speed) {
-	pinMode(pin,com_wattu_sidpi_GPIOController_MODE_CLOCK);
+	pinMode(pin,com_wattu_sidpi_impl_GPIOControllerImpl_MODE_CLOCK);
 	gpioClockSet(pin,speed);
 }
 
@@ -28,7 +28,7 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_clockSpeed
  * Method:    setPins
  * Signature: ([I[I)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_setPins
   (JNIEnv *env, jobject obj, jintArray pins, jintArray vals) {
 	 // Step 1: Convert the incoming JNI jintarray to C's jint[]
 		int i;
@@ -37,7 +37,7 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
 		jint *vals_c = (*env)->GetIntArrayElements(env, vals, NULL);
 
 	    for (i = 0; i < length; i++) {
-	    	pinMode(pins_c[i],com_wattu_sidpi_GPIOController_MODE_OUT);
+	    	pinMode(pins_c[i],com_wattu_sidpi_impl_GPIOControllerImpl_MODE_OUT);
 	    	digitalWrite(pins_c[i],vals_c[i]);
 	    }
 }
@@ -48,9 +48,9 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPins
  * Method:    setPin
  * Signature: (II)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPin
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_setPin
   (JNIEnv *env , jobject obj, jint pin, jint value) {
-	pinMode(pin,com_wattu_sidpi_GPIOController_MODE_OUT);
+	pinMode(pin,com_wattu_sidpi_impl_GPIOControllerImpl_MODE_OUT);
 	digitalWrite(pin,value);
 
 }
@@ -60,9 +60,9 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_setPin
  * Method:    getPin
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_getPin
+JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getPin
   (JNIEnv *env, jobject obj, jint pin) {
-	pinMode(pin,com_wattu_sidpi_GPIOController_MODE_IN);
+	pinMode(pin,com_wattu_sidpi_impl_GPIOControllerImpl_MODE_IN);
 	return (jint) digitalRead(pin);
 }
 
@@ -71,7 +71,7 @@ JNIEXPORT jint JNICALL Java_com_wattu_sidpi_GPIOController_getPin
  * Method:    getPins
  * Signature: ([I)[I
  */
-JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
+JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getPins
   (JNIEnv *env, jobject obj, jintArray pins) {
 
 	int i;
@@ -85,7 +85,7 @@ JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
 	if(NULL == dataJNI) return NULL;
 
     for (i = 0; i < length; i++) {
-    	pinMode(pins_c[i],com_wattu_sidpi_GPIOController_MODE_IN);
+    	pinMode(pins_c[i],com_wattu_sidpi_impl_GPIOControllerImpl_MODE_IN);
     	data[i] = digitalRead(pins_c[i]);
     }
 	return dataJNI;
@@ -96,7 +96,7 @@ JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_GPIOController_getPins
  * Method:    startClock
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_startClock
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_startClock
   (JNIEnv *env, jobject obj, jint pin) {
 
 }
@@ -106,7 +106,7 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_startClock
  * Method:    stopClock
  * Signature: (I)V
  */
-JNIEXPORT void JNICALL Java_com_wattu_sidpi_GPIOController_stopClock
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_stopClock
   (JNIEnv *env, jobject obj, jint pin) {
 
 }
