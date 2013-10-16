@@ -27,7 +27,7 @@ public class SIDPiController {
 	
 	public SIDPiController() {
 		
-		gpioController = new GPIOControllerTestImpl(); 
+		gpioController = new GPIOControllerImpl(); 
 		setCSHigh();
 		setResetHigh();
 		setReadMode();
