@@ -28,12 +28,10 @@ public class SIDPiController {
 	public SIDPiController() {
 		
 		gpioController = new GPIOControllerImpl(); 
-		setCSHigh();
-		setResetHigh();
-		setReadMode();
-		clockLow();
 		setClockSpeed(DEFAULT_SID_SPEED_HZ);
 		startClock();
+		reset();
+		setCSHigh();
 		
 	}
 
@@ -138,12 +136,9 @@ public class SIDPiController {
 	
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
-			System.out.println("waiting");
 			for(int i=0;i<cycles;i++) {
 				while(gpioController.getPin(CLK)==0);
 			}
-			System.out.println("finished waiting");
-			
 		} else {
 			advanceClock(5);
 		}
