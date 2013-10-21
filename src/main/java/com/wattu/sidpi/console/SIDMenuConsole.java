@@ -79,7 +79,7 @@ public class SIDMenuConsole {
 			}
 			case 'm' : {
 				try {
-					ClientContext.listenForClients();
+					ClientContext.listenForClients(sid);
 				}
 				catch (Exception e) {
 					System.err.println(e);

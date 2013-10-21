@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientContext {
+	
+	private SIDPiController sid;
 	/** String encoding */
 	private static final Charset ISO_8859 = Charset.forName("ISO-8859-1");
 
@@ -91,7 +93,8 @@ public class ClientContext {
 
 	/** Map which holds all instances of each client connection. */
 	private static Map<SocketChannel, ClientContext> clientContextMap = new ConcurrentHashMap<SocketChannel, ClientContext>();
-	private ClientContext() {
+	private ClientContext(SIDPiController sid) {
+		this.sid = sid;
 		//this.latency = 100000;
 		dataWrite.position(dataWrite.capacity());
 		//eventConsumerThread = new AudioGeneratorThread(config);
@@ -275,7 +278,7 @@ public class ClientContext {
 		return dataWrite;
 	}
 		
-	public static void listenForClients() {
+	public static void listenForClients(SIDPiController sid) {
 		/* check for new connections. */
 		ServerSocketChannel ssc = null;
 		try {
@@ -298,7 +301,7 @@ public class ClientContext {
 						sc.configureBlocking(false);
 	
 						sc.register(s, SelectionKey.OP_READ);
-						ClientContext cc = new ClientContext();
+						ClientContext cc = new ClientContext(sid);
 						clientContextMap.put(sc, cc);
 						System.out.println("New client: " + cc);
 					}
@@ -401,7 +404,8 @@ public class ClientContext {
 			reg &= 0x1f;
 			final byte value = dataRead.get(4 + i + 3);
 			inputClock += writeCycles;
-			System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
+			//System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
+			this.sid.writeRegister(reg, value);
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
 		}
