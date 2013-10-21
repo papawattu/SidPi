@@ -290,8 +290,8 @@ public class ClientContext {
 						sc.configureBlocking(false);
 	
 						sc.register(s, SelectionKey.OP_READ);
-						//ClientContext cc = new ClientContext(AudioConfig.getInstance(config.audio(), 2), config.jsiddevice().getLatency());
-						//clientContextMap.put(sc, cc);
+						ClientContext cc = new ClientContext();
+						clientContextMap.put(sc, cc);
 						System.out.println("New client: " );
 					}
 					
