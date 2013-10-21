@@ -117,7 +117,7 @@ public class ClientContext {
 				throw new RuntimeException("Unknown command number: " + commandByte);
 			}
 			command = commands[commandByte];	
-			System.out.println(command);
+			//System.out.println(command);
 			sidNumber = dataRead.get(1) & 0xff;
 			dataLength = dataRead.getShort(2) & 0xffff;
 
@@ -408,6 +408,7 @@ public class ClientContext {
 			this.sid.writeRegister(reg, value);
 			while(writeCycles > 0) {
 				writeCycles--;
+				for(int j=0;i<1000;j++);
 			}
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
