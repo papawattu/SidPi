@@ -398,7 +398,7 @@ public class ClientContext {
 	private void handleWritePacket(int dataLength) {
 		//Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
 		for (int i = 0; i < dataLength; i += 4) {
-			final int writeCycles = dataRead.getShort(4 + i) & 0xffff;
+			int writeCycles = dataRead.getShort(4 + i) & 0xffff;
 			byte reg = dataRead.get(4 + i + 2);
 			byte sid = (byte) ((reg & 0xe0) >> 5);
 			reg &= 0x1f;
@@ -406,6 +406,9 @@ public class ClientContext {
 			inputClock += writeCycles;
 			//System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
 			this.sid.writeRegister(reg, value);
+			while(writeCycles > 0) {
+				writeCycles--;
+			}
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
 		}
