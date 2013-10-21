@@ -12,16 +12,6 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- * Container for client-specific data.
- * 
- * @author Ken Händel
- * @author Antti Lankila
- * @author Wilfred Bos
-
- * @see NetworkSIDDevice
- */
 class ClientContext {
 	/** String encoding */
 	private static final Charset ISO_8859 = Charset.forName("ISO-8859-1");
