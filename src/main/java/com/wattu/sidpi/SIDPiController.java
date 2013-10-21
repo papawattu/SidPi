@@ -137,7 +137,9 @@ public class SIDPiController {
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
 			for(int i=0;i<cycles;i++) {
-				
+				for(int j=0;j<3;j++) {
+					
+				}
 			}
 		} else {
 			advanceClock(5);
