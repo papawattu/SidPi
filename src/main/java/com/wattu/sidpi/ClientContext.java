@@ -69,7 +69,7 @@ class ClientContext {
 	//private final AudioGeneratorThread eventConsumerThread;
 
 	/** Shadow SID clocked with client to read from */
-	private SID[] sidRead;
+	//private SID[] sidRead;
 	
 	/** Allocate read buffer. Maximum command + maximum socket buffer size (assumed to be per request 16K) */
 	private final ByteBuffer dataRead = ByteBuffer.allocateDirect(65536 + 4 + 16384);
@@ -175,7 +175,7 @@ class ClientContext {
 			final byte register = dataRead.get(4 + dataLength - 1);
 			
 			dataWrite.put((byte) Response.READ.ordinal());
-			dataWrite.put(sidRead[sidNumber].read(register & 0x1f));
+			dataWrite.put((byte) 0);
 			break;
 		}
 
