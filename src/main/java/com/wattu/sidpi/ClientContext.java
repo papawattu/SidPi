@@ -12,7 +12,7 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-class ClientContext {
+public class ClientContext {
 	/** String encoding */
 	private static final Charset ISO_8859 = Charset.forName("ISO-8859-1");
 
