@@ -411,12 +411,12 @@ public class ClientContext {
 			inputClock += writeCycles;
 			//System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
 			this.sid.writeRegister(reg, value);
-			this.sid.waitForCycles(writeCycles);
+			//this.sid.waitForCycles(writeCycles);
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
 		}
 	}
 	private void handleDelayPacket(int sidNumber, int cycles)  {
-		this.sid.waitForCycles(cycles);
+		//this.sid.waitForCycles(cycles);
 	}
 }
