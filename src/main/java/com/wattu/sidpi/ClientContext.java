@@ -417,6 +417,6 @@ public class ClientContext {
 		}
 	}
 	private void handleDelayPacket(int sidNumber, int cycles)  {
-		//this.sid.waitForCycles(cycles);
+		this.sid.waitForCycles(cycles);
 	}
 }
