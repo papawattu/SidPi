@@ -10,7 +10,9 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
+
 
 public class ClientContext {
 	
@@ -165,6 +167,9 @@ public class ClientContext {
 
 		/* SID command queuing section. */
 		case TRY_DELAY: {
+			final int cycles = dataRead.getShort(4) & 0xffff;
+			
+			handleDelayPacket(0,cycles);
 			dataWrite.put((byte) Response.OK.ordinal());
 			break;
 		}
@@ -406,12 +411,12 @@ public class ClientContext {
 			inputClock += writeCycles;
 			//System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
 			this.sid.writeRegister(reg, value);
-			while(writeCycles > 0) {
-				writeCycles--;
-				for(int j=0;j<3;j++);
-			}
+			this.sid.waitForCycles(writeCycles);
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
 		}
+	}
+	private void handleDelayPacket(int sidNumber, int cycles)  {
+		this.sid.waitForCycles(cycles);
 	}
 }
