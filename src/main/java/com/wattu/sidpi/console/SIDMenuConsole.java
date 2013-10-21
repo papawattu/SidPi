@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import com.wattu.sidpi.SIDPiController;
+import com.wattu.sidpi.ClientContext;
 
 public class SIDMenuConsole {
 	
@@ -74,6 +75,15 @@ public class SIDMenuConsole {
 			}
 			case 'x' : {
 				return COMMANDS.EXIT;
+			}
+			case 'm' : {
+				try {
+					ClientContext.listenForClients();
+				}
+				catch (Exception e) {
+					System.err.println(e);
+				}
+				return COMMANDS.NOP;
 			}
 			default : {
 				return COMMANDS.NOP;	
@@ -156,6 +166,7 @@ public class SIDMenuConsole {
 		System.out.println("W - Write register");
 		System.out.println("H - Set CS High");
 		System.out.println("L - Set CS Low");
+		System.out.println("M - Start Network Listener");
 		System.out.println("X - Exit");
 		System.out.println("========");
 		System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
