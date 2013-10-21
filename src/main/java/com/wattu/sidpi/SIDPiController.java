@@ -138,9 +138,12 @@ public class SIDPiController {
 	
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
+			System.out.println("waiting");
 			for(int i=0;i<cycles;i++) {
 				while(gpioController.getPin(CLK)==0);
 			}
+			System.out.println("finished waiting");
+			
 		} else {
 			advanceClock(5);
 		}
