@@ -10,11 +10,12 @@ import com.wattu.sidpi.ClientContext;
 public class SIDMenuConsole {
 	
 	private enum COMMANDS {NOP,ADVANCE_CLK,READ_REG,WRITE_REG,SET_CLK,START_CLK,STOP_CLK,RESET,CS_HIGH,CS_LOW,EXIT};
-	private SIDPiController sid = new SIDPiController();
+	private static SIDPiController sid;
 	private BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
 	
 	public static void main (String args[]) throws IOException {
 
+		sid = new SIDPiController();
 		SIDMenuConsole console = new SIDMenuConsole();
 		console.commandLoop();
 		
@@ -169,8 +170,8 @@ public class SIDMenuConsole {
 		System.out.println("M - Start Network Listener");
 		System.out.println("X - Exit");
 		System.out.println("========");
-		System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
-		System.out.println("Current Clock Cycle : " + sid.getCurrentCycle());
+		//System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
+		//System.out.println("Current Clock Cycle : " + sid.getCurrentCycle());
 		
 	}
 	

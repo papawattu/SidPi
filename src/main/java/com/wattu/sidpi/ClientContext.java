@@ -91,7 +91,13 @@ public class ClientContext {
 
 	/** Map which holds all instances of each client connection. */
 	private static Map<SocketChannel, ClientContext> clientContextMap = new ConcurrentHashMap<SocketChannel, ClientContext>();
-	
+	private ClientContext() {
+		//this.latency = 100000;
+		dataWrite.position(dataWrite.capacity());
+		//eventConsumerThread = new AudioGeneratorThread(config);
+		//eventConsumerThread.start();
+		dataRead.limit(4);
+	}
 	
 	/** Callback to handle protocol after new data has been received. 
 	 * @throws InvalidCommandException */
@@ -107,7 +113,8 @@ public class ClientContext {
 			if (commandByte >= commands.length) {
 				throw new RuntimeException("Unknown command number: " + commandByte);
 			}
-			command = commands[commandByte];			
+			command = commands[commandByte];	
+			System.out.println(command);
 			sidNumber = dataRead.get(1) & 0xff;
 			dataLength = dataRead.getShort(2) & 0xffff;
 
@@ -141,6 +148,7 @@ public class ClientContext {
 			break;
 
 		case TRY_SET_SID_COUNT:
+			dataWrite.put((byte) Response.OK.ordinal());
 			break;
 			
 		case MUTE:
@@ -159,7 +167,7 @@ public class ClientContext {
 		}
 
 		case TRY_WRITE: {
-			System.out.println("Write");
+			handleWritePacket(dataLength);
 			dataWrite.put((byte) Response.OK.ordinal());
 			break;
 		}
@@ -274,7 +282,7 @@ public class ClientContext {
 			ssc = ServerSocketChannel.open();
 			ssc.configureBlocking(false);
 			System.out.println("Opening listening socket.");
-			ssc.socket().bind(new InetSocketAddress("192.168.1.66", 6582));
+			ssc.socket().bind(new InetSocketAddress("192.168.1.66", 6581));
 
 			Selector s = Selector.open();
 			ssc.register(s, SelectionKey.OP_ACCEPT);
@@ -292,7 +300,7 @@ public class ClientContext {
 						sc.register(s, SelectionKey.OP_READ);
 						ClientContext cc = new ClientContext();
 						clientContextMap.put(sc, cc);
-						System.out.println("New client: " );
+						System.out.println("New client: " + cc);
 					}
 					
 					if (sk.isReadable()) {
@@ -304,13 +312,13 @@ public class ClientContext {
 							if (length == -1) {
 								throw new EOFException();
 							}
-	
+							
 							cc.processReadBuffer();
 						}
 						catch (Exception e) {
 							System.out.println("Read: closing client " + cc + " due to exception: " + e);
 	
-							//cc.dispose();
+							cc.dispose();
 							clientContextMap.remove(sc);
 							sk.cancel();
 							sc.close();
@@ -318,7 +326,9 @@ public class ClientContext {
 							/* IOExceptions are probably not worth bothering user about, they could be normal
 							 * stuff like apps exiting or closing connection. Other stuff is important, though.
 							 */
-							
+							if (! (e instanceof IOException)) {
+								System.out.println(e);
+							}
 							continue;
 						}
 	
@@ -344,7 +354,7 @@ public class ClientContext {
 						}
 						catch (IOException ioe) {
 							System.out.println("Write: closing client " + cc + " due to exception: " + ioe);
-							//cc.dispose();
+							cc.dispose();
 							clientContextMap.remove(sc);
 							sk.cancel();
 							sc.close();
@@ -355,12 +365,45 @@ public class ClientContext {
 				
 				s.selectedKeys().clear();
 			}
+	
+			for (ClientContext cc : clientContextMap.values()) {
+				System.out.println("Cleaning up client: " + cc);
+				cc.dispose();
+			}
+			for (SocketChannel sc : clientContextMap.keySet()) {
+				sc.close();
+			}
+			for (ClientContext cc : clientContextMap.values()) {
+				cc.disposeWait();
+			}
 			
 			ssc.close();
 			System.out.println("Listening socket closed.");
 			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		}
+	}
+	protected void dispose() {
+		//eventConsumerThread.getSidCommandQueue().add(SIDWrite.makeEnd());
+		//eventConsumerThread.ensureDraining();
+	}
+	
+	protected void disposeWait() {
+		
+	}
+	private void handleWritePacket(int dataLength) {
+		//Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
+		for (int i = 0; i < dataLength; i += 4) {
+			final int writeCycles = dataRead.getShort(4 + i) & 0xffff;
+			byte reg = dataRead.get(4 + i + 2);
+			byte sid = (byte) ((reg & 0xe0) >> 5);
+			reg &= 0x1f;
+			final byte value = dataRead.get(4 + i + 3);
+			inputClock += writeCycles;
+			System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
+			//sidRead[sid].clockSilent(writeCycles);
+			//sidRead[sid].write(reg & 0x1f, value);
 		}
 	}
 }
