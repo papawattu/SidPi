@@ -137,8 +137,7 @@ public class SIDPiController {
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
 			for(int i=0;i<cycles;i++) {
-				//while(gpioController.getPin(CLK)==0) 
-				System.out.println(gpioController.getPin(CLK));
+				
 			}
 		} else {
 			advanceClock(5);
