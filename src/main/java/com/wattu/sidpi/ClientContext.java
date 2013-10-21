@@ -408,7 +408,7 @@ public class ClientContext {
 			this.sid.writeRegister(reg, value);
 			while(writeCycles > 0) {
 				writeCycles--;
-				for(int j=0;j<5;j++);
+				for(int j=0;j<3;j++);
 			}
 			//sidRead[sid].clockSilent(writeCycles);
 			//sidRead[sid].write(reg & 0x1f, value);
