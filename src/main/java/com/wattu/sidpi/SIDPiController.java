@@ -136,10 +136,10 @@ public class SIDPiController {
 	
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
-			final long end = System.nanoTime() + (cycles * 900);
+			final long end = System.nanoTime() + (cycles * 750);
 
 
-	        long timeLeft = cycles * 900;
+	        long timeLeft = cycles * 750;
 	        do {
 	                try {
 						Thread.sleep (0);

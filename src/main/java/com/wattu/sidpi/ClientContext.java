@@ -161,7 +161,7 @@ public class ClientContext {
 			break;
 
 		case TRY_RESET:
-			
+			sid.reset();
 			dataWrite.put((byte) Response.OK.ordinal());
 			break;
 
@@ -191,7 +191,7 @@ public class ClientContext {
 			final byte register = dataRead.get(4 + dataLength - 1);
 			
 			dataWrite.put((byte) Response.READ.ordinal());
-			dataWrite.put((byte) 0);
+			dataWrite.put((byte) sid.readRegister(register));
 			break;
 		}
 
