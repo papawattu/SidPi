@@ -128,7 +128,7 @@ public class SIDPiController {
 	public void reset() {
 		gpioController.setPin(RES, GPIOController.VALUE_LOW);
 		
-		waitForCycles(5);
+		waitForCycles(8);
 		
 		gpioController.setPin(RES, GPIOController.VALUE_HIGH);
 		
@@ -137,7 +137,8 @@ public class SIDPiController {
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
 			for(int i=0;i<cycles;i++) {
-				while(gpioController.getPin(CLK)==0);
+				//while(gpioController.getPin(CLK)==0) 
+				System.out.println(gpioController.getPin(CLK));
 			}
 		} else {
 			advanceClock(5);
