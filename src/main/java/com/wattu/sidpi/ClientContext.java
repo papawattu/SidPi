@@ -129,9 +129,9 @@ public class ClientContext {
 			}
 		}
 		
-		long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
-		boolean isBufferFull = clientTimeDifference > latency;
-		boolean isBufferHalfFull = clientTimeDifference > latency / 2;
+		//long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
+		//boolean isBufferFull = clientTimeDifference > latency;
+		//boolean isBufferHalfFull = clientTimeDifference > latency / 2;
 		
 		/* Handle data packet. */
 		final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
