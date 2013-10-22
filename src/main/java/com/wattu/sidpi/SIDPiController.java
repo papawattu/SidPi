@@ -70,7 +70,6 @@ public class SIDPiController {
 		setCSLow();
 		clockHigh();
 		int[] data = gpioController.getPins(DATA);
-		delay();
 		setCSHigh();
 		clockLow();
 		
@@ -112,6 +111,7 @@ public class SIDPiController {
 		vals[7] = (value & 128) >> 7;
 		
 		gpioController.setPins(DATA,vals);
+		gpioController.delay(1);
 		setCSHigh();
 		clockLow();
 	}
