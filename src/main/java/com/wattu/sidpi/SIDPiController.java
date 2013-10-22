@@ -142,11 +142,8 @@ public class SIDPiController {
 			if(cycles < 100 ) {
 				gpioController.delay(cycles);
 			} else {
-				try {
-					Thread.sleep(0, cycles);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				while(target > gpioController.getClock()) {
+					Thread.yield();
 				}
 			}
 		} else {
