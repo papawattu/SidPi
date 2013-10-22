@@ -17,15 +17,14 @@
 #define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
 #define TIMER_OFFSET 									(0x04)
 
-void *st_base;
+void *st_base = NULL;
+int fd =  NULL;
 
 long long int timerVal() {
 
 	long long int t, prev, *timer; // 64 bit timer
-	int fd =  NULL;
-	st_base = NULL;
 	    // get access to system core memory
-	if(st_base == NULL) {
+	if(st_base == NULL || fd == NULL) {
 		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
 			fprintf(stderr, "open() failed.\n");
 	        return 255;
