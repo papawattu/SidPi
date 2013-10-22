@@ -24,7 +24,7 @@ long long int timerVal() {
 
 	long long int t, prev, *timer; // 64 bit timer
 	    // get access to system core memory
-	if(*st_base == NULL || fd == NULL) {
+	if(fd == NULL) {
 		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
 			fprintf(stderr, "open() failed.\n");
 	        return 255;
@@ -162,4 +162,8 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 	//delayMicroseconds(delay);
 	long long int target = timerVal() + delay;
 	while(*(long long int *)((char *)st_base + TIMER_OFFSET) < target);
+}
+JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
+  (JNIEnv *, jobject) {
+	return timerVal();
 }
