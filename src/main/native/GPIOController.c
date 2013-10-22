@@ -114,3 +114,14 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_stopClock
   (JNIEnv *env, jobject obj, jint pin) {
 
 }
+
+/*
+ * Class:     com_wattu_sidpi_impl_GPIOControllerImpl
+ * Method:    delay
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
+  (JNIEnv *env, jobject obj, jint delay) {
+	delayMicroseconds(delay);
+}
+}
