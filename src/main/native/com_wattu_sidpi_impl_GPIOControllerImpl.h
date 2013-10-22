@@ -63,6 +63,14 @@ JNIEXPORT jintArray JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getPins
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_setPinMode
   (JNIEnv *, jobject, jint, jint);
 
+/*
+ * Class:     com_wattu_sidpi_impl_GPIOControllerImpl
+ * Method:    delay
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif
