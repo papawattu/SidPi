@@ -160,10 +160,10 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_stopClock
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
   (JNIEnv *env, jobject obj, jint delay) {
 	delayMicroseconds(delay);
-	//long long int target = timerVal() + delay;
-	//while(*(long long int *)((char *)st_base + TIMER_OFFSET) < target);
+//	long long int target = timerVal() + delay;
+//	while(*(long long int *)((char *)st_base + TIMER_OFFSET) < target);
 }
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
-  (JNIEnv *, jobject) {
+  (JNIEnv *env, jobject obj) {
 	return timerVal();
 }
