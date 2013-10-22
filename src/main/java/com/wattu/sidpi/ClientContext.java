@@ -295,6 +295,7 @@ public class ClientContext {
 		/* check for new connections. */
 		ServerSocketChannel ssc = null;
 		try {
+			Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 			ssc = ServerSocketChannel.open();
 			ssc.configureBlocking(false);
 			System.out.println("Opening listening socket.");
