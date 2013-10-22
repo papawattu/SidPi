@@ -22,21 +22,22 @@ void *st_base;
 long long int timerVal() {
 
 	long long int t, prev, *timer; // 64 bit timer
-	int fd;
+	int fd =  NULL;
+	st_base = NULL;
 	    // get access to system core memory
-
-	if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
-	     fprintf(stderr, "open() failed.\n");
+	if(st_base == NULL) {
+		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
+			fprintf(stderr, "open() failed.\n");
 	        return 255;
-	}
+		}
 
 	    // map a specific page into process's address space
-	if (MAP_FAILED == (st_base = mmap(NULL, 4096,
+		if (MAP_FAILED == (st_base = mmap(NULL, 4096,
                     PROT_READ, MAP_SHARED, fd, TIMER))) {
-	      fprintf(stderr, "mmap() failed.\n");
-	        return 254;
+		fprintf(stderr, "mmap() failed.\n");
+	    	return 254;
+		}
 	}
-
 	    // set up pointer, based on mapped page
 	timer = (long long int *)((char *)st_base + TIMER_OFFSET);
 
