@@ -129,9 +129,9 @@ public class ClientContext {
 			}
 		}
 		
-		//long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
-		//boolean isBufferFull = clientTimeDifference > latency;
-		//boolean isBufferHalfFull = clientTimeDifference > latency / 2;
+		long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
+		boolean isBufferFull = clientTimeDifference > latency;
+		boolean isBufferHalfFull = clientTimeDifference > latency / 2;
 		
 		/* Handle data packet. */
 		final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
@@ -167,6 +167,14 @@ public class ClientContext {
 
 		/* SID command queuing section. */
 		case TRY_DELAY: {
+			if (isBufferHalfFull) {
+				//eventConsumerThread.ensureDraining();
+			}
+			
+			if (isBufferFull) {
+				dataWrite.put((byte) Response.BUSY.ordinal());
+				break;
+			}
 			final int cycles = dataRead.getShort(4) & 0xffff;
 			
 			handleDelayPacket(0,cycles);

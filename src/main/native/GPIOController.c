@@ -1,5 +1,10 @@
 #include <jni.h>
 #include <stdio.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <wiringPi.h>
 
 #include "com_wattu_sidpi_impl_GPIOControllerImpl.h"
@@ -7,6 +12,39 @@
 #define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_CLOCK 3
 #define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_OUT 1
 #define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_IN 0
+
+#define BCM2708_PERI_BASE                             	0x20000000
+#define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
+#define TIMER_OFFSET 									(0x04)
+
+static volatile uint32_t *gpio ;
+
+long long int timerVal() {
+
+	long long int t, prev, *timer; // 64 bit timer
+
+
+	    // get access to system core memory
+
+	if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
+	     fprintf(stderr, "open() failed.\n");
+	        return 255;
+	}
+
+	    // map a specific page into process's address space
+	if (MAP_FAILED == (st_base = mmap(NULL, 4096,
+                    PROT_READ, MAP_SHARED, fd, TIMER))) {
+	      fprintf(stderr, "mmap() failed.\n");
+	        return 254;
+	}
+
+	    // set up pointer, based on mapped page
+	timer = (long long int *)((char *)st_base + TIMER_OFFSET);
+
+	    // read initial timer
+	return *timer;
+
+}
 
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
@@ -122,5 +160,7 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_stopClock
  */
 JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
   (JNIEnv *env, jobject obj, jint delay) {
-	delayMicroseconds(delay);
+	//delayMicroseconds(delay);
+	long long int target = timerVal() + delay;
+	while(*(long long int *)((char *)st_base + TIMER_OFFSET) < target);
 }

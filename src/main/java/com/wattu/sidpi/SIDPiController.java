@@ -17,7 +17,7 @@ public class SIDPiController {
 	private static final int[] ADDR	= {GPIOController.PIN_NUMBERS[13],GPIOController.PIN_NUMBERS[12],GPIOController.PIN_NUMBERS[11]
 										,GPIOController.PIN_NUMBERS[10],GPIOController.PIN_NUMBERS[9]};
 			
-	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
+	private static final int DEFAULT_SID_SPEED_HZ = 985000;
 	
 	private int currentSidSpeed = 0;
 	private long currentCycle = 0;
