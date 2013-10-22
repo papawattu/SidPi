@@ -17,13 +17,12 @@
 #define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
 #define TIMER_OFFSET 									(0x04)
 
-static volatile uint32_t *gpio ;
+void *st_base;
 
 long long int timerVal() {
 
 	long long int t, prev, *timer; // 64 bit timer
-
-
+	int fd;
 	    // get access to system core memory
 
 	if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
