@@ -124,4 +124,3 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
   (JNIEnv *env, jobject obj, jint delay) {
 	delayMicroseconds(delay);
 }
-}
