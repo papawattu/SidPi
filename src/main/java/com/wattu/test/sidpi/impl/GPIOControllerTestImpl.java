@@ -47,5 +47,11 @@ public class GPIOControllerTestImpl implements GPIOController {
 	public void delay(int delay) {
 		
 	}
+
+	@Override
+	public long getClock() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }

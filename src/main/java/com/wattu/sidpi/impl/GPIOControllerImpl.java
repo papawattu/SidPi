@@ -27,4 +27,6 @@ public class GPIOControllerImpl implements GPIOController {
 	
 	public native void delay(int delay);
 	
+	public native long getClock();
+	
 }

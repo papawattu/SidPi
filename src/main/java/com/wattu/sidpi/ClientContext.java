@@ -144,11 +144,11 @@ public class ClientContext {
 				throw new RuntimeException("FLUSH needs no data" + dataLength);
 			}
 			
-			//sidCommandQueue.clear();
+			sidCommandQueue.clear();
 			/* The playbackclock may still increase for a while, because
 			 * audio generation may still be ongoing. We aren't allowed
 			 * to wait for it, either, so this is the best we can do. */
-			//inputClock = eventConsumerThread.getPlaybackClock();
+			inputClock = eventConsumerThread.getPlaybackClock();
 			dataWrite.put((byte) Response.OK.ordinal());
 			break;
 
@@ -168,7 +168,7 @@ public class ClientContext {
 		/* SID command queuing section. */
 		case TRY_DELAY: {
 			if (isBufferHalfFull) {
-				//eventConsumerThread.ensureDraining();
+				eventConsumerThread.ensureDraining();
 			}
 			
 			if (isBufferFull) {
@@ -424,6 +424,7 @@ public class ClientContext {
 	}
 	private void handleDelayPacket(int sidNumber, int cycles)  {
 		Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
+		inputClock += cycles;
 		SIDWrite write = new SIDWrite(cycles);
 		q.add(write);
 	}

@@ -29,6 +29,7 @@ public class SIDPiController {
 		
 		gpioController = new GPIOControllerImpl(); 
 		setClockSpeed(DEFAULT_SID_SPEED_HZ);
+		currentCycle = gpioController.getClock();
 		startClock();
 		reset();
 		setCSHigh();

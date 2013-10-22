@@ -28,4 +28,6 @@ public interface GPIOController {
 	
 	public void delay(int delay);
 
+	public long getClock();
+
 }

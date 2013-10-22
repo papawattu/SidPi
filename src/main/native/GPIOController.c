@@ -24,7 +24,7 @@ long long int timerVal() {
 
 	long long int t, prev, *timer; // 64 bit timer
 	    // get access to system core memory
-	if(st_base == NULL || fd == NULL) {
+	if(*st_base == NULL || fd == NULL) {
 		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
 			fprintf(stderr, "open() failed.\n");
 	        return 255;

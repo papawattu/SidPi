@@ -19,11 +19,14 @@ public class SIDRunnerThread extends Thread {
 	public void run() {
 		//System.out.println("SIDRunner - entered run");
 		
-//			synchronized (commandQ) {
-//			
-//				commandQ.wait();
-//			
-//			}
+		synchronized (commandQ) {
+			try {
+				commandQ.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		//System.out.println("SIDRunner - entering main loop");
 		while (true) {
 			//System.out.println("SIDRunner - polling");
@@ -45,9 +48,13 @@ public class SIDRunnerThread extends Thread {
 			}
 		}
 	}
-	
+	public void ensureDraining() {
+		synchronized (commandQ) {
+			commandQ.notify();
+		}
+	}
 	public long getPlaybackClock() {
-		return 0;
+		return sid.getCurrentCycle();
 	}
 
 	public BlockingQueue<SIDWrite> getSidCommandQueue() {
