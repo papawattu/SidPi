@@ -11,8 +11,8 @@ import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-
 
 public class ClientContext {
 	
@@ -25,6 +25,8 @@ public class ClientContext {
 
 	/** Maximum time to wait for queue in milliseconds. */
 	private static final long MAX_TIME_TO_WAIT_FOR_QUEUE = 20;	
+	
+	private final SIDRunnerThread eventConsumerThread; 
 	
 	/** Available commands to clients */
 	private enum Command {
@@ -64,7 +66,7 @@ public class ClientContext {
 	}
 
 	/** Expected buffer fill rate */
-	//private final int latency;
+	private final int latency;
 	
 	/** Cached commands because values() returns new array each time. */
 	private final Command[] commands = Command.values();
@@ -84,9 +86,6 @@ public class ClientContext {
 	/** Current command. */
 	private Command command;
 	
-	/** Current sid number in command. */
-	private int sidNumber;
-	
 	/** Length of data packet associated to command. */
 	private int dataLength;
 	
@@ -95,12 +94,13 @@ public class ClientContext {
 
 	/** Map which holds all instances of each client connection. */
 	private static Map<SocketChannel, ClientContext> clientContextMap = new ConcurrentHashMap<SocketChannel, ClientContext>();
+	
 	private ClientContext(SIDPiController sid) {
 		this.sid = sid;
-		//this.latency = 100000;
+		this.latency = 100000;
 		dataWrite.position(dataWrite.capacity());
-		//eventConsumerThread = new AudioGeneratorThread(config);
-		//eventConsumerThread.start();
+		eventConsumerThread = new SIDRunnerThread(sid);
+		eventConsumerThread.start();
 		dataRead.limit(4);
 	}
 	
@@ -120,7 +120,7 @@ public class ClientContext {
 			}
 			command = commands[commandByte];	
 			//System.out.println(command);
-			sidNumber = dataRead.get(1) & 0xff;
+			int sidNumber = dataRead.get(1) & 0xff;
 			dataLength = dataRead.getShort(2) & 0xffff;
 
 			dataRead.limit(4 + dataLength);
@@ -129,12 +129,12 @@ public class ClientContext {
 			}
 		}
 		
-		//long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
-		//boolean isBufferFull = clientTimeDifference > latency;
-		//boolean isBufferHalfFull = clientTimeDifference > latency / 2;
+		long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
+		boolean isBufferFull = clientTimeDifference > latency;
+		boolean isBufferHalfFull = clientTimeDifference > latency / 2;
 		
 		/* Handle data packet. */
-		//final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
+		final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
 
 		dataWrite.clear();
 		
@@ -401,7 +401,7 @@ public class ClientContext {
 		
 	}
 	private void handleWritePacket(int dataLength) {
-		//Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
+		Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
 		for (int i = 0; i < dataLength; i += 4) {
 			int writeCycles = dataRead.getShort(4 + i) & 0xffff;
 			byte reg = dataRead.get(4 + i + 2);
@@ -409,14 +409,13 @@ public class ClientContext {
 			reg &= 0x1f;
 			final byte value = dataRead.get(4 + i + 3);
 			inputClock += writeCycles;
-			//System.out.println("Sid " + sid + "reg "+ reg + "value" + value + "write cycles" +writeCycles);
-			this.sid.writeRegister(reg, value);
-			this.sid.waitForCycles(writeCycles);
-			//sidRead[sid].clockSilent(writeCycles);
-			//sidRead[sid].write(reg & 0x1f, value);
+			SIDWrite write = new SIDWrite(reg,value,writeCycles);
+			q.add(write);
 		}
 	}
 	private void handleDelayPacket(int sidNumber, int cycles)  {
-		this.sid.waitForCycles(cycles);
+		Queue<SIDWrite> q = eventConsumerThread.getSidCommandQueue();
+		SIDWrite write = new SIDWrite(cycles);
+		q.add(write);
 	}
 }
