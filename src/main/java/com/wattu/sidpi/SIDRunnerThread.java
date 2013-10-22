@@ -32,15 +32,17 @@ public class SIDRunnerThread extends Thread {
 
 			System.out.println("SIDRunner - got write command");
 			
+			if(write != null) {
 			
-			if (!write.isDelay()) {
-				System.out.println("SIDRunner - write reg");
+				if (!write.isDelay()) {
+					System.out.println("SIDRunner - write reg");
 				
-				sid.writeRegister(write.getAddress(), write.getValue());
-			} 
-			System.out.println("SIDRunner - wait");
+					sid.writeRegister(write.getAddress(), write.getValue());
+				} 
+				System.out.println("SIDRunner - wait");
 			
-			sid.waitForCycles(write.getCycles());
+				sid.waitForCycles(write.getCycles());
+			}
 		}
 	}
 	
