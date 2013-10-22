@@ -25,4 +25,6 @@ public class GPIOControllerImpl implements GPIOController {
 	
 	public native void setPinMode(int pin,int mode);
 	
+	public native void delay(int delay);
+	
 }

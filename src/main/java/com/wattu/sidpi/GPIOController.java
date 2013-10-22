@@ -25,5 +25,7 @@ public interface GPIOController {
 	public int[] getPins(int pins[]);
 	
 	public void setPinMode(int pin,int mode);
+	
+	public void delay(int delay);
 
 }

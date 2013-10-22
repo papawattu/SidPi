@@ -42,5 +42,10 @@ public class GPIOControllerTestImpl implements GPIOController {
 		System.out.println("##TEST## Set Pin mode " + pin + " mode : " + mode);
 		
 	}
+
+	@Override
+	public void delay(int delay) {
+		
+	}
 	
 }

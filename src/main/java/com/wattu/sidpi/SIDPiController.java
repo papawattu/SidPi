@@ -137,23 +137,9 @@ public class SIDPiController {
 	
 	public void waitForCycles(int cycles) {
 		if(clockRunning) {
-			final long end = System.nanoTime() + (cycles * 750);
-
-
-	        long timeLeft = cycles * 750;
-	        do {
-	                try {
-						Thread.sleep (0);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	                Thread.yield();
-	                timeLeft = end - System.nanoTime();
-
-	        } while (timeLeft > 0);
+			gpioController.delay(cycles);
 		} else {
-			advanceClock(5);
+			advanceClock(cycles);
 		}
 	}
 	
