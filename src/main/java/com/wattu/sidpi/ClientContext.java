@@ -132,12 +132,7 @@ public class ClientContext {
 		
 		long clientTimeDifference = inputClock - eventConsumerThread.getPlaybackClock();
 		boolean isBufferFull = clientTimeDifference > latency;
-		boolean isBufferHalfFull = clientTimeDifference > latency / 2;
-		
-		System.out.println("input Clock " + inputClock);
-		System.out.println("Sid Clock " + eventConsumerThread.getPlaybackClock());
-		System.out.println("latency " + latency);
-		
+		boolean isBufferHalfFull = clientTimeDifference > latency / 2;	
 		
 		/* Handle data packet. */
 		final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
@@ -175,12 +170,12 @@ public class ClientContext {
 		case TRY_DELAY: {
 			if (isBufferHalfFull) {
 				eventConsumerThread.ensureDraining();
-				System.out.println("Delay Buffer half full");
+				//System.out.println("Delay Buffer half full");
 			}
 			
 			if (isBufferFull) {
 				dataWrite.put((byte) Response.BUSY.ordinal());
-				System.out.println("Delay Buffer full");
+				//System.out.println("Delay Buffer full");
 				break;
 			}
 			final int cycles = dataRead.getShort(4) & 0xffff;
