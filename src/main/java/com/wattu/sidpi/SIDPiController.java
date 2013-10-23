@@ -17,11 +17,12 @@ public class SIDPiController {
 	private static final int[] ADDR	= {GPIOController.PIN_NUMBERS[13],GPIOController.PIN_NUMBERS[12],GPIOController.PIN_NUMBERS[11]
 										,GPIOController.PIN_NUMBERS[10],GPIOController.PIN_NUMBERS[9]};
 			
-	private static final int DEFAULT_SID_SPEED_HZ = 985000;
+	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
 	
 	private int currentSidSpeed = 0;
-	private long currentCycle = 0;
 	private boolean clockRunning = false;
+	private int[] vals = new int[8];
+	private int[] addr = new int[5];
 	
 	private GPIOController gpioController;
 	
@@ -29,7 +30,6 @@ public class SIDPiController {
 		
 		gpioController = new GPIOControllerImpl(); 
 		setClockSpeed(DEFAULT_SID_SPEED_HZ);
-		currentCycle = gpioController.getClock();
 		startClock();
 		reset();
 		setCSHigh();
@@ -57,7 +57,6 @@ public class SIDPiController {
 	}
 
 	public int readRegister(int address) {
-		int[] addr = new int[5];
 		
 		addr[0] = (address & 1);
 		addr[1] = (address & 2) >> 1;
@@ -87,7 +86,6 @@ public class SIDPiController {
 	}
 
 	public void writeRegister(int address, int value) {
-		int[] addr = new int[5];
 		
 		addr[0] = (address & 1);
 		addr[1] = (address & 2) >> 1;
@@ -96,10 +94,7 @@ public class SIDPiController {
 		addr[4] = (address & 16) >> 4;
 		
 		gpioController.setPins(ADDR, addr);
-		setWriteMode();
 		setCSLow();
-		clockHigh();
-		int[] vals = new int[8];
 		
 		vals[0] = value & 1;
 		vals[1] = (value & 2) >> 1;
@@ -111,7 +106,6 @@ public class SIDPiController {
 		vals[7] = (value & 128) >> 7;
 		
 		gpioController.setPins(DATA,vals);
-		gpioController.delay(1);
 		setCSHigh();
 		clockLow();
 	}
@@ -137,16 +131,9 @@ public class SIDPiController {
 	}
 	
 	public void waitForCycles(int cycles) {
-		try {
-		if(clockRunning) {
-			long target = gpioController.getClock() + cycles;
+		long target = gpioController.getClock() + cycles;
 			
-			while(gpioController.getClock() < target) Thread.sleep(0); 
-			//gpioController.delay(cycles);
-		} else {
-			advanceClock(cycles);
-		}
-		} catch (InterruptedException e) {}
+		while(gpioController.getClock() < target); 
 	}
 	
 	public void advanceClock() {
@@ -154,21 +141,7 @@ public class SIDPiController {
 	}
 	
 	private void advanceClock(int cycles)  {
-		if(!clockRunning) {
-			for(int i=0;i<cycles;i++) {
-				gpioController.setPin(CLK, GPIOController.VALUE_HIGH);
-				delay();
-				gpioController.setPin(CLK, GPIOController.VALUE_LOW);
-			}
-			currentCycle += cycles;
-		}
-	}
-	private void delay() {
-		try {
-			Thread.sleep(0);
-		} catch (InterruptedException e) {
-			
-		}
+	
 	}
 	public long getCurrentCycle() {
 		return gpioController.getClock();
@@ -181,10 +154,7 @@ public class SIDPiController {
 	}
 	
 	private void clockLow() {
-		if(!clockRunning) {
-			gpioController.setPin(CLK, GPIOController.VALUE_LOW);
-			currentCycle ++;
-		}
+	
 	}
 
 	public void startClock() {
