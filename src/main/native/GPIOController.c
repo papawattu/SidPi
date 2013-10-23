@@ -142,6 +142,8 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
   (JNIEnv *env, jobject obj) {
 	static volatile uint32_t *timer ;
+	int fd;
+	int timerSetup = 0 ;
 	if(timerSetup==0) {
 		if ((fd = open ("/dev/mem", O_RDWR | O_SYNC) ) < 0) {
 
