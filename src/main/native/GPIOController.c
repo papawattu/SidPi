@@ -21,6 +21,7 @@
 #define GPIO_TIMER                						(BCM2708_PERI_BASE + 0x0000B000)
 #define BLOCK_SIZE                						(4*1024)
 #define TIMER_VALUE        								(0x404 >> 2)
+#define CLO 											0x20003004
 
 
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
@@ -151,7 +152,7 @@ JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
 
 		    return -1 ;
 		  }
-		 timer = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO_TIMER) ;
+		 timer = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, CLO) ;
 		   if ((int32_t)timer == -1)
 		   {
 			   return -1 ;
@@ -159,5 +160,5 @@ JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
 		timerSetup = 1;
 		//timer = (long long int *)((char *)st_base + TIMER_OFFSET);
 	}
-	return *(timer + TIMER_VALUE);
+	return *timer;
 }
