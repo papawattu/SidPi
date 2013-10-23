@@ -102,7 +102,8 @@ public class ClientContext {
 		eventConsumerThread = new SIDRunnerThread(sid);
 		eventConsumerThread.start();
 		dataRead.limit(4);
-		inputClock = eventConsumerThread.getPlaybackClock();
+		inputClock = sid.getCurrentCycle();
+		System.out.println("Setting input clock : " + inputClock);
 	}
 	
 	/** Callback to handle protocol after new data has been received. 
@@ -120,8 +121,7 @@ public class ClientContext {
 				throw new RuntimeException("Unknown command number: " + commandByte);
 			}
 			command = commands[commandByte];	
-			//System.out.println(command);
-			int sidNumber = dataRead.get(1) & 0xff;
+			
 			dataLength = dataRead.getShort(2) & 0xffff;
 
 			dataRead.limit(4 + dataLength);
@@ -170,10 +170,12 @@ public class ClientContext {
 		case TRY_DELAY: {
 			if (isBufferHalfFull) {
 				eventConsumerThread.ensureDraining();
+				System.out.println("Delay Buffer half full");
 			}
 			
 			if (isBufferFull) {
 				dataWrite.put((byte) Response.BUSY.ordinal());
+				System.out.println("Delay Buffer full");
 				break;
 			}
 			final int cycles = dataRead.getShort(4) & 0xffff;
@@ -188,10 +190,12 @@ public class ClientContext {
 				throw new RuntimeException("TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 			}
 			if (isBufferHalfFull) {
+				System.out.println("Write Buffer half full");
 				eventConsumerThread.ensureDraining();
 			}
 			
 			if (isBufferFull) {
+				System.out.println("Write Buffer full");
 				dataWrite.put((byte) Response.BUSY.ordinal());
 				break;
 			}
