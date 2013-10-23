@@ -93,10 +93,6 @@ public class SIDPiController {
 		addr[3] = (address & 8) >> 3;
 		addr[4] = (address & 16) >> 4;
 		
-		gpioController.setPins(ADDR, addr);
-		setWriteMode();
-		setCSLow();
-		
 		vals[0] = value & 1;
 		vals[1] = (value & 2) >> 1;
 		vals[2] = (value & 4) >> 2;
@@ -105,10 +101,10 @@ public class SIDPiController {
 		vals[5] = (value & 32) >> 5;
 		vals[6] = (value & 64) >> 6;
 		vals[7] = (value & 128) >> 7;
-		
+		gpioController.setPins(ADDR, addr);
+		setWriteMode();
 		gpioController.setPins(DATA,vals);
 		setCSHigh();
-		clockLow();
 	}
 
 	public void setClockSpeed(int speed) {
