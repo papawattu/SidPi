@@ -17,6 +17,9 @@
 #define BCM2708_PERI_BASE                             	0x20000000
 #define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
 #define TIMER_OFFSET 									(0x04)
+#define GPIO_BASE                						(BCM2708_PERI_BASE + 0x00200000)
+#define GPIO_TIMER                						(BCM2708_PERI_BASE + 0x0000B000)
+#define BLOCK_SIZE                						(4*1024)
 
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
@@ -141,23 +144,14 @@ JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
 	static volatile uint32_t *timer ;
 	if(timerSetup==0) {
 		if ((fd = open ("/dev/mem", O_RDWR | O_SYNC) ) < 0) {
-		    if (wiringPiDebug)
-		    {
-		      int serr = errno ;
-		        fprintf (stderr, "wiringPiSetup: Unable to open /dev/mem: %s\n", strerror (errno)) ;
-		      errno = serr ;
-		    }
+
 		    return -1 ;
 		  }
 		 timer = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO_TIMER) ;
 		   if ((int32_t)timer == -1)
 		   {
-		     if (wiringPiDebug)
-		     {
-		       int serr = errno ;
-		         fprintf (stderr, "wiringPiSetup: mmap failed (timer): %s\n", strerror (errno)) ;
-		       errno = serr ;
-		     }
+			   return -1 ;
+		   }
 		timerSetup = 1;
 		//timer = (long long int *)((char *)st_base + TIMER_OFFSET);
 	}
