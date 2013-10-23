@@ -97,7 +97,7 @@ public class ClientContext {
 	
 	private ClientContext(SIDPiController sid) {
 		this.sid = sid;
-		this.latency = 100000;
+		this.latency = 1000000;
 		dataWrite.position(dataWrite.capacity());
 		eventConsumerThread = new SIDRunnerThread(sid);
 		eventConsumerThread.start();

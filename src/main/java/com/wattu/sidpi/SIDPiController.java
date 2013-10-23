@@ -137,13 +137,16 @@ public class SIDPiController {
 	}
 	
 	public void waitForCycles(int cycles) {
+		try {
 		if(clockRunning) {
 			long target = gpioController.getClock() + cycles;
-			while(gpioController.getClock() < target) Thread.yield(); 
+			
+			while(gpioController.getClock() < target) Thread.sleep(0); 
 			//gpioController.delay(cycles);
 		} else {
 			advanceClock(cycles);
 		}
+		} catch (InterruptedException e) {}
 	}
 	
 	public void advanceClock() {
