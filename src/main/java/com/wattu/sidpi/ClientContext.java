@@ -134,6 +134,11 @@ public class ClientContext {
 		boolean isBufferFull = clientTimeDifference > latency;
 		boolean isBufferHalfFull = clientTimeDifference > latency / 2;
 		
+		System.out.println("input Clock " + inputClock);
+		System.out.println("Sid Clock " + eventConsumerThread.getPlaybackClock());
+		System.out.println("latency " + latency);
+		
+		
 		/* Handle data packet. */
 		final BlockingQueue<SIDWrite> sidCommandQueue = eventConsumerThread.getSidCommandQueue();
 
@@ -190,12 +195,12 @@ public class ClientContext {
 				throw new RuntimeException("TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 			}
 			if (isBufferHalfFull) {
-				System.out.println("Write Buffer half full");
+				//System.out.println("Write Buffer half full");
 				eventConsumerThread.ensureDraining();
 			}
 			
 			if (isBufferFull) {
-				System.out.println("Write Buffer full");
+				//System.out.println("Write Buffer full");
 				dataWrite.put((byte) Response.BUSY.ordinal());
 				break;
 			}
