@@ -103,6 +103,7 @@ public class SIDPiController {
 		vals[7] = (value & 128) >> 7;
 		gpioController.setPins(ADDR, addr);
 		setWriteMode();
+		setCSLow();
 		gpioController.setPins(DATA,vals);
 		setCSHigh();
 	}
