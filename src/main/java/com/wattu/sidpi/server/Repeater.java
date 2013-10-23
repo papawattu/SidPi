@@ -2,23 +2,15 @@ package com.wattu.sidpi.server;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
 
-import com.wattu.sidpi.ClientContext;
-
-public class Repeater {
+public class Repeater implements Runnable {
+	
+	private boolean running;
 	
 	public static void main(String[] args) throws IOException {
         
@@ -26,31 +18,64 @@ public class Repeater {
             System.err.println("Usage: java EchoServer <port number>");
             System.exit(1);
         }
-         
+        
+        Repeater repeater = new Repeater();
+        Thread repeaterThread = new Thread(repeater);
+        repeaterThread.start();
+        
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        
+        while(bufferedReader.readLine().length()==0);
+        
+        repeater.stop();
+	}    
+    public void run() {    
         /* check for new connections. */
-		ServerSocket serverSocket = new ServerSocket(6581);
-		Socket clientSocket = serverSocket.accept();
+    	ServerSocket serverSocket = null;
+    	Socket clientSocket = null;
+    	Socket sidSocket = null;
+        try {
+        	System.out.println("Opening listening socket");
+        	serverSocket = new ServerSocket(6581);
+        	clientSocket = serverSocket.accept();
 		
-		PrintStream out = new PrintStream(clientSocket.getOutputStream());
-		BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
+        	System.out.println("Client connected");
+        	
+        	PrintStream out = new PrintStream(clientSocket.getOutputStream());
+        	BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 		
-		Socket sidSocket = new Socket("192.168.1.66", 6581);
+        	sidSocket = new Socket("192.168.1.66", 6581);
+        	System.out.println("Opening forwaring client socket");
+        
+        	PrintStream sidOut = new PrintStream(sidSocket.getOutputStream());
+        	BufferedInputStream sidIn = new BufferedInputStream(sidSocket.getInputStream());
 		
-		PrintStream sidOut = new PrintStream(sidSocket.getOutputStream());
-		BufferedInputStream sidIn = new BufferedInputStream(sidSocket.getInputStream());
-		
-		byte[] buffer = new byte[16384];
-		int length =0;
-		while(true) {
-			if(in.available() > 0) {
-				length = in.read(buffer,0,16384);
-				sidOut.write(buffer, 0, length);
-			}
-			if(sidIn.available() > 0) {
-				length = sidIn.read(buffer, 0, 16384);
-				out.write(buffer, 0, length);
-			}
-		}
-
-	}
+        	byte[] buffer = new byte[16384];
+        	int length =0;
+        	running = true;
+        	while(running) {
+        		if(in.available() > 0) {
+        			length = in.read(buffer,0,16384);
+        			sidOut.write(buffer, 0, length);
+        		}
+        		if(sidIn.available() > 0) {
+        			length = sidIn.read(buffer, 0, 16384);
+        			out.write(buffer, 0, length);
+        			
+        		}
+        	}
+        	sidSocket.close();
+          	clientSocket.close();
+        	serverSocket.close();
+        	
+        } catch (IOException ioe) {
+        	System.err.println("Error " + ioe);
+        	System.exit(1);
+        } 
+    }
+    
+    public void stop() {
+    	running = false;
+    }
+    
 }

@@ -102,6 +102,7 @@ public class ClientContext {
 		eventConsumerThread = new SIDRunnerThread(sid);
 		eventConsumerThread.start();
 		dataRead.limit(4);
+		inputClock = eventConsumerThread.getPlaybackClock();
 	}
 	
 	/** Callback to handle protocol after new data has been received. 
@@ -183,6 +184,17 @@ public class ClientContext {
 		}
 
 		case TRY_WRITE: {
+			if (dataLength < 4 && (dataLength % 4) != 0) {
+				throw new RuntimeException("TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
+			}
+			if (isBufferHalfFull) {
+				eventConsumerThread.ensureDraining();
+			}
+			
+			if (isBufferFull) {
+				dataWrite.put((byte) Response.BUSY.ordinal());
+				break;
+			}
 			handleWritePacket(dataLength);
 			dataWrite.put((byte) Response.OK.ordinal());
 			break;
@@ -193,7 +205,7 @@ public class ClientContext {
 				throw new RuntimeException("READ needs 4*n+3 bytes (4*n hardsid protocol + 16-bit delay + register to read)");
 			}
 
-			
+			System.out.println("Tried to read");
 			/* Handle the read off our simulated SID device. */
 			final int readCycles = dataRead.getShort(4 + dataLength - 3) & 0xffff;
 			final byte register = dataRead.get(4 + dataLength - 1);
@@ -305,6 +317,7 @@ public class ClientContext {
 			ssc.register(s, SelectionKey.OP_ACCEPT);
 	
 			clientContextMap.clear();
+			
 			
 			while (s.select() > 0) {
 				for (SelectionKey sk : s.selectedKeys()) {

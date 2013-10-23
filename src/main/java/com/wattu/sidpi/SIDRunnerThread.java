@@ -17,18 +17,27 @@ public class SIDRunnerThread extends Thread {
 	
 	@Override
 	public void run() {
-		while (true) {
-			
-			SIDWrite write = commandQ.poll();
-			if(write != null) {
-			
-				if (!write.isDelay()) {
-				
-					sid.writeRegister(write.getAddress(), write.getValue());
-				} 
-			
-				sid.waitForCycles(write.getCycles());
+		
+		try {
+			synchronized (commandQ) {
+				commandQ.wait();
 			}
+			while (true) {
+				
+				SIDWrite write = commandQ.poll();
+				if(write != null) {
+				
+					if (!write.isDelay()) {
+					
+						sid.writeRegister(write.getAddress(), write.getValue());
+					} 
+				
+					sid.waitForCycles(write.getCycles());
+				}
+			}
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	public void ensureDraining() {
