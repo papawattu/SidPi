@@ -154,7 +154,12 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
   (JNIEnv *env, jobject obj) {
 	long long int *timer; // 64 bit timer
-    if (MAP_FAILED == (st_base = mmap(NULL, 4096,
+
+	if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
+	        fprintf(stderr, "open() failed.\n");
+	        return 255;
+	}
+	if (MAP_FAILED == (st_base = mmap(NULL, 4096,
                         PROT_READ, MAP_SHARED, fd, ST_BASE))) {
         fprintf(stderr, "mmap() failed.\n");
         return 254;
