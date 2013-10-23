@@ -18,9 +18,9 @@
 #define TIMER_OFFSET (4)
 
 static volatile void *st_base; // byte ptr to simplify offset math
-
+int fd;
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
-	int fd;
+
 
 	if (wiringPiSetupGpio () < 0) {
 		return -1;
