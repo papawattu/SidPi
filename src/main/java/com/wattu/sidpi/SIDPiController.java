@@ -94,6 +94,7 @@ public class SIDPiController {
 		addr[4] = (address & 16) >> 4;
 		
 		gpioController.setPins(ADDR, addr);
+		setWriteMode();
 		setCSLow();
 		
 		vals[0] = value & 1;
