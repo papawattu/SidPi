@@ -173,7 +173,7 @@ public class SIDPiController {
 		}
 	}
 	public long getCurrentCycle() {
-		return currentCycle;
+		return gpioController.getClock();
 	}
 
 	private void clockHigh() {
