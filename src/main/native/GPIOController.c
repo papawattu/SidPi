@@ -17,34 +17,6 @@
 #define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
 #define TIMER_OFFSET 									(0x04)
 
-void *st_base = NULL;
-int fd =  NULL;
-
-long long int timerVal() {
-
-	long long int t, prev, *timer; // 64 bit timer
-	    // get access to system core memory
-	if(fd == NULL) {
-		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
-			fprintf(stderr, "open() failed.\n");
-	        return 255;
-		}
-
-	    // map a specific page into process's address space
-		if (MAP_FAILED == (st_base = mmap(NULL, 4096,
-                    PROT_READ, MAP_SHARED, fd, TIMER))) {
-		fprintf(stderr, "mmap() failed.\n");
-	    	return 254;
-		}
-	}
-	    // set up pointer, based on mapped page
-	timer = (long long int *)((char *)st_base + TIMER_OFFSET);
-
-	    // read initial timer
-	return *timer;
-
-}
-
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
 		return -1;
@@ -165,5 +137,24 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 }
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
   (JNIEnv *env, jobject obj) {
-	return timerVal();
+	static long long int *timer;
+	static int timerSetup = 0;
+	void *st_base;
+	int fd;
+
+	if(timerSetup==0) {
+		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
+			fprintf(stderr, "open() failed.\n");
+			return 255;
+		}
+		// map a specific page into process's address space
+		if (MAP_FAILED == (st_base = mmap(NULL, 4096,
+							PROT_READ, MAP_SHARED, fd, TIMER))) {
+			fprintf(stderr, "mmap() failed.\n");
+			return 254;
+		}
+		timerSetup = 1;
+		timer = (long long int *)((char *)st_base + TIMER_OFFSET);
+	}
+	return *timer;
 }
