@@ -20,6 +20,8 @@
 #define GPIO_BASE                						(BCM2708_PERI_BASE + 0x00200000)
 #define GPIO_TIMER                						(BCM2708_PERI_BASE + 0x0000B000)
 #define BLOCK_SIZE                						(4*1024)
+#define TIMER_VALUE        								(0x404 >> 2)
+
 
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
 	if (wiringPiSetupGpio () < 0) {
