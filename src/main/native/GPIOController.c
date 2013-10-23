@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -137,24 +138,28 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 }
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
   (JNIEnv *env, jobject obj) {
-	static long long int *timer;
-	static int timerSetup = 0;
-	void *st_base;
-	int fd;
-
+	static volatile uint32_t *timer ;
 	if(timerSetup==0) {
-		if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
-			fprintf(stderr, "open() failed.\n");
-			return 255;
-		}
-		// map a specific page into process's address space
-		if (MAP_FAILED == (st_base = mmap(NULL, 4096,
-							PROT_READ, MAP_SHARED, fd, TIMER))) {
-			fprintf(stderr, "mmap() failed.\n");
-			return 254;
-		}
+		if ((fd = open ("/dev/mem", O_RDWR | O_SYNC) ) < 0) {
+		    if (wiringPiDebug)
+		    {
+		      int serr = errno ;
+		        fprintf (stderr, "wiringPiSetup: Unable to open /dev/mem: %s\n", strerror (errno)) ;
+		      errno = serr ;
+		    }
+		    return -1 ;
+		  }
+		 timer = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, GPIO_TIMER) ;
+		   if ((int32_t)timer == -1)
+		   {
+		     if (wiringPiDebug)
+		     {
+		       int serr = errno ;
+		         fprintf (stderr, "wiringPiSetup: mmap failed (timer): %s\n", strerror (errno)) ;
+		       errno = serr ;
+		     }
 		timerSetup = 1;
-		timer = (long long int *)((char *)st_base + TIMER_OFFSET);
+		//timer = (long long int *)((char *)st_base + TIMER_OFFSET);
 	}
-	return *timer;
+	return *(timer + TIMER_VALUE);
 }
