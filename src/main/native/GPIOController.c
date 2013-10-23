@@ -14,21 +14,30 @@
 #define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_OUT 1
 #define com_wattu_sidpi_impl_GPIOControllerImpl_MODE_IN 0
 
-#define BCM2708_PERI_BASE                             	0x20000000
-#define TIMER										  	(BCM2708_PERI_BASE + 0x00003000)
-#define TIMER_OFFSET 									(0x04)
-#define GPIO_BASE                						(BCM2708_PERI_BASE + 0x00200000)
-#define GPIO_TIMER                						(BCM2708_PERI_BASE + 0x0000B000)
-#define BLOCK_SIZE                						(4*1024)
-#define TIMER_VALUE        								(0x404 >> 2)
-#define CLO 											0x20003004
+#define ST_BASE (0x20003000)
+#define TIMER_OFFSET (4)
 
+static volatile void *st_base; // byte ptr to simplify offset math
 
 JNIEXPORT jint JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_wiringPiSetup (JNIEnv *env, jobject thisObj) {
+	int fd;
+
 	if (wiringPiSetupGpio () < 0) {
 		return -1;
 	}
 
+    // get access to system core memory
+    if (-1 == (fd = open("/dev/mem", O_RDONLY))) {
+        fprintf(stderr, "open() failed.\n");
+        return 255;
+    }
+
+    // map a specific page into process's address space
+    if (MAP_FAILED == (st_base = mmap(NULL, 4096,
+                        PROT_READ, MAP_SHARED, fd, ST_BASE))) {
+        fprintf(stderr, "mmap() failed.\n");
+        return 254;
+    }
    return 0;
 }
 
@@ -144,21 +153,7 @@ JNIEXPORT void JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_delay
 }
 JNIEXPORT jlong JNICALL Java_com_wattu_sidpi_impl_GPIOControllerImpl_getClock
   (JNIEnv *env, jobject obj) {
-	static volatile uint32_t *timer ;
-	int fd;
-	int timerSetup = 0 ;
-	if(timerSetup==0) {
-		if ((fd = open ("/dev/mem", O_RDWR | O_SYNC) ) < 0) {
-
-		    return -1 ;
-		  }
-		 timer = (uint32_t *)mmap(0, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, fd, CLO) ;
-		   if ((int32_t)timer == -1)
-		   {
-			   return -1 ;
-		   }
-		timerSetup = 1;
-		//timer = (long long int *)((char *)st_base + TIMER_OFFSET);
-	}
+	long long int *timer; // 64 bit timer
+	timer = (long long int *)((char *)st_base + TIMER_OFFSET);
 	return *timer;
 }
