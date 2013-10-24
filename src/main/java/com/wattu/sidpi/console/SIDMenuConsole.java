@@ -17,12 +17,20 @@ public class SIDMenuConsole {
 
 		sid = new SIDPiController();
 		SIDMenuConsole console = new SIDMenuConsole();
+		try {
+			ClientContext.listenForClients(sid);
+		}
+		catch (Exception e) {
+			System.err.println(e);
+		}
 		console.commandLoop();
 		
 	}
 
 	private void commandLoop() throws IOException {
 		COMMANDS lastCommand = COMMANDS.NOP;
+
+		
 		
 		while(lastCommand != COMMANDS.EXIT) {
 			displayMenu();

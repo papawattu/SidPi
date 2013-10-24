@@ -33,7 +33,7 @@ public class SIDPiController {
 		startClock();
 		reset();
 		setCSHigh();
-		
+		setWriteMode();
 	}
 
 	public void setReadMode() {
@@ -81,7 +81,7 @@ public class SIDPiController {
 					(data[6] << 6) |
 					(data[7] << 7); 
 					
-					
+		setWriteMode();			
 		return value;
 	}
 
@@ -102,9 +102,9 @@ public class SIDPiController {
 		vals[6] = (value & 64) >> 6;
 		vals[7] = (value & 128) >> 7;
 		gpioController.setPins(ADDR, addr);
-		setWriteMode();
 		setCSLow();
 		gpioController.setPins(DATA,vals);
+		gpioController.delay(1);
 		setCSHigh();
 	}
 
@@ -131,7 +131,7 @@ public class SIDPiController {
 	public void waitForCycles(int cycles) {
 		long target = gpioController.getClock() + cycles;
 			
-		while(gpioController.getClock() < target); 
+		while(gpioController.getClock() < target) Thread.yield(); 
 	}
 	
 	public void advanceClock() {
