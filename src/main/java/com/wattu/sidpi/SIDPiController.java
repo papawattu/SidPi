@@ -139,6 +139,7 @@ public class SIDPiController {
 			}
 		}
 		gpioController.setPins(ADDR, addr);
+		setWriteMode();
 		setCSLow();
 		gpioController.setPins(DATA,vals);
 		gpioController.delay(1);
