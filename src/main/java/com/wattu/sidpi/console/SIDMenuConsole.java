@@ -17,12 +17,7 @@ public class SIDMenuConsole {
 
 		sid = new SIDPiController();
 		SIDMenuConsole console = new SIDMenuConsole();
-		try {
-			ClientContext.listenForClients(sid);
-		}
-		catch (Exception e) {
-			System.err.println(e);
-		}
+
 		console.commandLoop();
 		
 	}
@@ -85,7 +80,7 @@ public class SIDMenuConsole {
 			case 'x' : {
 				return COMMANDS.EXIT;
 			}
-			case 'm' : {
+			case 'n' : {
 				try {
 					ClientContext.listenForClients(sid);
 				}
@@ -94,11 +89,35 @@ public class SIDMenuConsole {
 				}
 				return COMMANDS.NOP;
 			}
+			case 'd' : {
+				ding();
+				return COMMANDS.NOP;
+			}
+			case 'o' : {
+				if(!sid.isLogging()) {
+					sid.setLogging(true);
+				}  else {
+					sid.setLogging(false);
+				}
+			}
 			default : {
 				return COMMANDS.NOP;	
 			}
 	
 		}
+		
+	}
+	
+	private void ding() {
+		sid.writeRegister(5, 9);
+		sid.writeRegister(6, 0);
+		sid.writeRegister(1, 25);
+		sid.writeRegister(0, 177);
+		sid.writeRegister(4, 33);
+		for(int i = 0;i<1000;i++) {
+			Thread.yield();
+		}
+		sid.writeRegister(4, 32);
 		
 	}
 	private void advanceClock() {
@@ -175,11 +194,14 @@ public class SIDMenuConsole {
 		System.out.println("W - Write register");
 		System.out.println("H - Set CS High");
 		System.out.println("L - Set CS Low");
-		System.out.println("M - Start Network Listener");
+		System.out.println("N - Start Network Listener");
+		System.out.println("D - Ding");
+		System.out.println("O - Toggle logging");
 		System.out.println("X - Exit");
 		System.out.println("========");
-		//System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
-		//System.out.println("Current Clock Cycle : " + sid.getCurrentCycle());
+		System.out.println("Current Clock Speed : " + sid.getClockSpeed() + " is running  : " + sid.isClockRunning());
+		System.out.println("Current Clock Cycle : " + sid.getCurrentCycle());
+		System.out.println("Sid logging is : " + sid.isLogging());
 		
 	}
 	
