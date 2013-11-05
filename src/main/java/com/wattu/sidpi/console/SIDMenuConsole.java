@@ -111,10 +111,11 @@ public class SIDMenuConsole {
 	private void ding() {
 		sid.writeRegister(5, 9);
 		sid.writeRegister(6, 0);
+		sid.writeRegister(24, 15);
 		sid.writeRegister(1, 25);
 		sid.writeRegister(0, 177);
 		sid.writeRegister(4, 33);
-		for(int i = 0;i<1000;i++) {
+		for(int i = 0;i<10000;i++) {
 			Thread.yield();
 		}
 		sid.writeRegister(4, 32);
