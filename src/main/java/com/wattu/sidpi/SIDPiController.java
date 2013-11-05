@@ -63,14 +63,14 @@ public class SIDPiController {
 
 	public void setCSLow() {
 		if(logging) {
-			System.out.println("SIDPiController - CS - pin " + CS + " to low");
+			System.out.println("SIDPiController - Set CS - pin " + CS + " to low");
 		}
 		gpioController.setPin(CS, GPIOController.VALUE_LOW);
 	}
 
 	public void setCSHigh() {
 		if(logging) {
-			System.out.println("SIDPiController - Set read mode - pin " + CS + " to high");
+			System.out.println("SIDPiController - Set CS - pin " + CS + " to high");
 		}
 		gpioController.setPin(CS, GPIOController.VALUE_HIGH);
 	}
