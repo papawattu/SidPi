@@ -142,7 +142,7 @@ public class SIDPiController {
 		setWriteMode();
 		setCSLow();
 		gpioController.setPins(DATA,vals);
-		gpioController.delay(1);
+		gpioController.delay(10);
 		setCSHigh();
 	}
 
