@@ -14,7 +14,7 @@ public class SIDPiController {
 	private static final int CLK 	= 4;
 	private static final int[] DATA	= {2,3,17,27,22,10,9,11};
 	
-	private static final int[] ADDR	= {25,24,23,18,15};
+	private static final int[] ADDR	= {15,18,23,24,25};
 			
 	private static final int DEFAULT_SID_SPEED_HZ = 1000000;
 	
