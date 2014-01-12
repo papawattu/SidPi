@@ -115,7 +115,7 @@ int main(void) {
 					== -1)
 				perror("cannot create thread");
 
-			printf("SID thread started");
+			printf("SID thread started\n");
 
 			close(sockfd); // child doesn't need the listener
 			//memset(&data, 0, sizeof data);
@@ -270,8 +270,9 @@ void processReadBuffer(int len) {
 			invalidCommandException("GET_VERSION needs no data");
 		}
 
-		dataWrite[dataWritePos++] = VERSION;
+		dataWrite[dataWritePos++] =0 VERSION;
 		dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
+		printf("Command %d : Version : %d : WritePos : %d\n",dataWrite[0],dataWrite[1],dataWritePos);
 		break;
 
 	case TRY_SET_SAMPLING:
