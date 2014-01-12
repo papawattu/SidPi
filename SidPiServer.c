@@ -22,6 +22,7 @@ pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
 unsigned int dataWritePos = 0;
 unsigned int dataReadPos = 0;
+unsigned int inputClock = 0;
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -35,6 +36,7 @@ int main(void) {
 	unsigned char buffer[1024];
 	int iret1;
 	int i;
+
 	pthread_t sidThread;
 
 	signal(SIGINT, signal_callback_handler);
@@ -173,7 +175,6 @@ void processReadBuffer(int len) {
 	command = dataRead[dataReadPos];
 	sidNumber = dataRead[dataReadPos + 1];
 	dataLength = (dataRead[dataReadPos + 2] << 8) | dataRead[dataReadPos + 3];
-	printf("Cmd %d : Sid Num : %d : Data length : %d\n",command,sidNumber,dataLength);
 	dataWritePos = 0;
 
 	switch (command) {
@@ -346,11 +347,24 @@ void invalidCommandException(void *errMsg) {
 	perror((char *) errMsg);
 	exit(-1);
 }
+void handleWritePacket(int dataLength) {
+	int i,writeCycles;
+	unsigned char reg,sid,value;
+
+	for (i = 0; i < dataLength; i += 4) {
+		writeCycles = (dataRead[4 + i] << 8) | dataRead[5 + i];
+		reg = dataRead[4 + i + 2];
+		sid = ((reg & 0xe0) >> 5);
+		reg &= 0x1f;
+		value = dataRead[4 + i + 3];
+		inputClock += writeCycles;
+		sidWrite(reg,value,writeCycles);
+	}
+}
 void handleDelayPacket(int sidNumber, int cycles) {
 
-}
-void handleWritePacket(int dataLength) {
-
+	inputClock += cycles;
+	sidDelay(cycles);
 }
 
 void sigchld_handler(int s) {
