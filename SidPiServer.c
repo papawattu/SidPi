@@ -131,7 +131,7 @@ int main(void) {
 						perror("send failed");
 
 				}
-				rv = read(new_fd, buffer, 1024);
+				rv = read(new_fd, dataRead, 16384);
 
 			}
 			exit(0);
