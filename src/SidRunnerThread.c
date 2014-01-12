@@ -66,16 +66,18 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	long long int * cycle; // 64 bit timer
+	long long int * beforeCycle,afterCycle,difference; // 64 bit timer
 
-	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
+	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	printf("Delay %d : Current cycle %llu\n",cycles,*cycle);
+	printf("Delay %d : Current cycle %llu\n",cycles,*beforeCycle);
 	usleep(cycles);
 
-	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
+	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	printf("Current cycle %llu\n",*cycle);
+	difference = afterCycle - beforeCycle;
+
+	printf("Current cycle %llu : difference %llu\n",*afterCycle, difference);
 
 }
 void writeSid(int reg,int val) {
