@@ -139,7 +139,7 @@ int main(void) {
 			printf("SID thread started");
 
 			close(sockfd); // child doesn't need the listener
-			memset(&data, 0, sizeof data);
+			//memset(&data, 0, sizeof data);
 			rv = read(new_fd, dataRead, 16384);
 			while (rv > -1) {
 				if (rv > 0) {
@@ -169,12 +169,12 @@ void *sid_thread(void * ptr) {
 	buffer = (unsigned char *) ptr;
 	while (1) {
 		pthread_mutex_lock(&mutex2);
-		if (bufWritePos > bufReadPos || bufReadPos > bufWritePos) {
+		/*if (bufWritePos > bufReadPos || bufReadPos > bufWritePos) {
 			printf("buffer write pos is %d\n", bufWritePos);
 			printf("buffer read pos is %d\n", bufReadPos);
 			bufReadPos = (bufReadPos + 1) % COMMAND_BUFFER_SIZE;
 		}
-		pthread_mutex_unlock(&mutex2);
+		pthread_mutex_unlock(&mutex2); */
 		usleep(100);
 	}
 }
@@ -371,5 +371,3 @@ void processReadBuffer(int len) {
 
 	}
 	}
-
-}
