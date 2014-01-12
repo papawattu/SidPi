@@ -270,7 +270,7 @@ void processReadBuffer(int len) {
 			invalidCommandException("GET_VERSION needs no data");
 		}
 
-		dataWrite[dataWritePos++] =0 VERSION;
+		dataWrite[dataWritePos++] = VERSION;
 		dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
 		printf("Command %d : Version : %d : WritePos : %d\n",dataWrite[0],dataWrite[1],dataWritePos);
 		break;
