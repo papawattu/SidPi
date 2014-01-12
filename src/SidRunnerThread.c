@@ -24,16 +24,16 @@ void setupSid() {
 void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
-		//pthread_mutex_lock(&mutex2);
-		/*if (bufWritePos > bufReadPos || bufReadPos > bufWritePos) {
-			printf("buffer write pos is %d\n", bufWritePos);
-			printf("buffer read pos is %d\n", bufReadPos);
-			bufReadPos = (bufReadPos + 1) % COMMAND_BUFFER_SIZE;
-		}
-		pthread_mutex_unlock(&mutex2); */
 		if(bufWritePos > bufReadPos) {
-			printf("Buffer Read pos %d : Buffer Write pos : %d : Write reg %d : value %d : cycles %d\n",bufReadPos,bufWritePos,buffer[bufReadPos],buffer[bufReadPos+1],buffer[bufReadPos+2]);
-			bufReadPos+=3;
+			if(buffer[bufReadPos] != 0xff)
+				writeSid(buffer[bufReadPos],buffer[bufReadPos+1]);
+
+			delay(buffer[bufReadPos+2]);
+
+			if(bufReadPos >= BUFFER_SIZE - 3)
+				bufReadPos = 0;
+			else
+				bufReadPos+=3;
 		}
 		usleep(100);
 	}
@@ -43,14 +43,22 @@ void sidDelay(int cycles) {
 	if(bufWritePos >= BUFFER_SIZE - 3)
 			bufWritePos = 0;
 
-	buffer[bufWritePos++] = 0xff;
-	buffer[bufWritePos++] = 0;
-	buffer[bufWritePos++] = cycles;
+	buffer[bufWritePos] = 0xff;
+	buffer[bufWritePos + 1] = 0;
+	buffer[bufWritePos + 2] = cycles;
 }
 void sidWrite(int reg,int value,int writeCycles) {
 	if(bufWritePos >= BUFFER_SIZE - 3)
 		bufWritePos = 0;
-	buffer[bufWritePos++] = reg;
-	buffer[bufWritePos++] = value;
-	buffer[bufWritePos++] = writeCycles;
+	buffer[bufWritePos] = reg;
+	buffer[bufWritePos + 1] = value;
+	buffer[bufWritePos + 2] = writeCycles;
+	bufWritePos +=3;
 }
+void delay(int cycles) {
+	printf("Delay %d\n");
+}
+void writeSid(int reg,int val) {
+	printf("Write reg %x val %x val\n");
+}
+
