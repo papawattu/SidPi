@@ -56,9 +56,9 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	printf("Delay %d\n");
+	printf("Delay %d\n",cycles);
 }
 void writeSid(int reg,int val) {
-	printf("Write reg %x val %x val\n");
+	printf("Write reg %x val %x\n",reg,val);
 }
 
