@@ -21,6 +21,7 @@ const int ADDR[]	= {8,25,24,23,18};
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
 void setupSid();
+void *sidThread() ;
 
 
 #endif /* SIDRUNNERTHREAD_H_ */
