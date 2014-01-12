@@ -32,7 +32,7 @@ void *sidThread() {
 		}
 		pthread_mutex_unlock(&mutex2); */
 		if(bufWritePos > bufReadPos) {
-			printf("Write reg %d : value %d : cycles %d\n",buffer[bufReadPos],buffer[bufReadPos+1],buffer[bufReadPos+2]);
+			printf("Buffer Read pos %d : Buffer Write pos : %d : Write reg %d : value %d : cycles %d\n",bufReadPos,bufWritePos,buffer[bufReadPos],buffer[bufReadPos+1],buffer[bufReadPos+2]);
 			bufReadPos+=3;
 		}
 		usleep(100);
