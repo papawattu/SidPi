@@ -24,7 +24,7 @@ struct bcm2835_peripheral {
 
 struct bcm2835_peripheral gpio = {GPIO_BASE};
 
-extern struct bcm2835_peripheral gpio;  // They have to be found somewhere, but can't be in the header
+//extern struct bcm2835_peripheral gpio;  // They have to be found somewhere, but can't be in the header
 
 #define INP_GPIO(g)   *(gpio.addr + ((g)/10)) &= ~(7<<(((g)%10)*3))
 #define OUT_GPIO(g)   *(gpio.addr + ((g)/10)) |=  (1<<(((g)%10)*3))
