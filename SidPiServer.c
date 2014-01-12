@@ -340,6 +340,7 @@ void processReadBuffer(int len) {
 	default:
 		invalidCommandException("Unsupported command");
 	}
+	dataReadPos = 0;
 }
 void invalidCommandException(void *errMsg) {
 	perror((char *) errMsg);
