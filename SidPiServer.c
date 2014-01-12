@@ -127,7 +127,7 @@ int main(void) {
 					//dataWritePos = (dataWritePos + 1) % COMMAND_BUFFER_SIZE;
 					pthread_mutex_unlock(&mutex1);
 
-					if (send(new_fd, &dataWrite, 2, 0) == -1)
+					if (send(new_fd, &dataWrite, dataWritePos, 0) == -1)
 						perror("send failed");
 
 				}
@@ -270,8 +270,8 @@ void processReadBuffer(int len) {
 			invalidCommandException("GET_VERSION needs no data");
 		}
 
-		dataWrite[dataWritePos++] = VERSION;
-		dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
+		*dataWrite[dataWritePos++] = VERSION;
+		*dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
 		break;
 
 	case TRY_SET_SAMPLING:
