@@ -37,8 +37,6 @@ int main(void) {
 	int iret1;
 	int i;
 
-	pthread_t sidThread;
-
 	signal(SIGINT, signal_callback_handler);
 
 	dataRead = malloc((size_t) DATA_READ_SIZE);
@@ -112,12 +110,7 @@ int main(void) {
 		printf("server: got connection from %s\n", s);
 
 		if (!fork()) { // this is the child process
-
-			if (pthread_create(&sidThread, NULL, sid_thread, (void*) dataRead)
-					== -1)
-				perror("cannot create thread");
-
-			printf("SID thread started\n");
+			setupSid();
 
 			close(sockfd); // child doesn't need the listener
 			//memset(&data, 0, sizeof data);
