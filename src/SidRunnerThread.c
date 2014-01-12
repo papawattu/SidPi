@@ -22,7 +22,7 @@ void setupSid() {
 void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
-		pthread_mutex_lock(&mutex2);
+		//pthread_mutex_lock(&mutex2);
 		/*if (bufWritePos > bufReadPos || bufReadPos > bufWritePos) {
 			printf("buffer write pos is %d\n", bufWritePos);
 			printf("buffer read pos is %d\n", bufReadPos);
