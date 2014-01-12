@@ -70,7 +70,7 @@ void delay(int cycles) {
 
 	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	printf("Delay %d : Current cycle %d\n",cycle);
+	printf("Delay %d : Current cycle %llu\n",cycles,cycle);
 	usleep(cycles);
 
 	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
