@@ -149,7 +149,7 @@ int main(void) {
 					//dataWritePos = (dataWritePos + 1) % COMMAND_BUFFER_SIZE;
 					pthread_mutex_unlock(&mutex1);
 
-					if (send(new_fd, &data, 2, 0) == -1)
+					if (send(new_fd, &dataWrite, 2, 0) == -1)
 						perror("send failed");
 
 				}
@@ -360,15 +360,14 @@ void processReadBuffer(int len) {
 	default:
 		invalidCommandException("Unsupported command");
 	}
+}
+void invalidCommandException(void *errMsg) {
+	perror((char *) errMsg);
+	exit(-1);
+}
+void handleDelayPacket(int sidNumber, int cycles) {
 
-	void invalidCommandException(void *errMsg) {
-		perror((char *) errMsg);
-		exit(-1);
-	}
-	void handleDelayPacket(int sidNumber, int cycles) {
+}
+void handleWritePacket(int dataLength) {
 
-	}
-	void handleWritePacket(int dataLength) {
-
-	}
-	}
+}
