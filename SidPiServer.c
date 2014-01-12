@@ -225,8 +225,7 @@ void processReadBuffer(int len) {
 
 	case TRY_RESET:
 		if (dataLength != 1) {
-			invalidCommandException("RESET needs 1 byte (volume after reset)",
-					dataLength);
+			invalidCommandException("RESET needs 1 byte (volume after reset)");
 		}
 
 		dataWrite[dataWritePos++] = OK;
@@ -324,7 +323,7 @@ void processReadBuffer(int len) {
 
 	case GET_CONFIG_INFO:
 		if (dataLength != 0) {
-			invalidCommandException("GET_INFO needs no data", dataLength);
+			invalidCommandException("GET_INFO needs no data");
 		}
 
 		dataWrite[dataWritePos++] = INFO;
@@ -344,7 +343,7 @@ void processReadBuffer(int len) {
 
 	case SET_SID_LEVEL:
 		if (dataLength != 1) {
-			invalidCommandException("SET_SID_LEVEL needs 1 byte", dataLength);
+			invalidCommandException("SET_SID_LEVEL needs 1 byte");
 		}
 
 		dataWrite[dataWritePos++] = OK;
