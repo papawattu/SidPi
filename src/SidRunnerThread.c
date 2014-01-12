@@ -17,6 +17,16 @@ void setupSid() {
 	buffer = malloc((size_t) BUFFER_SIZE);
 	bufReadPos = 0;
 	bufWritePos = 0;
+
+	if(map_peripheral(&gpio) == -1) {
+		printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
+		return;
+	}
+	if(map_peripheral(&timer) == -1) {
+		printf("Failed to map the physical Timer into the virtual memory space.\n");
+		return;
+	}
+
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
 }
@@ -35,7 +45,6 @@ void *sidThread() {
 			else
 				bufReadPos+=3;
 		}
-		usleep(100);
 	}
 }
 
@@ -56,7 +65,17 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	printf("Delay %d\n",cycles);
+	long long int * cycle; // 64 bit timer
+
+	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
+
+	printf("Delay %d : Current cycle %d\n",cycle);
+	usleep(cycles);
+
+	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
+
+	printf("Current cycle %d\n",cycle);
+
 }
 void writeSid(int reg,int val) {
 	printf("Write reg %x val %x\n",reg,val);

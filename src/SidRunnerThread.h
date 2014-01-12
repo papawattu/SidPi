@@ -8,6 +8,8 @@
 #ifndef SIDRUNNERTHREAD_H_
 #define SIDRUNNERTHREAD_H_
 
+#include "rpi.h"
+
 #define CS 	7
 #define RW 	0
 #define RES 0

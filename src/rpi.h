@@ -24,6 +24,7 @@ struct bcm2835_peripheral {
 };
 
 struct bcm2835_peripheral gpio = {GPIO_BASE};
+struct bcm2835_peripheral timer = {ST_BASE};
 
 //extern struct bcm2835_peripheral gpio;  // They have to be found somewhere, but can't be in the header
 
