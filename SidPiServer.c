@@ -127,7 +127,7 @@ int main(void) {
 					//dataWritePos = (dataWritePos + 1) % COMMAND_BUFFER_SIZE;
 					pthread_mutex_unlock(&mutex1);
 
-					if (send(new_fd, &dataWrite, dataWritePos, 0) == -1)
+					if (send(new_fd, dataWrite, dataWritePos, 0) == -1)
 						perror("send failed");
 
 				}
