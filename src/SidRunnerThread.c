@@ -70,12 +70,12 @@ void delay(int cycles) {
 
 	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	printf("Delay %d : Current cycle %llu\n",cycles,cycle);
+	printf("Delay %d : Current cycle %llu\n",cycles,*cycle);
 	usleep(cycles);
 
 	cycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	printf("Current cycle %d\n",cycle);
+	printf("Current cycle %llu\n",*cycle);
 
 }
 void writeSid(int reg,int val) {
