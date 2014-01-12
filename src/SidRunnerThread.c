@@ -10,11 +10,13 @@
 pthread_t sidThreadHandle;
 
 unsigned char *buffer;
+unsigned int bufReadPos,bufWritePos;
 
 void setupSid() {
 
 	buffer = malloc((size_t) BUFFER_SIZE);
-
+	bufReadPos = 0;
+	bufWritePos = 0;
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
 }
@@ -29,13 +31,26 @@ void *sidThread() {
 			bufReadPos = (bufReadPos + 1) % COMMAND_BUFFER_SIZE;
 		}
 		pthread_mutex_unlock(&mutex2); */
+		if(bufWritePos > bufReadPos) {
+			printf("Write reg %d : value %d : cycles %d\n",buffer[bufReadPos],buffer[bufReadPos+1],buffer[bufReadPos+2]);
+			bufReadPos+=3;
+		}
 		usleep(100);
 	}
 }
 
 void sidDelay(int cycles) {
-	printf("Delay cycles %d\n",cycles);
+	if(bufWritePos >= BUFFER_SIZE - 3)
+			bufWritePos = 0;
+
+	buffer[bufWritePos++] = 0xff;
+	buffer[bufWritePos++] = 0;
+	buffer[bufWritePos++] = cycles;
 }
 void sidWrite(int reg,int value,int writeCycles) {
-	printf("Write reg %d : value %d : cycles %d\n",reg,value,writeCycles);
+	if(bufWritePos >= BUFFER_SIZE - 3)
+		bufWritePos = 0;
+	buffer[bufWritePos++] = reg;
+	buffer[bufWritePos++] = value;
+	buffer[bufWritePos++] = writeCycles;
 }
