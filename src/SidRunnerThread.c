@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include "SidRunnerThread.h"
+#include "rpi.h"
 
 pthread_t sidThreadHandle;
 

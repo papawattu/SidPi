@@ -14,8 +14,8 @@
 #include <unistd.h>
 #include "rpi.h"
 
-//struct bcm2835_peripheral gpio = {GPIO_BASE};
-
+struct bcm2835_peripheral gpio = {GPIO_BASE};
+struct bcm2835_peripheral timer = {ST_BASE};
 // Exposes the physical address defined in the passed structure using mmap on /dev/mem
 int map_peripheral(struct bcm2835_peripheral *p)
 {
