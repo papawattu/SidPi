@@ -24,6 +24,7 @@
 
 void *sid_thread(void *ptr);
 void signal_callback_handler(int signum);
+void processReadBuffer(int len);
 
 pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
@@ -132,7 +133,7 @@ int main(void) {
 
 		if (!fork()) { // this is the child process
 
-			if (pthread_create(&sidThread, NULL, sid_thread, (void*) data)
+			if (pthread_create(&sidThread, NULL, sid_thread, (void*) dataRead)
 					== -1)
 				perror("cannot create thread");
 
@@ -145,7 +146,7 @@ int main(void) {
 				if (rv > 0) {
 					processReadBuffer(rv);
 					pthread_mutex_lock(&mutex1);
-					bufWritePos = (bufWritePos + 1) % COMMAND_BUFFER_SIZE;
+					//dataWritePos = (dataWritePos + 1) % COMMAND_BUFFER_SIZE;
 					pthread_mutex_unlock(&mutex1);
 
 					if (send(new_fd, &data, 2, 0) == -1)
@@ -360,8 +361,8 @@ void processReadBuffer(int len) {
 		invalidCommandException("Unsupported command");
 	}
 
-	void invalidCommandException(char * errMsg) {
-		perror(*errMsg);
+	void invalidCommandException(void *errMsg) {
+		perror((char *) errMsg);
 		exit(-1);
 	}
 	void handleDelayPacket(int sidNumber, int cycles) {
