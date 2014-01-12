@@ -57,11 +57,13 @@ public class Repeater implements Runnable {
         		if(in.available() > 0) {
         			length = in.read(buffer,0,16384);
         			sidOut.write(buffer, 0, length);
+        			System.out.println("read " + printBuf(buffer,length));
         		}
         		if(sidIn.available() > 0) {
         			length = sidIn.read(buffer, 0, 16384);
         			out.write(buffer, 0, length);
-        			
+        			System.out.println("write " + printBuf(buffer,length));
+            			
         		}
         	}
         	sidSocket.close();
@@ -77,5 +79,11 @@ public class Repeater implements Runnable {
     public void stop() {
     	running = false;
     }
-    
+    private String printBuf(byte[] buf,int len) {
+    	StringBuffer sb = new StringBuffer();
+    	for(int i=0;i<len;i++) {
+    		sb.append(String.format("%02X ", buf[i])).append(" ");
+    	}
+    	return sb.toString();
+    }
 }
