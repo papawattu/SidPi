@@ -173,7 +173,7 @@ void processReadBuffer(int len) {
 	command = dataRead[dataReadPos];
 	sidNumber = dataRead[dataReadPos + 1];
 	dataLength = (dataRead[dataReadPos + 2] << 8) | dataRead[dataReadPos + 3];
-
+	printf("Cmd %d : Sid Num : %d : Data length : %d\n",command,sidNumber,dataLength);
 	dataWritePos = 0;
 
 	switch (command) {
@@ -270,8 +270,8 @@ void processReadBuffer(int len) {
 			invalidCommandException("GET_VERSION needs no data");
 		}
 
-		*dataWrite[dataWritePos++] = VERSION;
-		*dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
+		dataWrite[dataWritePos++] = VERSION;
+		dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
 		break;
 
 	case TRY_SET_SAMPLING:
