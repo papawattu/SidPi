@@ -15,36 +15,13 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
-#include "sid.h"
+
 #include "SidPiServer.h"
-
-#define PORT "6581"  // the port users will be connecting to
-#define BACKLOG 10     // how many pending connections queue will hold
-#define DATA_READ_SIZE 65536 * 4 * 16384
-#define DATA_WRITE_SIZE 260
-
-void *sid_thread(void *ptr);
-void signal_callback_handler(int signum);
-void processReadBuffer(int len);
 
 pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
 unsigned int dataWritePos = 0;
 unsigned int dataReadPos = 0;
-
-void sigchld_handler(int s) {
-	while (waitpid(-1, NULL, WNOHANG) > 0)
-		;
-}
-
-// get sockaddr, IPv4 or IPv6:
-void *get_in_addr(struct sockaddr *sa) {
-	if (sa->sa_family == AF_INET) {
-		return &(((struct sockaddr_in*) sa)->sin_addr);
-	}
-
-	return &(((struct sockaddr_in6*) sa)->sin6_addr);
-}
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -196,6 +173,8 @@ void processReadBuffer(int len) {
 	command = dataRead[dataReadPos];
 	sidNumber = dataRead[dataReadPos + 1];
 	dataLength = (dataRead[dataReadPos + 2] << 8) | dataRead[dataReadPos + 3];
+
+	dataWritePos = 0;
 
 	switch (command) {
 	case FLUSH:
@@ -371,3 +350,15 @@ void handleDelayPacket(int sidNumber, int cycles) {
 void handleWritePacket(int dataLength) {
 
 }
+
+void sigchld_handler(int s) {
+	while (waitpid(-1, NULL, WNOHANG) > 0);
+}
+
+// get sockaddr, IPv4 or IPv6:
+void *get_in_addr(struct sockaddr *sa) {
+	if (sa->sa_family == AF_INET) {
+		return &(((struct sockaddr_in*) sa)->sin_addr);
+	}
+}
+
