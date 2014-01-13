@@ -68,7 +68,7 @@ void setupSid() {
 	OUT_GPIO(RES);
 	SET_GPIO_ALT(4,3);
 
-	startSidClk();
+	startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");

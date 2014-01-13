@@ -15,6 +15,8 @@
 
 #define BUFFER_SIZE 65536 * 3
 
+#define DEFAULT_SID_SPEED_HZ 1000000
+
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
