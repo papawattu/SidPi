@@ -12,8 +12,11 @@
 #define BCM2708_PERI_BASE       0x20000000
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
 #define ST_BASE 				(BCM2708_PERI_BASE + 0x003000)  // Timer
+#define CLOCK					(BCM2708_PERI_BASE + 0x010100)
 #define TIMER_OFFSET 			(4)
 #define BLOCK_SIZE 				(4*1024)
+#define BCM_PASSWORD			0x5A000000
+#define GPIO_CLOCK_SOURCE       1
 
 // IO Access
 struct bcm2835_peripheral {
@@ -28,6 +31,7 @@ struct bcm2835_peripheral {
 
 extern struct bcm2835_peripheral gpio;  // They have to be found somewhere, but can't be in the header
 extern struct bcm2835_peripheral timer;  // They have to be found somewhere, but can't be in the header
+extern struct bcm2835_peripheral clock;  // They have to be found somewhere, but can't be in the header
 
 
 #define INP_GPIO(g)   *(gpio.addr + ((g)/10)) &= ~(7<<(((g)%10)*3))

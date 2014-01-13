@@ -32,22 +32,43 @@ void setupSid() {
 		return;
 	}
 
-	for(i=0;i<256;i++) {
-		printf("i = %d : Pin = %d \n",i,DATA[i]);
-		dataPins[i] = (unsigned long) (i & 1) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 2) >> 1) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 4)   >> 2) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 8)   >> 3) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 16)  >> 4) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 32)  >> 5) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 64)  >> 6) << DATA[i % 8];
-		dataPins[i] = (unsigned long) ((i & 128) >> 7) << DATA[i % 8];
+	if(map_peripheral(&clock) == -1) {
+		printf("Failed to map the physical Clock into the virtual memory space.\n");
+		return;
 	}
 
 	for(i=0;i<256;i++) {
-		printf("Set %d = %8X\n",i,dataPins[i]);
-		printf("Clr %d = %8X\n",i,((unsigned int) !dataPins[i]) & dataPins[255]);
+		dataPins[i] = (unsigned long) (i & 1) << DATA[0];
+		dataPins[i] |= (unsigned long) ((i & 2) >> 1) << DATA[1];
+		dataPins[i] |= (unsigned long) ((i & 4)   >> 2) << DATA[2];
+		dataPins[i] |= (unsigned long) ((i & 8)   >> 3) << DATA[3];
+		dataPins[i] |= (unsigned long) ((i & 16)  >> 4) << DATA[4];
+		dataPins[i] |= (unsigned long) ((i & 32)  >> 5) << DATA[5];
+		dataPins[i] |= (unsigned long) ((i & 64)  >> 6) << DATA[6];
+		dataPins[i] |= (unsigned long) ((i & 128) >> 7) << DATA[7];
 	}
+
+	for(i=0;i<32;i++) {
+		addrPins[i] = (unsigned long) (i & 1) << ADDR[0];
+		addrPins[i] |= (unsigned long) ((i & 2) >> 1) << ADDR[1];
+		addrPins[i] |= (unsigned long) ((i & 4)   >> 2) << ADDR[2];
+		addrPins[i] |= (unsigned long) ((i & 8)   >> 3) << ADDR[3];
+		addrPins[i] |= (unsigned long) ((i & 16)  >> 4) << ADDR[4];
+
+	}
+
+	for(i=0;i<8;i++)
+		OUT_GPIO(DATA[i]);
+
+	for(i=0;i<5;i++)
+		OUT_GPIO(ADDR[i]);
+
+	OUT_GPIO(CS);
+	OUT_GPIO(RW);
+	OUT_GPIO(RES);
+	SET_GPIO_ALT(4,3);
+
+	startSidClk();
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
@@ -102,6 +123,27 @@ void delay(int cycles) {
 
 }
 void writeSid(int reg,int val) {
-	//printf("Write reg %x val %x\n",reg,val);
+	GPIO_CLR = 1 << CS;
+	*(gpio.addr + 7) = dataPins[val % 256] | addrPins[reg %32];
+	*(gpio.addr + 10) = (~dataPins[val % 256] & dataPins[255]) | (~addrPins[reg %32] & addrPins[31]);
+	GPIO_SET = 1 << CS;
+}
+void startSidClk (int freq)
+{
+  int divi, divr, divf ;
+
+  divi = 19200000 / freq ;
+  divr = 19200000 % freq ;
+  divf = (int)((double)divr * 4096.0 / 19200000.0) ;
+
+  if (divi > 4095)
+    divi = 4095 ;
+
+  *(clock + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE ;
+  while ((*(clock + 28) & 0x80) != 0)
+    ;
+
+  *(clock + 28) = BCM_PASSWORD | (divi << 12) | divf ;
+  *(clock + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
 }
 
