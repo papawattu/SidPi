@@ -65,7 +65,7 @@ void setupSid() {
 	OUT_GPIO(CS);
 	OUT_GPIO(RW);
 	OUT_GPIO(RES);
-	SET_GPIO_ALT(4,3);
+	SET_GPIO_ALT(4,2);
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
