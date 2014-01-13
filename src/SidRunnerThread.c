@@ -67,7 +67,7 @@ void sidWrite(int reg,int value,int writeCycles) {
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle;
-	long long int difference; // 64 bit timer
+	int difference; // 64 bit timer
 
 	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
@@ -76,9 +76,9 @@ void delay(int cycles) {
 
 	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	difference = (long long int) *afterCycle - (long long int ) *beforeCycle;
+	difference = (long long int) (*afterCycle - *beforeCycle);
 
-	printf("Current cycle %llu : difference %llu\n",*afterCycle, difference);
+	printf("Current cycle %llu : difference %d\n",*afterCycle, difference);
 
 }
 void writeSid(int reg,int val) {
