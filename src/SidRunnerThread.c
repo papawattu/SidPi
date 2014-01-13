@@ -45,7 +45,7 @@ void setupSid() {
 
 	for(i=0;i<256;i++) {
 		printf("Set %d = %x\n",i,dataPins[i]);
-		printf("Clr %d = %x\n",1,(!(unsigned char) dataPins[i]) & dataPins[255]);
+		printf("Clr %d = %x\n",i,(!(unsigned int) dataPins[i]) & dataPins[255]);
 	}
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
