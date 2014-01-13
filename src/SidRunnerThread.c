@@ -33,15 +33,14 @@ void setupSid() {
 	}
 
 	for(i=0;i<256;i++) {
-		dataPins[i] = 0;
 		dataPins[i] = (i & 1) << DATA[i];
-		dataPins[i] = (i & 2) << DATA[i];
-		dataPins[i] = (i & 4) << DATA[i];
-		dataPins[i] = (i & 8) << DATA[i];
-		dataPins[i] = (i & 16) << DATA[i];
-		dataPins[i] = (i & 32) << DATA[i];
-		dataPins[i] = (i & 64) << DATA[i];
-		dataPins[i] = (i & 128) << DATA[i];
+		dataPins[i] |= (i & 2) << DATA[i];
+		dataPins[i] |= (i & 4) << DATA[i];
+		dataPins[i] |= (i & 8) << DATA[i];
+		dataPins[i] |= (i & 16) << DATA[i];
+		dataPins[i] |= (i & 32) << DATA[i];
+		dataPins[i] |= (i & 64) << DATA[i];
+		dataPins[i] |= (i & 128) << DATA[i];
 	}
 
 	for(i=0;i<256;i++) {
