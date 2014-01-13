@@ -69,23 +69,15 @@ void sidWrite(int reg,int value,int writeCycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle;
 	struct timespec tim;
-	int difference; // 64 bit timer
 
-	if(cycles < 5) return;
+	printf("before %ll",*((char *)timer.addr + TIMER_OFFSET));
 
+	if(cycles < 10) return;
 	tim.tv_sec = 0;
-	tim.tv_nsec = cycles;
-
-	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
-
-	printf("Delay %d : Current cycle %llu\n",cycles,*beforeCycle);
+	tim.tv_nsec = cycles-5;
 	nanosleep(&tim,NULL);
 
-	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
-
-	difference =  (int) ((long long int) *afterCycle - *beforeCycle);
-
-	printf("Current cycle %llu : difference %d\n",*afterCycle, difference);
+	printf("after %ll",*((char *)timer.addr + TIMER_OFFSET));
 
 }
 void writeSid(int reg,int val) {
