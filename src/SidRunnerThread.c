@@ -67,7 +67,7 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	long long int * beforeCycle, *afterCycle, *target;
+	long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
 	target = *(long long int *)((char *)timer.addr + TIMER_OFFSET) + cycles;
 	if(cycles < 10) return;
