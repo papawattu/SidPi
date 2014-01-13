@@ -33,19 +33,19 @@ void setupSid() {
 	}
 
 	for(i=0;i<256;i++) {
-		dataPins[i] = (i & 1) << DATA[i];
-		dataPins[i] |= (i & 2) << DATA[i];
-		dataPins[i] |= (i & 4) << DATA[i];
-		dataPins[i] |= (i & 8) << DATA[i];
-		dataPins[i] |= (i & 16) << DATA[i];
-		dataPins[i] |= (i & 32) << DATA[i];
-		dataPins[i] |= (i & 64) << DATA[i];
-		dataPins[i] |= (i & 128) << DATA[i];
+		dataPins[i] =   (i & 1)         << DATA[i];
+		dataPins[i] |= ((i & 2)   >> 1) << DATA[i];
+		dataPins[i] |= ((i & 4)   >> 2) << DATA[i];
+		dataPins[i] |= ((i & 8)   >> 3) << DATA[i];
+		dataPins[i] |= ((i & 16)  >> 4) << DATA[i];
+		dataPins[i] |= ((i & 32)  >> 5) << DATA[i];
+		dataPins[i] |= ((i & 64)  >> 6) << DATA[i];
+		dataPins[i] |= ((i & 128) >> 7) << DATA[i];
 	}
 
 	for(i=0;i<256;i++) {
 		printf("Set %d = %x\n",i,dataPins[i]);
-		printf("Clr %d = %x\n",i,(!(unsigned int) dataPins[i]) & dataPins[255]);
+		printf("Clr %d = %x\n",i,((unsigned int) !dataPins[i]) & dataPins[255]);
 	}
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
