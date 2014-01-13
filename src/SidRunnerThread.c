@@ -78,7 +78,7 @@ void delay(int cycles) {
 		tim.tv_nsec = cycles-80;
 		nanosleep(&tim,NULL);
 	}
-	printf("target %llu : current %llu\n",*target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
+	printf("target %llu : current %llu\n",target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
 
 }
 void writeSid(int reg,int val) {
