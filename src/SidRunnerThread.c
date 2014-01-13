@@ -13,8 +13,8 @@ pthread_t sidThreadHandle;
 
 unsigned char *buffer;
 unsigned int bufReadPos,bufWritePos;
-unsigned char dataPins[256];
-unsigned char addrPins[32];
+unsigned int dataPins[256];
+unsigned int addrPins[32];
 
 void setupSid() {
 
@@ -33,19 +33,20 @@ void setupSid() {
 	}
 
 	for(i=0;i<256;i++) {
-		dataPins[i] =  (i & 1) << DATA[i];
-		dataPins[i] =  (i & 2) << DATA[i];
-		dataPins[i] =  (i & 4) << DATA[i];
-		dataPins[i] =  (i & 8) << DATA[i];
-		dataPins[i] =  (i & 16) << DATA[i];
-		dataPins[i] =  (i & 32) << DATA[i];
-		dataPins[i] =  (i & 64) << DATA[i];
-		dataPins[i] =  (i & 128) << DATA[i];
+		dataPins[i] = 0;
+		dataPins[i] = (i & 1) << DATA[i];
+		dataPins[i] = (i & 2) << DATA[i];
+		dataPins[i] = (i & 4) << DATA[i];
+		dataPins[i] = (i & 8) << DATA[i];
+		dataPins[i] = (i & 16) << DATA[i];
+		dataPins[i] = (i & 32) << DATA[i];
+		dataPins[i] = (i & 64) << DATA[i];
+		dataPins[i] = (i & 128) << DATA[i];
 	}
 
 	for(i=0;i<256;i++) {
-		printf("Set %d = %b\n",i,dataPins[i]);
-		printf("Clr %d = %b\n",1,(!(unsigned char) dataPins[i]));
+		printf("Set %d = %x\n",i,dataPins[i]);
+		printf("Clr %d = %x\n",1,(!(unsigned char) dataPins[i]) & dataPins[255]);
 	}
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
