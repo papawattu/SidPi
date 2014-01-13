@@ -27,12 +27,12 @@ void setupSid() {
 		printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
 		return;
 	}
-	if(map_peripheral(&timer) == -1) {
+	if(map_peripheral(&gpio_timer) == -1) {
 		printf("Failed to map the physical Timer into the virtual memory space.\n");
 		return;
 	}
 
-	if(map_peripheral(&clock) == -1) {
+	if(map_peripheral(&gpio_clock) == -1) {
 		printf("Failed to map the physical Clock into the virtual memory space.\n");
 		return;
 	}
@@ -110,10 +110,10 @@ void sidWrite(int reg,int value,int writeCycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
-	target = *(long long int *)((char *)timer.addr + TIMER_OFFSET) + cycles;
+	target = *(long long int *)((char *)gpio_timer.addr + TIMER_OFFSET) + cycles;
 	if(cycles < 10) return;
 	if(cycles < 100)
-		while(*(long long int *)((char *)timer.addr + TIMER_OFFSET) < target);
+		while(*(long long int *)((char *)gpio_timer.addr + TIMER_OFFSET) < target);
 	else {
 		tim.tv_sec = 0;
 		tim.tv_nsec = cycles-80;
@@ -138,11 +138,11 @@ void startSidClk(int freq) {
   if (divi > 4095)
     divi = 4095 ;
 
-  *(clock.addr + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE ;
-  while ((*(clock.addr + 28) & 0x80) != 0)
+  *(gpio_clock.addr + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE ;
+  while ((*(gpio_clock.addr + 28) & 0x80) != 0)
     ;
 
-  *(clock.addr + 28) = BCM_PASSWORD | (divi << 12) | divf ;
-  *(clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
+  *(gpio_clock.addr + 28) = BCM_PASSWORD | (divi << 12) | divf ;
+  *(gpio_clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
 }
 

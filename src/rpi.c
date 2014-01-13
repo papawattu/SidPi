@@ -15,8 +15,8 @@
 #include "rpi.h"
 
 struct bcm2835_peripheral gpio = {GPIO_BASE};
-struct bcm2835_peripheral timer = {GPIO_TIMER};
-struct bcm2835_peripheral clock = {GPIO_CLOCK};
+struct bcm2835_peripheral gpio_timer = {GPIO_TIMER};
+struct bcm2835_peripheral gpio_clock = {GPIO_CLOCK};
 // Exposes the physical address defined in the passed structure using mmap on /dev/mem
 int map_peripheral(struct bcm2835_peripheral *p)
 {
