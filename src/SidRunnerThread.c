@@ -35,13 +35,13 @@ void setupSid() {
 	for(i=0;i<256;i++) {
 		printf("i = %d : Pin = %d \n",i,DATA[i]);
 		dataPins[i] =   (i & 1)         << DATA[i % 8];
-		dataPins[i] |= ((i & 2)   >> 1) << DATA[i % 8];
-		dataPins[i] |= ((i & 4)   >> 2) << DATA[i % 8];
-		dataPins[i] |= ((i & 8)   >> 3) << DATA[i % 8];
-		dataPins[i] |= ((i & 16)  >> 4) << DATA[i % 8];
-		dataPins[i] |= ((i & 32)  >> 5) << DATA[i % 8];
-		dataPins[i] |= ((i & 64)  >> 6) << DATA[i % 8];
-		dataPins[i] |= ((i & 128) >> 7) << DATA[i % 8];
+		dataPins[i] = (((i & 2)   >> 1) << DATA[i % 8]) | dataPins[i];
+		dataPins[i] = ((i & 4)   >> 2) << DATA[i % 8];
+		dataPins[i] = ((i & 8)   >> 3) << DATA[i % 8];
+		dataPins[i] = ((i & 16)  >> 4) << DATA[i % 8];
+		dataPins[i] = ((i & 32)  >> 5) << DATA[i % 8];
+		dataPins[i] = ((i & 64)  >> 6) << DATA[i % 8];
+		dataPins[i] = ((i & 128) >> 7) << DATA[i % 8];
 	}
 
 	for(i=0;i<256;i++) {
