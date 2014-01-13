@@ -76,7 +76,7 @@ void delay(int cycles) {
 
 	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
-	difference = (long long int) (*afterCycle - *beforeCycle);
+	difference =  (int) ((long long int) *afterCycle - *beforeCycle);
 
 	printf("Current cycle %llu : difference %d\n",*afterCycle, difference);
 
