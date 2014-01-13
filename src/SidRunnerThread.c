@@ -79,7 +79,7 @@ void delay(int cycles) {
 	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
 	printf("Delay %d : Current cycle %llu\n",cycles,*beforeCycle);
-	nanosleep(&tim);
+	nanosleep(&tim,NULL);
 
 	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
