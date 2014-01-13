@@ -66,7 +66,7 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	long long int * beforeCycle,afterCycle;
+	long long int * beforeCycle, *afterCycle;
 	long difference; // 64 bit timer
 
 	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
