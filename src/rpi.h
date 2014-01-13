@@ -12,7 +12,7 @@
 #define BCM2708_PERI_BASE       0x20000000
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
 #define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
-#define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x010100)
+#define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x00101000)
 #define TIMER_OFFSET 			(4)
 #define BLOCK_SIZE 				(4*1024)
 #define BCM_PASSWORD			0x5A000000
