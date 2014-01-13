@@ -27,13 +27,12 @@ void setupSid() {
 		printf("Failed to map the physical GPIO registers into the virtual memory space.\n");
 		return;
 	}
+	if(map_peripheral(&gpio_clock) == -1) {
+			printf("Failed to map the physical Clock into the virtual memory space.\n");
+			return;
+	}
 	if(map_peripheral(&gpio_timer) == -1) {
 		printf("Failed to map the physical Timer into the virtual memory space.\n");
-		return;
-	}
-
-	if(map_peripheral(&gpio_clock) == -1) {
-		printf("Failed to map the physical Clock into the virtual memory space.\n");
 		return;
 	}
 
