@@ -33,6 +33,7 @@ void setupSid() {
 	}
 
 	for(i=0;i<256;i++) {
+		printf("i = %d : Pin = %d \n",i,DATA[i]);
 		dataPins[i] =   (i & 1)         << DATA[i];
 		dataPins[i] |= ((i & 2)   >> 1) << DATA[i];
 		dataPins[i] |= ((i & 4)   >> 2) << DATA[i];
@@ -44,8 +45,8 @@ void setupSid() {
 	}
 
 	for(i=0;i<256;i++) {
-		printf("Set %d = %x\n",i,dataPins[i]);
-		printf("Clr %d = %x\n",i,((unsigned int) !dataPins[i]) & dataPins[255]);
+		printf("Set %d = %8X\n",i,dataPins[i]);
+		printf("Clr %d = %8X\n",i,((unsigned int) !dataPins[i]) & dataPins[255]);
 	}
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
