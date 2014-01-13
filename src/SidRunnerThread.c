@@ -67,17 +67,18 @@ void sidWrite(int reg,int value,int writeCycles) {
 	bufWritePos +=3;
 }
 void delay(int cycles) {
-	long long int * beforeCycle, *afterCycle;
+	long long int * beforeCycle, *afterCycle, *target;
 	struct timespec tim;
-
-	printf("before %llu",*(long long int *)((char *)timer.addr + TIMER_OFFSET));
-
+	target = *(long long int *)((char *)timer.addr + TIMER_OFFSET) + cycles;
 	if(cycles < 10) return;
-	tim.tv_sec = 0;
-	tim.tv_nsec = cycles-5;
-	nanosleep(&tim,NULL);
-
-	printf("after %llu",*(long long int *)((char *)timer.addr + TIMER_OFFSET));
+	if(cycles < 100)
+		while(*(long long int *)((char *)timer.addr + TIMER_OFFSET) < target);
+	else {
+		tim.tv_sec = 0;
+		tim.tv_nsec = cycles-80;
+		nanosleep(&tim,NULL);
+	}
+	printf("target %llu : current %llu\n",*target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
 
 }
 void writeSid(int reg,int val) {
