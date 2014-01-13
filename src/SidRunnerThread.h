@@ -24,6 +24,7 @@ void setupSid();
 void *sidThread() ;
 void delay(int cycles);
 void writeSid(int reg,int val);
+void startSidClk(int freq);
 
 
 #endif /* SIDRUNNERTHREAD_H_ */

@@ -128,8 +128,7 @@ void writeSid(int reg,int val) {
 	*(gpio.addr + 10) = (~dataPins[val % 256] & dataPins[255]) | (~addrPins[reg %32] & addrPins[31]);
 	GPIO_SET = 1 << CS;
 }
-void startSidClk (int freq)
-{
+void startSidClk(int freq) {
   int divi, divr, divf ;
 
   divi = 19200000 / freq ;
@@ -139,11 +138,11 @@ void startSidClk (int freq)
   if (divi > 4095)
     divi = 4095 ;
 
-  *(clock + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE ;
-  while ((*(clock + 28) & 0x80) != 0)
+  *(clock.addr + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE ;
+  while ((*(clock.addr + 28) & 0x80) != 0)
     ;
 
-  *(clock + 28) = BCM_PASSWORD | (divi << 12) | divf ;
-  *(clock + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
+  *(clock.addr + 28) = BCM_PASSWORD | (divi << 12) | divf ;
+  *(clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
 }
 
