@@ -5,6 +5,7 @@
 #include <string.h>
 #include <signal.h>
 #include <pthread.h>
+#include <time.h>
 #include "SidRunnerThread.h"
 #include "rpi.h"
 
@@ -67,12 +68,18 @@ void sidWrite(int reg,int value,int writeCycles) {
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle;
+	struct timespec tim;
 	int difference; // 64 bit timer
+
+	if(cycles < 5) return;
+
+	tim.tv_sec = 0;
+	tim.tv_nsec = cycles;
 
 	beforeCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
 	printf("Delay %d : Current cycle %llu\n",cycles,*beforeCycle);
-	usleep(cycles);
+	nanosleep(&tim);
 
 	afterCycle = (long long int *)((char *)timer.addr + TIMER_OFFSET);
 
