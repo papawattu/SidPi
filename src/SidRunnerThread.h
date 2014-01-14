@@ -27,6 +27,9 @@ void *sidThread() ;
 void delay(int cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);
+void mmapRPIDevices();
+void generatePinTables();
+void setPinsToOutput();
 
 
 #endif /* SIDRUNNERTHREAD_H_ */
