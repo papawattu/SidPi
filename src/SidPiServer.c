@@ -42,6 +42,8 @@ int main(void) {
 	dataRead = malloc((size_t) DATA_READ_SIZE);
 	dataWrite = malloc((size_t) DATA_WRITE_SIZE);
 
+	setupSid();
+
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -110,7 +112,7 @@ int main(void) {
 		printf("server: got connection from %s\n", s);
 
 		if (!fork()) { // this is the child process
-			setupSid();
+			//setupSid();
 
 			close(sockfd); // child doesn't need the listener
 			//memset(&data, 0, sizeof data);
