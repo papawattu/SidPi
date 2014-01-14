@@ -137,22 +137,6 @@ int main(void) {
 	return 0;
 }
 
-void *sid_thread(void * ptr) {
-	unsigned char *buffer;
-
-	buffer = (unsigned char *) ptr;
-	while (1) {
-		pthread_mutex_lock(&mutex2);
-		/*if (bufWritePos > bufReadPos || bufReadPos > bufWritePos) {
-			printf("buffer write pos is %d\n", bufWritePos);
-			printf("buffer read pos is %d\n", bufReadPos);
-			bufReadPos = (bufReadPos + 1) % COMMAND_BUFFER_SIZE;
-		}
-		pthread_mutex_unlock(&mutex2); */
-		usleep(100);
-	}
-}
-
 void signal_callback_handler(int signum) {
 	printf("Caught signal %d.\n", signum);
 	free(dataRead);
@@ -266,7 +250,6 @@ void processReadBuffer(int len) {
 
 		dataWrite[dataWritePos++] = VERSION;
 		dataWrite[dataWritePos++] = SID_NETWORK_PROTOCOL_VERSION;
-		printf("Command %d : Version : %d : WritePos : %d\n",dataWrite[0],dataWrite[1],dataWritePos);
 		break;
 
 	case TRY_SET_SAMPLING:
