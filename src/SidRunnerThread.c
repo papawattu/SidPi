@@ -94,8 +94,8 @@ void *sidThread() {
 	while (1) {
 		if(bufWritePos > bufReadPos) {
 			if(buffer[bufReadPos] != 0xff)
-				writeSid(buffer[bufReadPos],buffer[bufReadPos+1]);
-
+				//writeSid(buffer[bufReadPos],buffer[bufReadPos+1]);
+					;
 			delay(buffer[bufReadPos+2]);
 
 			if(bufReadPos >= BUFFER_SIZE - 3)
