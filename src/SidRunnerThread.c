@@ -18,6 +18,8 @@ unsigned long addrPins[32];
 
 void setupSid() {
 
+	int reg,val;
+
 	buffer = malloc((size_t) BUFFER_SIZE);
 	bufReadPos = 0;
 	bufWritePos = 0;
@@ -32,6 +34,12 @@ void setupSid() {
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
+
+	for(reg=0;reg<32;reg++) {
+		for(val=0;val<256;val++) {
+			sidWrite(reg,val,0);
+		}
+	}
 }
 
 void *sidThread() {
@@ -89,6 +97,7 @@ void delay(int cycles) {
 
 }
 void writeSid(int reg, int val) {
+	print("reg : %d val : %d \n",reg,val);
 	*(gpio.addr + 10) = (unsigned long) 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256] | addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) (~dataPins[val % 256] & dataPins[255])
