@@ -81,15 +81,15 @@ void delay(int cycles) {
 			+ cycles;
 	if (cycles < 10)
 		return;
-	if (cycles < 100)
-		while (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
-				< target)
-			;
-	else {
+	//if (cycles < 100)
+	//	while (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
+	//			< target)
+	//		;
+	//else {
 		tim.tv_sec = 0;
-		tim.tv_nsec = cycles - 80;
+		tim.tv_nsec = cycles -10;
 		nanosleep(&tim, NULL);
-	}
+	//}
 	//printf("target %llu : current %llu\n",target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
 
 }
