@@ -18,6 +18,29 @@
 #define BCM_PASSWORD			0x5A000000
 #define GPIO_CLOCK_SOURCE       1
 
+static unsigned int gpioToGPFSEL [] =
+{
+  0,0,0,0,0,0,0,0,0,0,
+  1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,
+  3,3,3,3,3,3,3,3,3,3,
+  4,4,4,4,4,4,4,4,4,4,
+  5,5,5,5,5,5,5,5,5,5,
+} ;
+
+
+// gpioToShift
+//        Define the shift up for the 3 bits per pin in each GPFSEL port
+
+static unsigned int gpioToShift [] =
+{
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+} ;
+
 // IO Access
 struct bcm2835_peripheral {
     unsigned long addr_p;

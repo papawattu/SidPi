@@ -19,6 +19,7 @@ unsigned long addrPins[32];
 void setupSid() {
 
 	int i;
+	int fSel, shift;
 	buffer = malloc((size_t) BUFFER_SIZE);
 	bufReadPos = 0;
 	bufWritePos = 0;
@@ -56,16 +57,31 @@ void setupSid() {
 
 	}
 
-	for(i=0;i<8;i++)
-		OUT_GPIO(DATA[i]);
+	for(i=0;i<8;i++) {
+		fSel    = gpioToGPFSEL [dataPins[i]] ;
+		shift   = gpioToShift  [dataPins[i]] ;
+		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift) ;
+	}
+	for(i=0;i<5;i++) {
+		fSel    = gpioToGPFSEL [addrPins[i]] ;
+		shift   = gpioToShift  [addrPins[i]] ;
+		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift) ;
+	}
+	fSel    = gpioToGPFSEL [CS] ;
+	shift   = gpioToShift  [CS] ;
+	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift) ;
 
-	for(i=0;i<5;i++)
-		OUT_GPIO(ADDR[i]);
+	fSel    = gpioToGPFSEL [RW] ;
+	shift   = gpioToShift  [RW] ;
+	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift) ;
 
-	OUT_GPIO(CS);
-	OUT_GPIO(RW);
-	OUT_GPIO(RES);
-	SET_GPIO_ALT(4,0);
+	fSel    = gpioToGPFSEL [RES] ;
+	shift   = gpioToShift  [RES] ;
+	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift) ;
+
+	fSel    = gpioToGPFSEL [CLK] ;
+	shift   = gpioToShift  [CLK] ;
+	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (4 << shift) ;
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
