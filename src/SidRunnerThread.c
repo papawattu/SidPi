@@ -40,7 +40,7 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		if (bufWritePos > bufReadPos) {
-			if (buffer[bufReadPos] != 0xff)
+			if ((unsigned char) buffer[bufReadPos] != 0xff)
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
 			delay(((buffer[bufReadPos + 2] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
 
@@ -91,7 +91,7 @@ void delay(int cycles) {
 	}
 	printf("cycles %d : ",cycles);
 
-	usleep(100);
+	//usleep(100);
 }
 void writeSid(int reg, int val) {
 	printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
