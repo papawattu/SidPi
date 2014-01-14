@@ -40,10 +40,11 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		if (bufWritePos > bufReadPos) {
-			if ((unsigned char) buffer[bufReadPos] != 0xff)
+			if ((unsigned char) buffer[bufReadPos] != 0xff) {
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
 				delay(((buffer[bufReadPos + 3] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
-			else {
+
+			} else {
 				printf("delay\n ");
 
 				delay(((buffer[bufReadPos + 3] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
