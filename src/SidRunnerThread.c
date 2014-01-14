@@ -133,14 +133,14 @@ void setPinsToOutput() {
 	shift = gpioToShift[CS];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
 	usleep(10);
-	fSel = gpioToGPFSEL[RW];
+	/* fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
 	usleep(10);
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
-	usleep(10);
+	usleep(10); */
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (4 << shift);
