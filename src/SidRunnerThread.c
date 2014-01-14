@@ -42,7 +42,12 @@ void *sidThread() {
 		if (bufWritePos > bufReadPos) {
 			if ((unsigned char) buffer[bufReadPos] != 0xff)
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
-			delay(((buffer[bufReadPos + 2] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
+				delay(((buffer[bufReadPos + 3] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
+			else {
+				printf("delay\n ");
+
+				delay(((buffer[bufReadPos + 3] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
+			}
 
 			if (bufReadPos >= BUFFER_SIZE - 4)
 				bufReadPos = 0;
@@ -76,6 +81,8 @@ void sidWrite(int reg, int value, int writeCycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
+	printf("cycles %d : \n",cycles);
+
 	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
 			+ cycles;
 	if (cycles < 10)
@@ -89,12 +96,11 @@ void delay(int cycles) {
 		tim.tv_nsec = cycles -10;
 		nanosleep(&tim, NULL);
 	}
-	printf("cycles %d : ",cycles);
 
 	//usleep(100);
 }
 void writeSid(int reg, int val) {
-	printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
+	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) ~addrPins[reg % 32] & addrPins[31];
 	delay(1);
