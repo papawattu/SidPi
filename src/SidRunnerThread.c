@@ -123,8 +123,8 @@ void delay(int cycles) {
 }
 void writeSid(int reg,int val) {
 	GPIO_CLR = 1 << CS;
-	*(gpio.addr + 7) = dataPins[val % 256] | addrPins[reg %32];
-	*(gpio.addr + 10) = (~dataPins[val % 256] & dataPins[255]) | (~addrPins[reg %32] & addrPins[31]);
+	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256] | addrPins[reg %32];
+	*(gpio.addr + 10) = (unsigned long) (~dataPins[val % 256] & dataPins[255]) | (~addrPins[reg %32] & addrPins[31]);
 	GPIO_SET = 1 << CS;
 }
 void startSidClk(int freq) {
@@ -141,7 +141,7 @@ void startSidClk(int freq) {
   while ((*(gpio_clock.addr + 28) & 0x80) != 0)
     ;
 
-  *(gpio_clock.addr + 28) = BCM_PASSWORD | (divi << 12) | divf ;
+  *(gpio_clock.addr + 29) = BCM_PASSWORD | (divi << 12) | divf ;
   *(gpio_clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE ;
 }
 
