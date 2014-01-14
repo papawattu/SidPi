@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include "SidRunnerThread.h"
+//#include "SidRunnerThread.h"
 
 int main(void) {
 
