@@ -37,7 +37,7 @@ void setupSid() {
 void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if ((bufWritePos + 8192) > bufReadPos) {
+		if (bufWritePos > (bufReadPos + 8192)) {
 			if (buffer[bufReadPos] != 0xff)
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
 			;
