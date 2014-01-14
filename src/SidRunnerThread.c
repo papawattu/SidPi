@@ -43,12 +43,12 @@ void *sidThread() {
 			if (buffer[bufReadPos] != 0xff)
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
 			;
-			delay(buffer[bufReadPos + 2]);
+			delay(((buffer[bufReadPos + 2] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
 
-			if (bufReadPos >= BUFFER_SIZE - 3)
+			if (bufReadPos >= BUFFER_SIZE - 4)
 				bufReadPos = 0;
 			else
-				bufReadPos += 3;
+				bufReadPos += 4;
 		} else {
 			sleep(1);
 		}
@@ -56,20 +56,23 @@ void *sidThread() {
 }
 
 void sidDelay(int cycles) {
-	if (bufWritePos >= BUFFER_SIZE - 3)
+	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 
 	buffer[bufWritePos] = 0xff;
 	buffer[bufWritePos + 1] = 0;
-	buffer[bufWritePos + 2] = cycles;
+	buffer[bufWritePos + 2] = cycles & 0xff00 << 8;
+	buffer[bufWritePos + 3] = cycles & 0xff;
+
 }
 void sidWrite(int reg, int value, int writeCycles) {
-	if (bufWritePos >= BUFFER_SIZE - 3)
+	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 	buffer[bufWritePos] = reg;
 	buffer[bufWritePos + 1] = value;
-	buffer[bufWritePos + 2] = writeCycles;
-	bufWritePos += 3;
+	buffer[bufWritePos + 2] = writeCycles & 0xff00 << 8;
+	buffer[bufWritePos + 3] = writeCycles & 0xff;
+	bufWritePos += 4;
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target;
