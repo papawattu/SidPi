@@ -42,7 +42,7 @@ int main(void) {
 	dataRead = malloc((size_t) DATA_READ_SIZE);
 	dataWrite = malloc((size_t) DATA_WRITE_SIZE);
 
-	setupSid();
+	//setupSid();
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
