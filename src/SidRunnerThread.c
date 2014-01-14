@@ -89,11 +89,11 @@ void delay(int cycles) {
 
 }
 void writeSid(int reg, int val) {
-	GPIO_CLR = 1 << CS;
+	*(gpio.addr + 10) = (unsigned long) = 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256] | addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) (~dataPins[val % 256] & dataPins[255])
 			| (~addrPins[reg % 32] & addrPins[31]);
-	GPIO_SET = 1 << CS;
+	*(gpio.addr + 7) = (unsigned long) = 1 << CS;
 }
 void startSidClk(int freq) {
 	int divi, divr, divf;
