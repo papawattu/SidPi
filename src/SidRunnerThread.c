@@ -61,6 +61,8 @@ void *sidThread() {
 }
 
 void sidDelay(int cycles) {
+	printf("siddelay : cycles %d\n ",cycles);
+
 	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 
@@ -82,7 +84,7 @@ void sidWrite(int reg, int value, int writeCycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
-	printf("cycles %d : \n",cycles);
+	printf("delay : cycles %d : \n",cycles);
 
 	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
 			+ cycles;

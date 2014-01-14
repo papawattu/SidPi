@@ -337,7 +337,7 @@ void handleWritePacket(int dataLength) {
 	}
 }
 void handleDelayPacket(int sidNumber, int cycles) {
-
+	printf("cmd delay %d",cycles);
 	inputClock += cycles;
 	sidDelay(cycles);
 }
