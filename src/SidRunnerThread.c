@@ -116,15 +116,15 @@ void setPinsToOutput() {
 	int i, fSel, shift;
 
 	for (i = 0; i < 8; i++) {
-		fSel = gpioToGPFSEL[dataPins[i]];
-		shift = gpioToShift[dataPins[i]];
+		fSel = gpioToGPFSEL[DATA[i]];
+		shift = gpioToShift[DATA[i]];
 		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift))
 				| (1 << shift);
 		usleep(10);
 	}
 	for (i = 0; i < 5; i++) {
-		fSel = gpioToGPFSEL[addrPins[i]];
-		shift = gpioToShift[addrPins[i]];
+		fSel = gpioToGPFSEL[ADDR[i]];
+		shift = gpioToShift[ADDR[i]];
 		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift))
 				| (1 << shift);
 		usleep(10);
@@ -133,7 +133,7 @@ void setPinsToOutput() {
 	shift = gpioToShift[CS];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
 	usleep(10);
-	/* fSel = gpioToGPFSEL[RW];
+	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
 	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
 	usleep(10);
