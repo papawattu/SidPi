@@ -327,7 +327,7 @@ void handleWritePacket(int dataLength) {
 	unsigned char reg,sid,value;
 
 	for (i = 0; i < dataLength; i += 4) {
-		writeCycles = (dataRead[4 + i] << 8) | dataRead[5 + i];
+		writeCycles = (dataRead[5 + i] << 8) | dataRead[4 + i];
 		printf("hwp : %d %d\n ",writeCycles,dataRead[4 + i],dataRead[5 + i]);
 		printf("hwp : cycles %d\n ",writeCycles);
 		reg = dataRead[4 + i + 2];
