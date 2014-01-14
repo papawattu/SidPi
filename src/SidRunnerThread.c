@@ -73,6 +73,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int writeCycles) {
+	printf("write cycles %d",writeCycles);
 	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 	buffer[bufWritePos] = reg;
