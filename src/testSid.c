@@ -13,8 +13,15 @@
 
 int main(void) {
 
+	char readLine[50];
+	int reg,val;
 
+	printf("Command (reg value) : ");
 
+	gets(readLine);
+	while(readLine[0] != 'x') {
+		reg = atoi()
+	}
 	return 0;
 }
 
