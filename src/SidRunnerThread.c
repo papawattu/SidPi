@@ -28,7 +28,7 @@ void setupSid() {
 
 	setPinsToOutput();
 
-	//startSidClk(DEFAULT_SID_SPEED_HZ);
+	startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
