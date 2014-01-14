@@ -39,7 +39,7 @@ void setupSid() {
 void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (bufWritePos > (bufReadPos + 8192)) {
+		if (bufWritePos > bufReadPos) {
 			if (buffer[bufReadPos] != 0xff)
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
 			;
@@ -61,7 +61,7 @@ void sidDelay(int cycles) {
 
 	buffer[bufWritePos] = 0xff;
 	buffer[bufWritePos + 1] = 0;
-	buffer[bufWritePos + 2] = cycles & 0xff00 << 8;
+	buffer[bufWritePos + 2] = (cycles & 0xff00) << 8;
 	buffer[bufWritePos + 3] = cycles & 0xff;
 
 }
@@ -70,7 +70,7 @@ void sidWrite(int reg, int value, int writeCycles) {
 		bufWritePos = 0;
 	buffer[bufWritePos] = reg;
 	buffer[bufWritePos + 1] = value;
-	buffer[bufWritePos + 2] = writeCycles & 0xff00 << 8;
+	buffer[bufWritePos + 2] = (writeCycles & 0xff00) << 8;
 	buffer[bufWritePos + 3] = writeCycles & 0xff;
 	bufWritePos += 4;
 }
