@@ -24,7 +24,7 @@ int main(void) {
 		writeSid(4,33);
 		sleep(1);
 		writeSid(4,32);
-		sleep(2);
+		sleep(1);
 	}
 
 	return 0;
