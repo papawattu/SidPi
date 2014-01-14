@@ -323,13 +323,13 @@ void invalidCommandException(void *errMsg) {
 	exit(-1);
 }
 void handleWritePacket(int dataLength) {
-	int i,writeCycles;
+	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
 
 	for (i = 0; i < dataLength; i += 4) {
-		writeCycles = (dataRead[5 + i] << 8) | dataRead[4 + i];
-		printf("hwp : %d %d\n ",writeCycles,dataRead[4 + i],dataRead[5 + i]);
-		printf("hwp : cycles %d\n ",writeCycles);
+		writeCycles = (unsigned char) ((dataRead[5 + i] & 0xff) << 8) | dataRead[4 + i];
+		printf("hwp : %2X %2X\n ",writeCycles,dataRead[4 + i],dataRead[5 + i]);
+		printf("hwp : cycles %4X\n ",writeCycles);
 		reg = dataRead[4 + i + 2];
 		sid = ((reg & 0xe0) >> 5);
 		reg &= 0x1f;
