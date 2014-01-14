@@ -9,21 +9,22 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
-#include "SidRunnerThreadh.h"
+#include "SidRunnerThread.h"
 
 int main(void) {
 
 	setupSid();
+	writeSid(5,9);
+	writeSid(6,0);
+	writeSid(24,15);
+	writeSid(1,25);
+	writeSid(10,177);
 
 	while(1) {
-		writeSid(0,0);
+		writeSid(4,33);
 		sleep(1);
-		writeSid(31,255);
-		sleep(1);
-		writeSid(10,170);
-		sleep(1);
-		writeSid(21,85);
-		sleep(1);
+		writeSid(4,32);
+		sleep(2);
 	}
 
 	return 0;
