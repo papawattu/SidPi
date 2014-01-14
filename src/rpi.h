@@ -18,7 +18,7 @@
 #define BCM_PASSWORD			0x5A000000
 #define GPIO_CLOCK_SOURCE       1
 
-static unsigned int gpioToGPFSEL [] =
+static unsigned char gpioToGPFSEL [] =
 {
   0,0,0,0,0,0,0,0,0,0,
   1,1,1,1,1,1,1,1,1,1,
@@ -32,7 +32,7 @@ static unsigned int gpioToGPFSEL [] =
 // gpioToShift
 //        Define the shift up for the 3 bits per pin in each GPFSEL port
 
-static unsigned int gpioToShift [] =
+static unsigned char gpioToShift [] =
 {
   0,3,6,9,12,15,18,21,24,27,
   0,3,6,9,12,15,18,21,24,27,
