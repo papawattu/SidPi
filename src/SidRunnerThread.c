@@ -47,6 +47,8 @@ void *sidThread() {
 				bufReadPos = 0;
 			else
 				bufReadPos += 3;
+		} else {
+			sleep(1);
 		}
 	}
 }
