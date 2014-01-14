@@ -13,15 +13,19 @@
 
 int main(void) {
 
-	char readLine[50];
-	int reg,val;
+	setupSid();
 
-	printf("Command (reg value) : ");
-
-	gets(readLine);
-	while(readLine[0] != 'x') {
-		reg = atoi()
+	while(1) {
+		writeSid(0,0);
+		sleep(1);
+		writeSid(31,255);
+		sleep(1);
+		writeSid(10,170);
+		sleep(1);
+		writeSid(21,85);
+		sleep(1);
 	}
+
 	return 0;
 }
 
