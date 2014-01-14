@@ -74,7 +74,7 @@ void sidWrite(int reg, int value, int writeCycles) {
 	bufWritePos += 4;
 }
 void delay(int cycles) {
-	long long int * beforeCycle, *afterCycle, target;
+	/*long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
 	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
 			+ cycles;
@@ -90,7 +90,8 @@ void delay(int cycles) {
 		nanosleep(&tim, NULL);
 	//}
 	//printf("target %llu : current %llu\n",target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
-
+*/
+	sleep(1);
 }
 void writeSid(int reg, int val) {
 	printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
