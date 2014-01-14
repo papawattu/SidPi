@@ -91,7 +91,7 @@ void delay(int cycles) {
 	//}
 	//printf("target %llu : current %llu\n",target,*(long long int *)((char *)timer.addr + TIMER_OFFSET));
 */
-	sleep(1);
+	usleep(100);
 }
 void writeSid(int reg, int val) {
 	printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
