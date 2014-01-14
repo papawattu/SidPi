@@ -112,7 +112,7 @@ int main(void) {
 		printf("server: got connection from %s\n", s);
 
 		if (!fork()) { // this is the child process
-			//setupSid();
+			setupSid();
 
 			close(sockfd); // child doesn't need the listener
 			//memset(&data, 0, sizeof data);
@@ -120,9 +120,6 @@ int main(void) {
 			while (rv > -1) {
 				if (rv > 0) {
 					processReadBuffer(rv);
-					pthread_mutex_lock(&mutex1);
-					//dataWritePos = (dataWritePos + 1) % COMMAND_BUFFER_SIZE;
-					pthread_mutex_unlock(&mutex1);
 
 					if (send(new_fd, dataWrite, dataWritePos, 0) == -1)
 						perror("send failed");
