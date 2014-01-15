@@ -43,7 +43,4 @@ int dequeue(queue *q);
 int empty(queue *q);
 void print_queue(queue *q);
 
-
-
-
 #endif /* SIDRUNNERTHREAD_H_ */
