@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-struct Queue buffer;
+struct Queue *buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
@@ -20,7 +20,7 @@ void setupSid() {
 
 	int reg,val;
 
-	//buffer = malloc((size_t) BUFFER_SIZE);
+	buffer = malloc(sizeof *buffer);
 	bufReadPos = 0;
 	bufWritePos = 0;
 
@@ -42,10 +42,10 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (!empty(&buffer)) {
-			reg = dequeue(&buffer);
-			val = dequeue(&buffer);
-			cycles = (dequeue(&buffer) << 8) | dequeue(&buffer);
+		if (!empty(buffer)) {
+			reg = dequeue(buffer);
+			val = dequeue(buffer);
+			cycles = (dequeue(buffer) << 8) | dequeue(buffer);
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
@@ -67,18 +67,18 @@ void *sidThread() {
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 
-	enqueue(&buffer,0xff);
-	enqueue(&buffer,0);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(buffer,0xff);
+	enqueue(buffer,0);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 
 }
 void sidWrite(int reg, int value, int cycles) {
 	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
-	enqueue(&buffer,reg);
-	enqueue(&buffer,value);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(buffer,reg);
+	enqueue(buffer,value);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
