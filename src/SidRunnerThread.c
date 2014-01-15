@@ -45,7 +45,7 @@ void *sidThread() {
 			val = buffer[bufReadPos + 1] & 0xff;
 			cycles = ((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff);
 
-			printf("reg = %d\t: val = %d\t: cycles = %d",reg,val,cycles);
+			printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
 			if ((unsigned char) buffer[bufReadPos] != 0xff) {
 
