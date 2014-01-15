@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-struct queue buffer = {0};
+struct queue buffer = {};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
