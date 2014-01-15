@@ -37,17 +37,24 @@ void setupSid() {
 }
 
 void *sidThread() {
+	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
 		if (bufWritePos > bufReadPos) {
+			reg = buffer[bufReadPos] & 0x1f;
+			val = buffer[bufReadPos + 1] & 0xff;
+			cycles = ((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff);
+
+			printf("reg = %d\t: val = %d\t: cycles = %d",reg,val,cycles);
+
 			if ((unsigned char) buffer[bufReadPos] != 0xff) {
-				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
-				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
+
+				writeSid(reg,val);
+				delay(cycles);
 
 			} else {
-				//printf("delay\n ");
 
-				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
+				delay(cycles);
 			}
 
 			if (bufReadPos >= BUFFER_SIZE - 4)
@@ -73,7 +80,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int writeCycles) {
-	//printf("write cycles %d\n",writeCycles);
+	printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
 	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 	buffer[bufWritePos] = reg;
