@@ -91,15 +91,18 @@ void sidWrite(int reg, int value, int writeCycles) {
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
-	struct timespec tim;
-	//printf("delay : cycles %d : \n",cycles);
-	if (cycles < 5) return;
-	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
-			+ cycles;
-	while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
-				< target);
-	//printf("!!DELAY current : %ull target %ull \n",current,target);
+	struct timespec tim ={0};
 
+	//printf("delay : cycles %d : \n",cycles);
+	//if (cycles < 5) return;
+	//target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
+	//		+ cycles;
+	//while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
+	//			< target);
+	//printf("!!DELAY current : %ull target %ull \n",current,target);
+	tim.tv_nsec = cycles * 1000;
+
+	nanosleep(&tim, NULL);
 }
 void writeSid(int reg, int val) {
 	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
