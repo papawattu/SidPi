@@ -25,7 +25,7 @@ typedef struct {
         int first;                      /* position of first element */
         int last;                       /* position of last element */
         int count;                      /* number of queue elements */
-} queue;
+} Queue;
 
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
@@ -37,10 +37,10 @@ void startSidClk(int freq);
 void mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
-void init_queue(queue *q);
-void enqueue(queue *q, int x);
-int dequeue(queue *q);
-int empty(queue *q);
-void print_queue(queue *q);
+void init_queue(Queue *q);
+void enqueue(Queue *q, int x);
+int dequeue(Queue *q);
+int empty(Queue *q);
+void print_queue(Queue *q);
 
 #endif /* SIDRUNNERTHREAD_H_ */
