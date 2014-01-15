@@ -24,7 +24,7 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(buffer);
+	init_queue(&buffer);
 
 	mmapRPIDevices();
 
@@ -42,10 +42,10 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (!empty(buffer)) {
-			reg = dequeue(buffer);
-			val = dequeue(buffer);
-			cycles = (dequeue(buffer) << 8) | dequeue(buffer);
+		if (!empty(&buffer)) {
+			reg = dequeue(&buffer);
+			val = dequeue(&buffer);
+			cycles = (dequeue(&buffer) << 8) | dequeue(&buffer);
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
@@ -67,18 +67,18 @@ void *sidThread() {
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 
-	enqueue(buffer,0xff);
-	enqueue(buffer,0);
-	enqueue(buffer,cycles & 0xff);
-	enqueue(buffer,(cycles & 0xff00) << 8);
+	enqueue(&buffer,0xff);
+	enqueue(&buffer,0);
+	enqueue(&buffer,cycles & 0xff);
+	enqueue(&buffer,(cycles & 0xff00) << 8);
 
 }
 void sidWrite(int reg, int value, int cycles) {
 	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
-	enqueue(buffer,reg);
-	enqueue(buffer,value);
-	enqueue(buffer,cycles & 0xff);
-	enqueue(buffer,(cycles & 0xff00) << 8);
+	enqueue(&buffer,reg);
+	enqueue(&buffer,value);
+	enqueue(&buffer,cycles & 0xff);
+	enqueue(&buffer,(cycles & 0xff00) << 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
