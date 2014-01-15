@@ -20,17 +20,17 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
-struct queue {
+typedef struct {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
         int first;                      /* position of first element */
         int last;                       /* position of last element */
         int count;                      /* number of queue elements */
-};
+} queue;
 
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
 void setupSid();
-void *sidThread() ;11111111
+void *sidThread() ;
 void delay(int cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);
@@ -41,7 +41,7 @@ void init_queue(queue *q);
 void enqueue(queue *q, int x);
 int dequeue(queue *q);
 int empty(queue *q);
-void print_queue(queue *q)
+void print_queue(queue *q);
 
 
 
