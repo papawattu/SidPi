@@ -24,7 +24,7 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(&buffer);
+	init_queue(buffer);
 
 	mmapRPIDevices();
 
@@ -200,14 +200,14 @@ void mmapRPIDevices() {
 		return;
 	}
 }
-void init_queue(queue *q)
+void init_queue(Queue *q)
 {
         q->first = 0;
         q->last = BUFFER_SIZE-1;
         q->count = 0;
 }
 
-void enqueue(queue *q, unsigned char x)
+void enqueue(Queue *q, unsigned char x)
 {
         if (q->count >= BUFFER_SIZE)
 		printf("Warning: queue overflow enqueue x=%d\n",x);
@@ -218,7 +218,7 @@ void enqueue(queue *q, unsigned char x)
         }
 }
 
-unsigned char dequeue(queue *q)
+unsigned char dequeue(Queue *q)
 {
         int x;
 
@@ -232,13 +232,13 @@ unsigned char dequeue(queue *q)
         return(x);
 }
 
-int empty(queue *q)
+int empty(Queue *q)
 {
         if (q->count <= 0) return (1);
         else return (0);
 }
 
-void print_queue(queue *q)
+void print_queue(Queue *q)
 {
         int i,j;
 
