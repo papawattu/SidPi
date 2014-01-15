@@ -328,8 +328,8 @@ void handleWritePacket(int dataLength) {
 
 	for (i = 0; i < dataLength; i += 4) {
 		writeCycles = (int) ((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i];
-		printf("hwp : %2X %2X\n ",dataRead[4 + i],dataRead[5 + i]);
-		printf("hwp : cycles %4X\n ",writeCycles);
+		//printf("hwp : %2X %2X\n ",dataRead[4 + i],dataRead[5 + i]);
+		//printf("hwp : cycles %4X\n ",writeCycles);
 		reg = dataRead[4 + i + 2];
 		sid = ((reg & 0xe0) >> 5);
 		reg &= 0x1f;
@@ -339,7 +339,7 @@ void handleWritePacket(int dataLength) {
 	}
 }
 void handleDelayPacket(int sidNumber, int cycles) {
-	printf("cmd delay %d",cycles);
+	//printf("cmd delay %d",cycles);
 	inputClock += cycles;
 	sidDelay(cycles);
 }

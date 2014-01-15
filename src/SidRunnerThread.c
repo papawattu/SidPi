@@ -45,7 +45,7 @@ void *sidThread() {
 				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
 
 			} else {
-				printf("delay\n ");
+				//printf("delay\n ");
 
 				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
 			}
@@ -61,7 +61,7 @@ void *sidThread() {
 }
 
 void sidDelay(int cycles) {
-	printf("siddelay : cycles %d\n ",cycles);
+	//printf("siddelay : cycles %d\n ",cycles);
 
 	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
@@ -73,7 +73,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int writeCycles) {
-	printf("write cycles %d\n",writeCycles);
+	//printf("write cycles %d\n",writeCycles);
 	if (bufWritePos >= BUFFER_SIZE - 4)
 		bufWritePos = 0;
 	buffer[bufWritePos] = reg;
@@ -85,13 +85,13 @@ void sidWrite(int reg, int value, int writeCycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
 	struct timespec tim;
-	printf("delay : cycles %d : \n",cycles);
+	//printf("delay : cycles %d : \n",cycles);
 	if (cycles < 5) return;
 	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
 			+ cycles;
 	while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
 				< target);
-	printf("!!DELAY current : %ull target %ull \n",current,target);
+	//printf("!!DELAY current : %ull target %ull \n",current,target);
 
 }
 void writeSid(int reg, int val) {
