@@ -40,7 +40,7 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (bufWritePos > bufReadPos + 16384) {
+		if (bufWritePos > bufReadPos + 4096 {
 			reg = buffer[bufReadPos] & 0x1f;
 			val = buffer[bufReadPos + 1] & 0xff;
 			cycles = ((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff);
@@ -100,7 +100,7 @@ void delay(int cycles) {
 	//while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
 	//			< target);
 	//printf("!!DELAY current : %ull target %ull \n",current,target);
-	tim.tv_nsec = cycles * 1000;
+	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
 }
