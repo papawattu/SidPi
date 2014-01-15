@@ -30,6 +30,18 @@ void startSidClk(int freq);
 void mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
+void init_queue(queue *q);
+void enqueue(queue *q, int x);
+int dequeue(queue *q);
+int empty(queue *q);
+void print_queue(queue *q)
+
+typedef struct {
+        unsigned char q[BUFFER_SIZE+1];		/* body of queue */
+        int first;                      /* position of first element */
+        int last;                       /* position of last element */
+        int count;                      /* number of queue elements */
+} queue;
 
 
 #endif /* SIDRUNNERTHREAD_H_ */

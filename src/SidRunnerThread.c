@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-unsigned char *buffer;
+struct queue buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
@@ -20,7 +20,7 @@ void setupSid() {
 
 	int reg,val;
 
-	buffer = malloc((size_t) BUFFER_SIZE);
+	//buffer = malloc((size_t) BUFFER_SIZE);
 	bufReadPos = 0;
 	bufWritePos = 0;
 
@@ -40,14 +40,14 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (bufWritePos > bufReadPos + 4096) {
-			reg = buffer[bufReadPos] & 0x1f;
-			val = buffer[bufReadPos + 1] & 0xff;
-			cycles = ((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff);
+		if (!empty(buffer)) {
+			reg = dequeue(buffer);
+			val = dequeue(buffer);
+			cycles = (dequeue(buffer) << 8) | dequeue(buffer);
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
-			if ((unsigned char) buffer[bufReadPos] != 0xff) {
+			if ((unsigned char) reg != 0xff) {
 
 				writeSid(reg,val);
 				delay(cycles);
@@ -56,13 +56,8 @@ void *sidThread() {
 
 				delay(cycles);
 			}
-
-			if (bufReadPos >= BUFFER_SIZE - 4)
-				bufReadPos = 0;
-			else
-				bufReadPos += 4;
 		} else {
-			sleep(1);
+			usleep(100);
 		}
 	}
 }
@@ -70,24 +65,18 @@ void *sidThread() {
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 
-	if (bufWritePos >= BUFFER_SIZE - 4)
-		bufWritePos = 0;
-
-	buffer[bufWritePos] = 0xff;
-	buffer[bufWritePos + 1] = 0;
-	buffer[bufWritePos + 3] = (cycles & 0xff00) << 8;
-	buffer[bufWritePos + 2] = cycles & 0xff;
+	enqueue(buffer,0xff);
+	enqueue(buffer,0);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 
 }
-void sidWrite(int reg, int value, int writeCycles) {
+void sidWrite(int reg, int value, int cycles) {
 	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
-	if (bufWritePos >= BUFFER_SIZE - 4)
-		bufWritePos = 0;
-	buffer[bufWritePos] = reg;
-	buffer[bufWritePos + 1] = value;
-	buffer[bufWritePos + 2] = (writeCycles & 0xff00) >> 8;
-	buffer[bufWritePos + 3] = writeCycles & 0xff;
-	bufWritePos += 4;
+	enqueue(buffer,reg);
+	enqueue(buffer,value);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
@@ -100,7 +89,7 @@ void delay(int cycles) {
 	//while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
 	//			< target);
 	//printf("!!DELAY current : %ull target %ull \n",current,target);
-	tim.tv_nsec = cycles * 900;
+	tim.tv_nsec = cycles * 950;
 
 	nanosleep(&tim, NULL);
 }
@@ -208,4 +197,56 @@ void mmapRPIDevices() {
 				"Failed to map the physical Timer into the virtual memory space.\n");
 		return;
 	}
+}
+void init_queue(queue *q)
+{
+        q->first = 0;
+        q->last = BUFFER_SIZE-1;
+        q->count = 0;
+}
+
+void enqueue(queue *q, unsigned char x)
+{
+        if (q->count >= BUFFER_SIZE)
+		printf("Warning: queue overflow enqueue x=%d\n",x);
+        else {
+                q->last = (q->last+1) % BUFFER_SIZE;
+                q->q[ q->last ] = x;
+                q->count = q->count + 1;
+        }
+}
+
+unsigned char dequeue(queue *q)
+{
+        int x;
+
+        if (q->count <= 0) printf("Warning: empty queue dequeue.\n");
+        else {
+                x = q->q[ q->first ];
+                q->first = (q->first+1) % BUFFER_SIZE;
+                q->count = q->count - 1;
+        }
+
+        return(x);
+}
+
+int empty(queue *q)
+{
+        if (q->count <= 0) return (1);
+        else return (0);
+}
+
+void print_queue(queue *q)
+{
+        int i,j;
+
+        i=q->first;
+
+        while (i != q->last) {
+                printf("%c ",q->q[i]);
+                i = (i+1) % BUFFER_SIZE;
+        }
+
+        printf("%2d ",q->q[i]);
+        printf("\n");
 }
