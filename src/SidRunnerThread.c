@@ -86,22 +86,11 @@ void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target;
 	struct timespec tim;
 	printf("delay : cycles %d : \n",cycles);
-
+	if (cycles < 5) return;
 	target = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
 			+ cycles;
-	if (cycles < 10)
-		return;
-	if (cycles < 100)
-		while (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
-				< target)
-			;
-	else {
-		tim.tv_sec = 0;
-		tim.tv_nsec = cycles -10;
-		nanosleep(&tim, NULL);
-	}
-
-	//usleep(100);
+	while (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
+				< target);
 }
 void writeSid(int reg, int val) {
 	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
