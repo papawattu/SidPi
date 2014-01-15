@@ -203,7 +203,7 @@ void processReadBuffer(int len) {
 			break;
 		} */
 
-		int cycles = (dataRead[dataReadPos+4] << 8) | dataRead[dataReadPos+5];
+		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
 		handleDelayPacket(sidNumber, cycles);
 		dataWrite[dataWritePos++] = OK;
 		break;
