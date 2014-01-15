@@ -42,12 +42,12 @@ void *sidThread() {
 		if (bufWritePos > bufReadPos) {
 			if ((unsigned char) buffer[bufReadPos] != 0xff) {
 				writeSid(buffer[bufReadPos], buffer[bufReadPos + 1]);
-				delay(((buffer[bufReadPos + 2] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
+				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
 
 			} else {
 				printf("delay\n ");
 
-				delay(((buffer[bufReadPos + 2] & 0xff00) << 8) | (buffer[bufReadPos + 3] & 0xff));
+				delay(((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff));
 			}
 
 			if (bufReadPos >= BUFFER_SIZE - 4)
