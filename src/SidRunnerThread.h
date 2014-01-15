@@ -20,6 +20,13 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
+typedef struct queue {
+        unsigned char q[BUFFER_SIZE+1];		/* body of queue */
+        int first;                      /* position of first element */
+        int last;                       /* position of last element */
+        int count;                      /* number of queue elements */
+};
+
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
 void setupSid();
@@ -36,12 +43,7 @@ int dequeue(queue *q);
 int empty(queue *q);
 void print_queue(queue *q)
 
-typedef struct queue {
-        unsigned char q[BUFFER_SIZE+1];		/* body of queue */
-        int first;                      /* position of first element */
-        int last;                       /* position of last element */
-        int count;                      /* number of queue elements */
-};
+
 
 
 #endif /* SIDRUNNERTHREAD_H_ */
