@@ -40,7 +40,7 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (bufWritePos > bufReadPos) {
+		if (bufWritePos > bufReadPos + 16384) {
 			reg = buffer[bufReadPos] & 0x1f;
 			val = buffer[bufReadPos + 1] & 0xff;
 			cycles = ((buffer[bufReadPos + 2] & 0xff) << 8) | (buffer[bufReadPos + 3] & 0xff);
