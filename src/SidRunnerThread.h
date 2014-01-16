@@ -39,6 +39,10 @@ void startSidClk(int freq);
 void mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
-
+void init_queue(Queue *q);
+void enqueue(Queue *q, int x);
+int dequeue(Queue *q);
+int empty(Queue *q);
+void print_queue(Queue *q);
 
 #endif /* SIDRUNNERTHREAD_H_ */
