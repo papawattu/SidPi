@@ -56,7 +56,8 @@ void setupSid() {
 }
 
 void *sidThread() {
-	int reg,val,cycles;
+	unsigned char reg,val
+	int cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
 		print_queue(&buffer);
@@ -64,7 +65,7 @@ void *sidThread() {
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
-			cycles = (dequeue(&buffer) << 8) | dequeue(&buffer);
+			cycles = (int) (dequeue(&buffer) << 8) | dequeue(&buffer);
 
 			printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
