@@ -104,7 +104,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
+	printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
 	enqueue(&buffer,(unsigned char) reg);
 	enqueue(&buffer,(unsigned char) value);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
@@ -266,7 +266,7 @@ void enqueue(Buffer *q, unsigned char x)
 
 unsigned char dequeue(Buffer *q)
 {
-        int x;
+        unsigned char x;
 
         if (q->count <= 0) printf("Warning: empty queue dequeue.\n");
         else {
