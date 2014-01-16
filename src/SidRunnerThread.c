@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-Queue buffer;
+Queue * buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
@@ -23,11 +23,11 @@ void setupSid() {
 
 	int reg,val;
 
-	//buffer = malloc(sizeof *buffer);
+	*buffer = malloc(sizeof(Queue));
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(&buffer);
+	init_queue(buffer);
 
 	mmapRPIDevices();
 
@@ -47,10 +47,10 @@ void *sidThread() {
 	while (1) {
 		print_queue(buffer);
 		printf("playback ready %d\n",playbackReady());
-		if (!empty(&buffer) && playbackReady()) {
-			reg = dequeue(&buffer);
-			val = dequeue(&buffer);
-			cycles = (dequeue(&buffer) << 8) | dequeue(&buffer);
+		if (!empty(buffer) && playbackReady()) {
+			reg = dequeue(buffer);
+			val = dequeue(buffer);
+			cycles = (dequeue(buffer) << 8) | dequeue(buffer);
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
@@ -83,18 +83,18 @@ void stopPlayback() {
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 
-	enqueue(&buffer,0xff);
-	enqueue(&buffer,0);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(buffer,0xff);
+	enqueue(buffer,0);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 
 }
 void sidWrite(int reg, int value, int cycles) {
 	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
-	enqueue(&buffer,reg);
-	enqueue(&buffer,value);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(buffer,reg);
+	enqueue(buffer,value);
+	enqueue(buffer,cycles & 0xff);
+	enqueue(buffer,(cycles & 0xff00) << 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;

@@ -20,7 +20,7 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
-struct {
+typedef struct queue {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
         long first;                      /* position of first element */
         long last;                       /* position of last element */
