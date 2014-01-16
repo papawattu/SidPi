@@ -54,13 +54,13 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		print_queue(&buffer);
-		printf("playback ready %d : empty : %d buffer : %8x\n",playbackReady(),empty(&buffer),&buffer);
+		//printf("playback ready %d : empty : %d buffer : %8x\n",playbackReady(),empty(&buffer),&buffer);
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 			cycles = (int) (dequeue(&buffer) << 8) | dequeue(&buffer);
 
-			printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
+			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
@@ -98,7 +98,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
+	//printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
@@ -256,6 +256,7 @@ void enqueue(Buffer *q, unsigned char x)
                 q->last = (q->last+1) % BUFFER_SIZE;
                 q->q[ q->last ] = x;
                 q->count = q->count + 1;
+                printf("count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         }
 }
 
