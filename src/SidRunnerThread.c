@@ -11,10 +11,16 @@
 
 pthread_t sidThreadHandle;
 
-struct Queue *buffer;
+Queue * buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
+
+void init_queue(Queue *q);
+void enqueue(Queue *q, int x);
+int dequeue(Queue *q);
+int empty(Queue *q);
+void print_queue(Queue *q);
 
 void setupSid() {
 
@@ -24,7 +30,7 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(&buffer);
+	init_queue(buffer);
 
 	mmapRPIDevices();
 

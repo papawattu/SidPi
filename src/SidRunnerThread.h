@@ -20,12 +20,14 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
-typedef struct {
+struct Queue {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
         int first;                      /* position of first element */
         int last;                       /* position of last element */
         int count;                      /* number of queue elements */
-} Queue;
+};
+
+typedef struct Queue Queue;
 
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
@@ -37,10 +39,6 @@ void startSidClk(int freq);
 void mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
-void init_queue(Queue *q);
-void enqueue(Queue *q, int x);
-int dequeue(Queue *q);
-int empty(Queue *q);
-void print_queue(Queue *q);
+
 
 #endif /* SIDRUNNERTHREAD_H_ */
