@@ -157,10 +157,10 @@ void processReadBuffer(int len) {
 	int isBufferFull = (clientTimeDifference > 1000000?1:0);
 	int isBufferHalfFull = (clientTimeDifference > 1000000 / 2?1:0);
 
-	printf("input clock : %d\n",inputClock);
-	printf("input sid clock : %d\n",getSidClock());
-	printf("Full buffer : %d\n",isBufferFull);
-	printf("Half buffer : %d\n",isBufferHalfFull);
+	//printf("input clock : %d\n",inputClock);
+	//printf("input sid clock : %d\n",getSidClock());
+	//printf("Full buffer : %d\n",isBufferFull);
+	//printf("Half buffer : %d\n",isBufferHalfFull);
 
 	switch (command) {
 	case FLUSH:

@@ -45,7 +45,8 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		print_queue();
+		print_queue(buffer);
+		printf("playback ready %d\n",playbackReady());
 		if (!empty(buffer) && playbackReady()) {
 			reg = dequeue(buffer);
 			val = dequeue(buffer);
