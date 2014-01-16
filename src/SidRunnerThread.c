@@ -13,9 +13,9 @@ pthread_t sidThreadHandle;
 
 typedef struct Buffer {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
-        long first;                      /* position of first element */
-        long last;                       /* position of last element */
-        long count;                      /* number of queue elements */
+        int first;                      /* position of first element */
+        int last;                       /* position of last element */
+        int count;                      /* number of queue elements */
 } Buffer;
 
 
@@ -41,8 +41,6 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(&buffer);
-
 	mmapRPIDevices();
 
 	generatePinTables();
@@ -58,6 +56,8 @@ void setupSid() {
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
+	init_queue(&buffer);
+
 	printf("Sid Thread Running...\n");
 	while (1) {
 		print_queue(&buffer);
