@@ -153,6 +153,11 @@ void processReadBuffer(int len) {
 	dataLength = (dataRead[dataReadPos + 2] << 8) | dataRead[dataReadPos + 3];
 	dataWritePos = 0;
 
+	long clientTimeDifference = inputClock - getSidClock();
+	int isBufferFull = (clientTimeDifference > 1000000?1:0);
+	int isBufferHalfFull = (clientTimeDifference > 1000000 / 2?1:0);
+
+
 	switch (command) {
 	case FLUSH:
 		if (dataLength != 0) {

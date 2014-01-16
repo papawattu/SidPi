@@ -95,6 +95,10 @@ void delay(int cycles) {
 
 	nanosleep(&tim, NULL);
 }
+
+long getSidClock() {
+	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
+}
 void writeSid(int reg, int val) {
 	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
