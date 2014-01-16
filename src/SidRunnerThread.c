@@ -11,12 +11,15 @@
 
 pthread_t sidThreadHandle;
 
-typedef struct Buffer {
+typedef struct buffer {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
         int first;                      /* position of first element */
         int last;                       /* position of last element */
         int count;                      /* number of queue elements */
 } Buffer;
+
+Buffer buffer;
+
 
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
@@ -45,9 +48,6 @@ void setupSid() {
 }
 
 void *sidThread() {
-
-	Buffer buffer;
-
 	unsigned char reg,val;
 	int cycles;
 	init_queue(&buffer);
