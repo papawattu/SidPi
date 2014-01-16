@@ -13,7 +13,7 @@
 #define RES 0
 #define CLK 4
 
-#define BUFFER_SIZE 65536 * 4
+#define BUFFER_SIZE 65536
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 
