@@ -22,9 +22,9 @@ const int ADDR[]	= {8,25,24,23,18};
 
 struct Queue {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
-        int first;                      /* position of first element */
-        int last;                       /* position of last element */
-        int count;                      /* number of queue elements */
+        long first;                      /* position of first element */
+        long last;                       /* position of last element */
+        long count;                      /* number of queue elements */
 };
 
 typedef struct Queue Queue;
