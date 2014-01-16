@@ -20,8 +20,6 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
-extern struct Queue;
-
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int writeCycles);
 void setupSid();
@@ -32,11 +30,6 @@ void startSidClk(int freq);
 void mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
-void init_queue(Queue *q);
-void enqueue(Queue *q, unsigned char x);
-unsigned char dequeue(Queue *q);
-int empty(Queue *q);
-void print_queue(Queue *q);
 int playbackReady();
 void startPlayback();
 void stopPlayback();
