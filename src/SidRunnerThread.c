@@ -20,11 +20,11 @@ struct Buffer {
 
 
 struct Buffer buffer;
-void init_queue(struct buffer *q);
-void enqueue(struct buffer *q, unsigned char x);
-unsigned char dequeue(struct buffer *q);
-int empty(struct buffer *q);
-void print_queue(struct buffer *q);
+void init_queue(struct Buffer *q);
+void enqueue(struct Buffer *q, unsigned char x);
+unsigned char dequeue(struct Buffer *q);
+int empty(struct Buffer *q);
+void print_queue(struct Buffer *q);
 
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
