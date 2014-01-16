@@ -11,7 +11,13 @@
 
 pthread_t sidThreadHandle;
 
-Queue * buffer;
+struct buffer {
+        unsigned char q[BUFFER_SIZE+1];		/* body of queue */
+        long first;                      /* position of first element */
+        long last;                       /* position of last element */
+        long count;                      /* number of queue elements */
+} Queue;
+
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
