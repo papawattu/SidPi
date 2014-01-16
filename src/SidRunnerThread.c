@@ -54,7 +54,7 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		print_queue(&buffer);
-		printf("playback ready %d : empty : %d buffer : %8x\n",playbackReady(),empty(&buffer),buffer);
+		printf("playback ready %d : empty : %d buffer : %8x\n",playbackReady(),empty(&buffer),&buffer);
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
@@ -98,7 +98,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,buffer);
+	printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
