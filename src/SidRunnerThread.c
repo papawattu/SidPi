@@ -246,14 +246,14 @@ void mmapRPIDevices() {
 		return;
 	}
 }
-void init_queue(struct buffer *q)
+void init_queue(struct Buffer *q)
 {
         q->first = 0;
         q->last = BUFFER_SIZE-1;
         q->count = 0;
 }
 
-void enqueue(struct buffer *q, unsigned char x)
+void enqueue(struct Buffer *q, unsigned char x)
 {
         if (q->count >= BUFFER_SIZE)
 		printf("Warning: queue overflow enqueue x=%d\n",x);
@@ -264,7 +264,7 @@ void enqueue(struct buffer *q, unsigned char x)
         }
 }
 
-unsigned char dequeue(struct buffer *q)
+unsigned char dequeue(struct Buffer *q)
 {
         int x;
 
@@ -278,13 +278,13 @@ unsigned char dequeue(struct buffer *q)
         return(x);
 }
 
-int empty(struct buffer *q)
+int empty(struct Buffer *q)
 {
         if (q->count <= 0) return (1);
         else return (0);
 }
 
-void print_queue(struct buffer *q)
+void print_queue(struct Buffer *q)
 {
         int i,j;
 
