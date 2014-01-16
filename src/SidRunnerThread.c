@@ -56,7 +56,7 @@ void setupSid() {
 }
 
 void *sidThread() {
-	unsigned char reg,val
+	unsigned char reg,val;
 	int cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
