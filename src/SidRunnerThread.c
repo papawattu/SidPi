@@ -16,6 +16,7 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
+long sidClock;
 
 
 void setupSid() {
@@ -110,6 +111,19 @@ void delay(int cycles) {
 }
 
 long getSidClock() {
+	long lastClock = 0,currentClock = 0;
+
+	if(isPlaybackReady) {
+		if(lastClock == 0) {
+			lastClock = (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
+		}
+		currentClock =  (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff) - lastClock;
+		lastClock = currentClock;
+		return currentClock;
+	} else {
+		return lastClock;
+	}
+
 	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
 }
 void writeSid(int reg, int val) {
