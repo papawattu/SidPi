@@ -27,7 +27,7 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(*buffer);
+	init_queue(buffer);
 
 	mmapRPIDevices();
 
@@ -45,7 +45,7 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		print_queue(*buffer);
+		print_queue(buffer);
 		printf("playback ready %d\n",playbackReady());
 		if (!empty(buffer) && playbackReady()) {
 			reg = dequeue(buffer);
