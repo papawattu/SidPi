@@ -16,7 +16,7 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
-long sidClock;
+long lastClock = 0,currentClock = 0;
 
 
 void setupSid() {
@@ -111,7 +111,6 @@ void delay(int cycles) {
 }
 
 long getSidClock() {
-	long lastClock = 0,currentClock = 0;
 
 	if(isPlaybackReady) {
 		if(lastClock == 0) {
