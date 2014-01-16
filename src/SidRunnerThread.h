@@ -44,5 +44,8 @@ void enqueue(Queue *q, unsigned char x);
 unsigned char dequeue(Queue *q);
 int empty(Queue *q);
 void print_queue(Queue *q);
+int playbackReady();
+void startPlayback();
+void stopPlayback();
 
 #endif /* SIDRUNNERTHREAD_H_ */

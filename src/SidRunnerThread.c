@@ -15,6 +15,8 @@ Queue * buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
+int isPlaybackReady = 0;
+
 
 void setupSid() {
 
@@ -42,7 +44,7 @@ void *sidThread() {
 	int reg,val,cycles;
 	printf("Sid Thread Running...\n");
 	while (1) {
-		if (!empty(buffer)) {
+		if (!empty(buffer) && playbackReady()) {
 			reg = dequeue(buffer);
 			val = dequeue(buffer);
 			cycles = (dequeue(buffer) << 8) | dequeue(buffer);
@@ -64,6 +66,17 @@ void *sidThread() {
 	}
 }
 
+int playbackReady() {
+	return isPlaybackReady;
+}
+
+void startPlayback() {
+	isPlaybackReady = 1;
+}
+
+void stopPlayback() {
+	isPlaybackReady = 0;
+}
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 

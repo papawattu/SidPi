@@ -199,14 +199,14 @@ void processReadBuffer(int len) {
 					"TRY_DELAY needs 2 bytes (16-bit delay value)");
 		}
 
-		/*if (isBufferHalfFull) {
-			eventConsumerThread.ensureDraining();
+		if (isBufferHalfFull) {
+			playbackReady();
 		}
 
 		if (isBufferFull) {
-			dataWrite.put((byte) Response.BUSY.ordinal());
+			dataWrite[dataWritePos++] = BUSY;
 			break;
-		} */
+		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
 		handleDelayPacket(sidNumber, cycles);
@@ -220,14 +220,14 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		/*if (isBufferHalfFull) {
-			eventConsumerThread.ensureDraining();
+		if (isBufferHalfFull) {
+			playbackReady();
 		}
 
 		if (isBufferFull) {
-			dataWrite.put((byte) Response.BUSY.ordinal());
+			dataWrite[dataWritePos++] = BUSY;
 			break;
-		} */
+		}
 
 		handleWritePacket(dataLength);
 		dataWrite[dataWritePos++] = OK;
