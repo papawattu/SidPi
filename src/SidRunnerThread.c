@@ -18,28 +18,19 @@ typedef struct Buffer {
         int count;                      /* number of queue elements */
 } Buffer;
 
-
-Buffer buffer;
-void init_queue(Buffer *q);
-void enqueue(Buffer *q, unsigned char x);
-unsigned char dequeue(Buffer *q);
-int empty(Buffer *q);
-void print_queue(Buffer *q);
-
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
 long lastClock = 0,currentClock = 0;
 
+void init_queue(Buffer *q);
+void enqueue(Buffer *q, unsigned char x);
+unsigned char dequeue(Buffer *q);
+int empty(Buffer *q);
+void print_queue(Buffer *q);
 
 void setupSid() {
-
-	int reg,val;
-
-	//buffer = malloc(sizeof(Queue));
-	bufReadPos = 0;
-	bufWritePos = 0;
 
 	mmapRPIDevices();
 
@@ -54,6 +45,9 @@ void setupSid() {
 }
 
 void *sidThread() {
+
+	Buffer buffer;
+
 	unsigned char reg,val;
 	int cycles;
 	init_queue(&buffer);
@@ -110,6 +104,7 @@ void sidWrite(int reg, int value, int cycles) {
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
+	print_queue(&buffer);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
