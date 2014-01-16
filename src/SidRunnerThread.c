@@ -20,11 +20,11 @@ typedef struct Buffer {
 
 
 Buffer buffer;
-void init_queue(struct Buffer *q);
-void enqueue(struct Buffer *q, unsigned char x);
-unsigned char dequeue(struct Buffer *q);
-int empty(struct Buffer *q);
-void print_queue(struct Buffer *q);
+void init_queue(Buffer *q);
+void enqueue(Buffer *q, unsigned char x);
+unsigned char dequeue(Buffer *q);
+int empty(Buffer *q);
+void print_queue(Buffer *q);
 
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
@@ -60,13 +60,13 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		print_queue(&buffer);
-		printf("playback ready %d\n",playbackReady());
+		printf("playback ready %d : empty : %d\n",playbackReady(),empty(&buffer));
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 			cycles = (dequeue(&buffer) << 8) | dequeue(&buffer);
 
-			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
+			printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
@@ -100,7 +100,7 @@ void sidDelay(int cycles) {
 	enqueue(&buffer,(unsigned char) 0xff);
 	enqueue(&buffer,(unsigned char) 0);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
-	enqueue(&buffer,(unsigned char) (cycles & 0xff00) << 8);
+	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
 
 }
 void sidWrite(int reg, int value, int cycles) {
@@ -108,7 +108,7 @@ void sidWrite(int reg, int value, int cycles) {
 	enqueue(&buffer,(unsigned char) reg);
 	enqueue(&buffer,(unsigned char) value);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
-	enqueue(&buffer,(unsigned char) (cycles & 0xff00) << 8);
+	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
