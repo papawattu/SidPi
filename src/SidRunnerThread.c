@@ -104,7 +104,7 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
+	printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,cycles);
 	enqueue(&buffer,(unsigned char) reg);
 	enqueue(&buffer,(unsigned char) value);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
