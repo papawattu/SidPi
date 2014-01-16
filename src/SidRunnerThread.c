@@ -23,7 +23,7 @@ void setupSid() {
 
 	int reg,val;
 
-	*buffer = malloc(sizeof(Queue));
+	buffer = malloc(sizeof(Queue));
 	bufReadPos = 0;
 	bufWritePos = 0;
 
