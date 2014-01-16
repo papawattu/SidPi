@@ -16,10 +16,10 @@ struct Buffer {
         long first;                      /* position of first element */
         long last;                       /* position of last element */
         long count;                      /* number of queue elements */
-};
+} Buffer;
 
 
-struct Buffer buffer;
+Buffer buffer;
 void init_queue(struct Buffer *q);
 void enqueue(struct Buffer *q, unsigned char x);
 unsigned char dequeue(struct Buffer *q);
