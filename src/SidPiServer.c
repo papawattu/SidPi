@@ -22,7 +22,7 @@ pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
 unsigned int dataWritePos = 0;
 unsigned int dataReadPos = 0;
-unsigned int inputClock = 0;
+long inputClock = 0;
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -158,7 +158,7 @@ void processReadBuffer(int len) {
 	int isBufferHalfFull = (clientTimeDifference > 1000000 / 2?1:0);
 
 	printf("input clock : %d\n",inputClock);
-	printf("input sid clock : %l\n",getSidClock());
+	printf("input sid clock : %d\n",getSidClock());
 	printf("Full buffer : %d\n",isBufferFull);
 	printf("Half buffer : %d\n",isBufferHalfFull);
 
