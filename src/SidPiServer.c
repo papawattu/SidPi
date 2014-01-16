@@ -204,7 +204,7 @@ void processReadBuffer(int len) {
 		}
 
 		if (isBufferHalfFull) {
-			playbackReady();
+			startPlayback();
 		}
 
 		if (isBufferFull) {
@@ -225,7 +225,7 @@ void processReadBuffer(int len) {
 		}
 
 		if (isBufferHalfFull) {
-			playbackReady();
+			startPlayback();
 		}
 
 		if (isBufferFull) {
