@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-struct Buffer {
+typedef struct Buffer {
         unsigned char q[BUFFER_SIZE+1];		/* body of queue */
         long first;                      /* position of first element */
         long last;                       /* position of last element */
@@ -97,18 +97,18 @@ void stopPlayback() {
 void sidDelay(int cycles) {
 	//printf("siddelay : cycles %d\n ",cycles);
 
-	enqueue(&buffer,0xff);
-	enqueue(&buffer,0);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(&buffer,(unsigned char) 0xff);
+	enqueue(&buffer,(unsigned char) 0);
+	enqueue(&buffer,(unsigned char) cycles & 0xff);
+	enqueue(&buffer,(unsigned char) (cycles & 0xff00) << 8);
 
 }
 void sidWrite(int reg, int value, int cycles) {
 	//printf("reg = %d\t: val = %d\t: cycles = %d",reg,value,writeCycles);
-	enqueue(&buffer,reg);
-	enqueue(&buffer,value);
-	enqueue(&buffer,cycles & 0xff);
-	enqueue(&buffer,(cycles & 0xff00) << 8);
+	enqueue(&buffer,(unsigned char) reg);
+	enqueue(&buffer,(unsigned char) value);
+	enqueue(&buffer,(unsigned char) cycles & 0xff);
+	enqueue(&buffer,(unsigned char) (cycles & 0xff00) << 8);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
@@ -246,14 +246,14 @@ void mmapRPIDevices() {
 		return;
 	}
 }
-void init_queue(struct Buffer *q)
+void init_queue(Buffer *q)
 {
         q->first = 0;
         q->last = BUFFER_SIZE-1;
         q->count = 0;
 }
 
-void enqueue(struct Buffer *q, unsigned char x)
+void enqueue(Buffer *q, unsigned char x)
 {
         if (q->count >= BUFFER_SIZE)
 		printf("Warning: queue overflow enqueue x=%d\n",x);
@@ -264,7 +264,7 @@ void enqueue(struct Buffer *q, unsigned char x)
         }
 }
 
-unsigned char dequeue(struct Buffer *q)
+unsigned char dequeue(Buffer *q)
 {
         int x;
 
@@ -278,13 +278,13 @@ unsigned char dequeue(struct Buffer *q)
         return(x);
 }
 
-int empty(struct Buffer *q)
+int empty(Buffer *q)
 {
         if (q->count <= 0) return (1);
         else return (0);
 }
 
-void print_queue(struct Buffer *q)
+void print_queue(Buffer *q)
 {
         int i,j;
 
