@@ -11,7 +11,7 @@
 
 pthread_t sidThreadHandle;
 
-Queue * buffer;
+Queue buffer;
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
@@ -23,7 +23,7 @@ void setupSid() {
 
 	int reg,val;
 
-	buffer = malloc(sizeof *buffer);
+	//buffer = malloc(sizeof *buffer);
 	bufReadPos = 0;
 	bufWritePos = 0;
 
