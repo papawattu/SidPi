@@ -71,6 +71,7 @@ void *sidThread() {
 
 				delay(cycles);
 			}
+			currentClock +=cycles;
 		} else {
 			usleep(100);
 		}
@@ -122,8 +123,8 @@ void delay(int cycles) {
 }
 
 long getSidClock() {
-
-	if(isPlaybackReady) {
+	return currentClock;
+/*	if(isPlaybackReady) {
 		if(lastClock == 0) {
 			lastClock = (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
 		}
@@ -135,7 +136,7 @@ long getSidClock() {
 	}
 
 	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
-}
+*/}
 void writeSid(int reg, int val) {
 	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
