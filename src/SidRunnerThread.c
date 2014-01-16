@@ -24,7 +24,7 @@ void setupSid() {
 	bufReadPos = 0;
 	bufWritePos = 0;
 
-	init_queue(buffer);
+	init_queue(&buffer);
 
 	mmapRPIDevices();
 
