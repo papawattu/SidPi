@@ -60,7 +60,7 @@ void *sidThread() {
 			val = dequeue(&buffer);
 			cycles = (int) (dequeue(&buffer) << 8) | dequeue(&buffer);
 
-			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
+			printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
@@ -103,7 +103,7 @@ void sidWrite(int reg, int value, int cycles) {
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
-	print_queue(&buffer);
+	//print_queue(&buffer);
 }
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current;
@@ -252,14 +252,14 @@ void init_queue(Buffer *q)
 
 void enqueue(Buffer *q, unsigned char x)
 {
-		printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+		//printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         if (q->count >= BUFFER_SIZE)
 		printf("Warning: queue overflow enqueue x=%d\n",x);
         else {
                 q->last = (q->last+1) % BUFFER_SIZE;
                 q->q[ q->last ] = x;
                 q->count = q->count + 1;
-                printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+         //       printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         }
 }
 
