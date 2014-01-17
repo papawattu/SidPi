@@ -317,5 +317,5 @@ int getBufferFull() {
 int getBufferMax() {
 	return BUFFER_SIZE;
 }
-}
+
 
