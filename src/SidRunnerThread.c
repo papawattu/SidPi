@@ -120,7 +120,7 @@ void delay(int cycles) {
 	nanosleep(&tim, NULL);
 	afterCycle = *timer;
 	difference = afterCycle - beforeCycle;
-	printf("target : %d\tdifference %ll\n",cycles,difference);
+	printf("target : %d\tdifference %llu\n",cycles,difference);
 }
 
 long getSidClock() {
