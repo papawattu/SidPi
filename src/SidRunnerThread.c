@@ -125,7 +125,7 @@ void delay(int cycles) {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
 
-	} while(cycles > difference);
+	} while(cycles >= difference);
 	printf("target : %d\tdifference %llu\n",cycles,difference);
 
 
