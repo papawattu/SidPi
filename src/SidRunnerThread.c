@@ -68,7 +68,7 @@ void *sidThread() {
 				delay(cycles);
 
 			} else {
-
+				printf("delay thread\n");
 				delay(cycles);
 			}
 			currentClock +=cycles;

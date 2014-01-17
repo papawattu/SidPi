@@ -204,6 +204,7 @@ void processReadBuffer(int len) {
 			invalidCommandException(
 					"TRY_DELAY needs 2 bytes (16-bit delay value)");
 		}
+		printf("delay cmd\n");
 
 		if (isBufferHalfFull) {
 			startPlayback();
@@ -215,8 +216,11 @@ void processReadBuffer(int len) {
 		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
-		handleDelayPacket(sidNumber, cycles);
-		dataWrite[dataWritePos++] = OK;
+		if(handleDelayPacket(sidNumber, cycles) >= 0)
+			dataWrite[dataWritePos++] = OK;
+		else
+			dataWrite[dataWritePos++] = BUSY;
+
 		break;
 	}
 
@@ -339,10 +343,7 @@ int handleWritePacket(int dataLength) {
 	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
 
-	if((dataLength *4) + getBufferCount() > getBufferMax()) {
-		//printf("data length %d, bufferCount %d, Max %d\n",dataLength *4,getBufferCount(),getBufferMax());
-		return -1;
-	}
+	if((dataLength *4) + getBufferCount() >= getBufferMax()) return -1;
 
 	for (i = 0; i < dataLength; i += 4) {
 		writeCycles = (int) ((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i];
@@ -359,6 +360,8 @@ int handleWritePacket(int dataLength) {
 }
 int handleDelayPacket(int sidNumber, int cycles) {
 	//printf("cmd delay %d",cycles);
+	if(getBufferCount() >= getBufferMax()) return -1;
+
 	inputClock += cycles;
 	sidDelay(cycles);
 	return 0;
