@@ -117,7 +117,7 @@ void delay(int cycles) {
 	//while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
 	//			< target);
 	//printf("!!DELAY current : %ull target %ull \n",current,target);
-	tim.tv_nsec = cycles * 950;
+	tim.tv_nsec = cycles * 95;
 
 	nanosleep(&tim, NULL);
 }
