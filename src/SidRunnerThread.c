@@ -109,18 +109,14 @@ void sidWrite(int reg, int value, int cycles) {
 void delay(int cycles) {
 	long long int * beforeCycle, *afterCycle, target,current,difference;
 	struct timespec tim ={0};
+	beforeCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 
-	printf("delay : cycles %d : \n",cycles);
 	if (cycles < 5) return;
-	beforeCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
-	//		+ cycles;
-	//while ((current = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET))
-	//			< target);
-	printf("!!DELAY current : %ull target %ull \n",current,target);
+
 	tim.tv_nsec = cycles * 95;
 
 	nanosleep(&tim, NULL);
-	afterCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET)
+	afterCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	difference = *afterCycle - *beforeCycle;
 	print("target : %d\tdifference %ll\n",cycles,difference);
 }
