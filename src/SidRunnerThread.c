@@ -99,12 +99,13 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	//printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
+	printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
-	//print_queue(&buffer);
+	printf("cycles1 = %d\tcycles2 = %d",cycles & 0xff, (cycles & 0xff00) >> 8));
+
 }
 void delay(int cycles) {
 	long long int * timer;
@@ -121,7 +122,7 @@ void delay(int cycles) {
 	do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
-		printf("target : %d\tdifference %llu\n",cycles,difference);
+		//printf("target : %d\tdifference %llu\n",cycles,difference);
 
 	} while(cycles > difference);
 
