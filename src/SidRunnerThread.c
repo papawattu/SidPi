@@ -111,7 +111,7 @@ void delay(int cycles) {
 	long long int beforeCycle, afterCycle, difference;
 
 	struct timespec tim ={0};
-	timer = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	beforeCycle = *timer;
 	if (cycles < 5) return;
 
@@ -119,7 +119,7 @@ void delay(int cycles) {
 
 	nanosleep(&tim, NULL);
 	afterCycle = *timer;
-	difference = *	afterCycle - *beforeCycle;
+	difference = afterCycle - beforeCycle;
 	printf("target : %d\tdifference %ll\n",cycles,difference);
 }
 
