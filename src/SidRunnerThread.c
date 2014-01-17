@@ -115,7 +115,7 @@ void delay(int cycles) {
 	beforeCycle = *timer;
 	if (cycles < 5) return;
 
-	tim.tv_nsec = cycles * 95;
+	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
 	afterCycle = *timer;
