@@ -37,5 +37,6 @@ int getBufferFirst();
 int getBufferLast();
 int getBufferCount();
 int getBufferFull();
+int getBufferMax();
 
 #endif /* SIDRUNNERTHREAD_H_ */

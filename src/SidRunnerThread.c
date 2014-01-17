@@ -27,7 +27,7 @@ int isPlaybackReady = 0;
 long lastClock = 0,currentClock = 0;
 
 void init_queue(Buffer *q);
-void enqueue(Buffer *q, unsigned char x);
+int enqueue(Buffer *q, unsigned char x);
 unsigned char dequeue(Buffer *q);
 int empty(Buffer *q);
 void print_queue(Buffer *q);
@@ -251,17 +251,20 @@ void init_queue(Buffer *q)
 
 }
 
-void enqueue(Buffer *q, unsigned char x)
+int enqueue(Buffer *q, unsigned char x)
 {
 		//printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
-        if (q->count >= BUFFER_SIZE)
-		printf("Warning: queue overflow enqueue x=%d\n",x);
+        if (q->count >= BUFFER_SIZE) {
+        	printf("Warning: queue overflow enqueue x=%d\n",x);
+        	return -1;
+        }
         else {
                 q->last = (q->last+1) % BUFFER_SIZE;
                 q->q[ q->last ] = x;
                 q->count = q->count + 1;
          //       printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         }
+        return 0;
 }
 
 unsigned char dequeue(Buffer *q)
@@ -310,5 +313,9 @@ int getBufferCount() {
 }
 int getBufferFull() {
 	return (buffer.count >= BUFFER_SIZE-4?1:0);
+}
+int getBufferMax() {
+	return BUFFER_SIZE;
+}
 }
 
