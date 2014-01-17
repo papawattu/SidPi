@@ -58,7 +58,7 @@ void *sidThread() {
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
-			cycles = (int) dequeue(&buffer << 8) | dequeue(&buffer) << 8;
+			cycles = (int) (dequeue(&buffer) << 8) | dequeue(&buffer) ;
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
