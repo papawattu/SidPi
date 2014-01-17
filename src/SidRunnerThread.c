@@ -58,7 +58,7 @@ void *sidThread() {
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
-			cycles = (int) (dequeue(&buffer) << 8) | dequeue(&buffer);
+			cycles = (int) dequeue(&buffer) | (dequeue(&buffer) << 8);
 
 			//printf("reg = %d\t: val = %d\t: cycles = %d\n",reg,val,cycles);
 
@@ -99,12 +99,12 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
+	//printf("reg = %d\t: val = %d\t: cycles = %d\tbuffer %8x\n",reg,value,cycles,&buffer);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
-	printf("cycles1 = %d\tcycles2 = %d",cycles & 0xff, (cycles & 0xff00) >> 8);
+	//printf("cycles1 = %d\tcycles2 = %d",cycles & 0xff, (cycles & 0xff00) >> 8);
 
 }
 void delay(int cycles) {
@@ -122,9 +122,9 @@ void delay(int cycles) {
 	do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
-		//printf("target : %d\tdifference %llu\n",cycles,difference);
 
 	} while(cycles > difference);
+	printf("target : %d\tdifference %llu\n",cycles,difference);
 
 
 }
