@@ -116,11 +116,11 @@ void delay(int cycles) {
 	struct timespec tim ={0};
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	beforeCycle = *timer;
-	if (cycles < 5) return;
+	if (cycles < 8) return;
 
-	tim.tv_nsec = cycles * 900;
+	//tim.tv_nsec = cycles * 900;
 
-	nanosleep(&tim, NULL);
+	//nanosleep(&tim, NULL);
 	do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
