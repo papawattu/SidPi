@@ -107,17 +107,19 @@ void sidWrite(int reg, int value, int cycles) {
 	//print_queue(&buffer);
 }
 void delay(int cycles) {
-	long long int * beforeCycle, *afterCycle, target,current,difference;
-	struct timespec tim ={0};
-	beforeCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	long long int * timer;
+	long long int beforeCycle, afterCycle, difference;
 
+	struct timespec tim ={0};
+	timer = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	beforeCycle = *timer;
 	if (cycles < 5) return;
 
 	tim.tv_nsec = cycles * 95;
 
 	nanosleep(&tim, NULL);
-	afterCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
-	difference = *afterCycle - *beforeCycle;
+	afterCycle = *timer;
+	difference = *	afterCycle - *beforeCycle;
 	printf("target : %d\tdifference %ll\n",cycles,difference);
 }
 
