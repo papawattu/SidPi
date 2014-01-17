@@ -340,6 +340,7 @@ int handleWritePacket(int dataLength) {
 	unsigned char reg,sid,value;
 
 	if((dataLength *4) + getBufferCount() > getBufferMax()) {
+		printf("data length %d, bufferCount %d, Max %d\n",dataLength *4,getBufferCount(),getBufferMax());
 		return -1;
 	}
 
