@@ -157,9 +157,9 @@ void processReadBuffer(int len) {
 	int isBufferFull = (clientTimeDifference > 10000?1:0);
 	int isBufferHalfFull = (clientTimeDifference > 10000 / 2?1:0);
 
-	printf("input clock : %d\n",inputClock);
-	printf("input sid clock : %d\n",getSidClock());
-	printf("first %d last %d count %d\n",getBufferFirst(),getBufferLast(),getBufferCount());
+	//printf("input clock : %d\n",inputClock);
+	//printf("input sid clock : %d\n",getSidClock());
+	//printf("first %d last %d count %d\n",getBufferFirst(),getBufferLast(),getBufferCount());
 
 	//printf("Full buffer : %d\n",isBufferFull);
 	//printf("Half buffer : %d\n",isBufferHalfFull);
@@ -340,7 +340,7 @@ int handleWritePacket(int dataLength) {
 	unsigned char reg,sid,value;
 
 	if((dataLength *4) + getBufferCount() > getBufferMax()) {
-		printf("data length %d, bufferCount %d, Max %d\n",dataLength *4,getBufferCount(),getBufferMax());
+		//printf("data length %d, bufferCount %d, Max %d\n",dataLength *4,getBufferCount(),getBufferMax());
 		return -1;
 	}
 
