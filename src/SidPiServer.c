@@ -235,7 +235,7 @@ void processReadBuffer(int len) {
 			break;
 		}
 
-		if(handleWritePacket(dataLength) > 0)
+		if(handleWritePacket(dataLength) >= 0)
 			dataWrite[dataWritePos++] = OK;
 		else
 			dataWrite[dataWritePos++] = BUSY;
