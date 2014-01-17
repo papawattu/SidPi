@@ -119,7 +119,9 @@ void delay(int cycles) {
 
 	nanosleep(&tim, NULL);
 	afterCycle = *timer;
-	while((long long int)(*timer - beforeCycle) >=cycles);
+	while(cycles - (int)(afterCycle - beforeCycle) <= 0) {
+		afterCycle = *timer;
+	}
 
 	printf("target : %d\tdifference %llu\n",cycles,difference);
 }
