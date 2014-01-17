@@ -118,12 +118,14 @@ void delay(int cycles) {
 	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
-	afterCycle = *timer;
-	while(cycles - (int)(afterCycle - beforeCycle) <= 0) {
+	do {
 		afterCycle = *timer;
-	}
+		difference = afterCycle - beforeCycle;
+		printf("target : %d\tdifference %llu\n",cycles,difference);
 
-	printf("target : %d\tdifference %llu\n",cycles,difference);
+	} while(cycles > difference);
+
+
 }
 
 long getSidClock() {
