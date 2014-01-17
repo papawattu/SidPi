@@ -298,3 +298,13 @@ void print_queue(Buffer *q)
         printf("%2d ",q->q[i]);
         printf("\n");
 }
+
+int getBufferFirst() {
+	return buffer.first;
+}
+int getBufferLast() {
+	return buffer.last;
+}
+int getBufferCount() {
+	return buffer.count;
+}

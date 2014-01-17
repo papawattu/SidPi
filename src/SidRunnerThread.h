@@ -33,6 +33,8 @@ void setPinsToOutput();
 int playbackReady();
 void startPlayback();
 void stopPlayback();
-
+int getBufferFirst();
+int getBufferLast();
+int getBufferCount();
 
 #endif /* SIDRUNNERTHREAD_H_ */

@@ -159,7 +159,7 @@ void processReadBuffer(int len) {
 
 	printf("input clock : %d\n",inputClock);
 	printf("input sid clock : %d\n",getSidClock());
-	printf("first %d last %d count %d\n",buffer.first,buffer.last,buffer.count);
+	printf("first %d last %d count %d\n",getBufferFirst(),getBufferLast(),getBufferCount());
 
 	//printf("Full buffer : %d\n",isBufferFull);
 	//printf("Half buffer : %d\n",isBufferHalfFull);
