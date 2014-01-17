@@ -157,8 +157,10 @@ void processReadBuffer(int len) {
 	int isBufferFull = (clientTimeDifference > 10000?1:0);
 	int isBufferHalfFull = (clientTimeDifference > 10000 / 2?1:0);
 
-	//printf("input clock : %d\n",inputClock);
-	//printf("input sid clock : %d\n",getSidClock());
+	printf("input clock : %d\n",inputClock);
+	printf("input sid clock : %d\n",getSidClock());
+	printf("first %d last %d count %d\n",buffer.first,buffer.last,buffer.count);
+
 	//printf("Full buffer : %d\n",isBufferFull);
 	//printf("Half buffer : %d\n",isBufferHalfFull);
 
