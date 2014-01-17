@@ -311,4 +311,4 @@ int getBufferCount() {
 int getBufferFull() {
 	return (buffer.count >= BUFFER_SIZE-4?1:0);
 }
-}
+
