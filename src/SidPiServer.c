@@ -154,8 +154,8 @@ void processReadBuffer(int len) {
 	dataWritePos = 0;
 
 	long clientTimeDifference = inputClock - getSidClock();
-	int isBufferFull = (clientTimeDifference > 1000000?1:0);
-	int isBufferHalfFull = (clientTimeDifference > 1000000 / 2?1:0);
+	int isBufferFull = (clientTimeDifference > 10000?1:0);
+	int isBufferHalfFull = (clientTimeDifference > 10000 / 2?1:0);
 
 	//printf("input clock : %d\n",inputClock);
 	//printf("input sid clock : %d\n",getSidClock());
