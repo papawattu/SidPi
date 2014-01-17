@@ -118,7 +118,7 @@ void delay(int cycles) {
 	nanosleep(&tim, NULL);
 	afterCycle = *(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	difference = *afterCycle - *beforeCycle;
-	print("target : %d\tdifference %ll\n",cycles,difference);
+	printf("target : %d\tdifference %ll\n",cycles,difference);
 }
 
 long getSidClock() {
