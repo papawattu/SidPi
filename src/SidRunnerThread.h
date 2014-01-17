@@ -36,5 +36,6 @@ void stopPlayback();
 int getBufferFirst();
 int getBufferLast();
 int getBufferCount();
+int getBufferFull();
 
 #endif /* SIDRUNNERTHREAD_H_ */

@@ -308,3 +308,7 @@ int getBufferLast() {
 int getBufferCount() {
 	return buffer.count;
 }
+int getBufferFull() {
+	return (buffer.count >= BUFFER_SIZE-4?1:0);
+}
+}

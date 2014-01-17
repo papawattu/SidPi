@@ -209,7 +209,7 @@ void processReadBuffer(int len) {
 			startPlayback();
 		}
 
-		if (isBufferFull) {
+		if (isBufferFull || getBufferFull() ) {
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
