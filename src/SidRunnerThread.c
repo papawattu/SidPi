@@ -52,7 +52,7 @@ void *sidThread() {
 	init_queue(&buffer);
 
 	printf("Sid Thread Running...\n");
-	while (1) {
+	while (0) {
 		//print_queue(&buffer);
 		//printf("playback ready %d : empty : %d buffer : %8x\n",playbackReady(),empty(&buffer),&buffer);
 		if (!empty(&buffer) && playbackReady()) {
