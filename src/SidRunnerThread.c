@@ -50,7 +50,7 @@ void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
 	init_queue(&buffer);
-
+//
 	printf("Sid Thread Running...\n");
 	while (0) {
 		//print_queue(&buffer);
