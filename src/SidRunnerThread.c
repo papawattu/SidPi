@@ -54,7 +54,7 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		//print_queue(&buffer);
-		printf("playback ready %d : empty : %d buffer count : %8x\n",playbackReady(),empty(&buffer),buffer.count);
+		printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
 		if (!empty(&buffer) && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
@@ -255,7 +255,7 @@ void mmapRPIDevices() {
 void init_queue(Buffer *q)
 {
 		q->first = 0;
-        q->last = BUFFER_SIZE-1;
+        q->last = BUFFER_SIZE-4;
         q->count = 0;
         printf("CC count %d : last %d : queue %d\n",q->count,q->last,q->q[q->last]);
 
@@ -263,7 +263,7 @@ void init_queue(Buffer *q)
 
 int enqueue(Buffer *q, unsigned char x)
 {
-		//printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+		printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         if (q->count >= BUFFER_SIZE) {
         	printf("Warning: queue overflow enqueue x=%d\n",x);
         	return -1;
@@ -272,7 +272,7 @@ int enqueue(Buffer *q, unsigned char x)
                 q->last = (q->last+1) % BUFFER_SIZE;
                 q->q[ q->last ] = x;
                 q->count = q->count + 1;
-         //       printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+               printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         }
         return 0;
 }
