@@ -54,14 +54,14 @@ void *sidThread() {
 	printf("Sid Thread Running...\n");
 	while (1) {
 		//print_queue(&buffer);
-		printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
-		if (!empty(&buffer) && playbackReady()) {
+		//printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
+		if (buffer.count >= 3) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
 			cycles = (int) ((dequeue(&buffer) &0xff) << 8) | dequeue(&buffer);
 
-			printf("cycles = %4x\n",cycles);
+			printf("SID THREAD : cycles = %4x\n",cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
