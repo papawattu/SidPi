@@ -32,7 +32,7 @@
 #define SID_NETWORK_PROTOCOL_VERSION	2
 
 void handleWritePacket(int dataLength);
-int handleDelayPacket(int sidNumber, int cycles);
+void handleDelayPacket(int sidNumber, int cycles);
 void invalidCommandException(void *errMsg);
 void processReadBuffer(int len);
 void *sid_thread(void *ptr);
