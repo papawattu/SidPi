@@ -55,7 +55,7 @@ void *sidThread() {
 	while (1) {
 		//print_queue(&buffer);
 		//printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
-		if (buffer.count >= 3) {
+		if (buffer.count >= 3 && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
@@ -327,5 +327,7 @@ int getBufferFull() {
 int getBufferMax() {
 	return BUFFER_SIZE;
 }
-
+void flush() {
+	init_queue(&buffer);
+}
 

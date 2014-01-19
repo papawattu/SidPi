@@ -169,7 +169,7 @@ void processReadBuffer(int len) {
 		if (dataLength != 0) {
 			invalidCommandException("FLUSH needs no data");
 		}
-
+		flush();
 		dataWrite[dataWritePos++] = OK;
 		break;
 
@@ -194,7 +194,8 @@ void processReadBuffer(int len) {
 		if (dataLength != 1) {
 			invalidCommandException("RESET needs 1 byte (volume after reset)");
 		}
-
+		flush();
+		writeSid(0x18,dataRead[1] & 0xff);
 		dataWrite[dataWritePos++] = OK;
 		break;
 
