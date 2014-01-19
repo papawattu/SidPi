@@ -234,7 +234,8 @@ void processReadBuffer(int len) {
 			startPlayback();
 		}
 
-		if (isBufferFull || getBufferFull()) {
+		if (isBufferFull ) {
+			printf("Buffer full \n");
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
