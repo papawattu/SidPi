@@ -39,8 +39,8 @@ int main(void) {
 
 	signal(SIGINT, signal_callback_handler);
 
-	dataRead = malloc((size_t) DATA_READ_SIZE);
-	dataWrite = malloc((size_t) DATA_WRITE_SIZE);
+	dataRead = malloc(DATA_READ_SIZE);
+	dataWrite = malloc(DATA_WRITE_SIZE);
 
 	//setupSid();
 
