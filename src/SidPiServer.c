@@ -216,10 +216,8 @@ void processReadBuffer(int len) {
 		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
-		if(handleDelayPacket(sidNumber, cycles) >= 0)
-			dataWrite[dataWritePos++] = OK;
-		else
-			dataWrite[dataWritePos++] = BUSY;
+		handleDelayPacket(sidNumber, cycles);
+		dataWrite[dataWritePos++] = OK;
 
 		break;
 	}
@@ -338,7 +336,7 @@ void invalidCommandException(void *errMsg) {
 	perror((char *) errMsg);
 	exit(-1);
 }
-int handleWritePacket(int dataLength) {
+void handleWritePacket(int dataLength) {
 	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
 
@@ -355,11 +353,11 @@ int handleWritePacket(int dataLength) {
 		inputClock += writeCycles;
 		sidWrite(reg,value,writeCycles);
 	}
-	return 0;
+	return;
 }
 void handleDelayPacket(int sidNumber, int cycles) {
 	//printf("cmd delay %d",cycles);
-	if(getBufferCount() >= getBufferMax()) return -1;
+	if(getBufferCount() >= getBufferMax()) return;
 
 	inputClock += cycles;
 	sidDelay(cycles);
