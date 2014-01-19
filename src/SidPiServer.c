@@ -228,9 +228,9 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		//if (isBufferHalfFull) {
+		if(isBufferHalfFull) {
 			startPlayback();
-		//}
+		}
 
 		if (isBufferFull ) {
 			printf("Buffer full \n");
