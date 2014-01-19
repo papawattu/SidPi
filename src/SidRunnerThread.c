@@ -65,8 +65,8 @@ void *sidThread() {
 
 			if ((unsigned char) reg != 0xff) {
 
-				writeSid(reg,val);
 				delay(cycles);
+				writeSid(reg,val);
 
 			} else {
 				printf("delay thread\n");
@@ -117,7 +117,7 @@ void delay(int cycles) {
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	beforeCycle = *timer;
 	if (cycles < 8) return;
-	return;
+
 	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
