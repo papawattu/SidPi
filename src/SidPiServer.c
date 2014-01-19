@@ -239,6 +239,7 @@ void processReadBuffer(int len) {
 		}
 
 		handleWritePacket(dataLength);
+		dataWrite[dataWritePos++] = OK;
 
 		break;
 	}
