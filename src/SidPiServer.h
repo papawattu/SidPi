@@ -1,6 +1,6 @@
 #define PORT "6581"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
-#define DATA_READ_SIZE (65536 * 4 * 16384)
+#define DATA_READ_SIZE (65536 * 4 + 16384)
 #define DATA_WRITE_SIZE 260
 
 #define SID_PI				"SidPi"

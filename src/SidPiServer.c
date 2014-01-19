@@ -20,8 +20,8 @@
 
 pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
-unsigned long dataWritePos = 0;
-unsigned long dataReadPos = 0;
+unsigned int dataWritePos = 0;
+unsigned int dataReadPos = 0;
 long inputClock = 0;
 
 int main(void) {
