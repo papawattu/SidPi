@@ -357,13 +357,13 @@ int handleWritePacket(int dataLength) {
 	}
 	return 0;
 }
-int handleDelayPacket(int sidNumber, int cycles) {
+void handleDelayPacket(int sidNumber, int cycles) {
 	//printf("cmd delay %d",cycles);
 	if(getBufferCount() >= getBufferMax()) return -1;
 
 	inputClock += cycles;
 	sidDelay(cycles);
-	return 0;
+	return;
 }
 
 void sigchld_handler(int s) {
