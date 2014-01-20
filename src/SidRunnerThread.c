@@ -62,7 +62,7 @@ void *sidThread() {
 			cycles = ((dequeue(&buffer) &0xff) << 8) | (dequeue(&buffer) & 0xff);
 			//cycles=0;
 			printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
-
+			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
@@ -72,7 +72,7 @@ void *sidThread() {
 				printf("delay thread\n");
 				delay(cycles);
 			}
-			currentClock +=cycles;
+
 		} else {
 			usleep(100);
 		}
@@ -121,13 +121,13 @@ void delay(int cycles) {
 	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
-/*
+
 	do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
 		printf("target : %d\tdifference %llu\n",cycles,difference);
 	} while(cycles >= difference);
-*/
+
 
 
 }
