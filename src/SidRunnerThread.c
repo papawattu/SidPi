@@ -66,7 +66,7 @@ void *sidThread() {
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
-				writeSid(val,reg);
+				writeSid(reg,val);
 
 			} else {
 				printf("delay thread\n");
