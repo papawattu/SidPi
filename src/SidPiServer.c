@@ -350,7 +350,7 @@ void handleWritePacket(int dataLength) {
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
 		sidWrite(reg,value,(dataRead[4 + i] & 0xff),dataRead[5 + i]);
-		printf("***MAIN THREAD*** : Current Cycle &08x\tReg &02x\tValue &02x\tCycles &04x\n",inputClock,reg,value,writeCycles);
+		printf("***MAIN THREAD*** : Current Cycle %08x\tReg %02x\tValue %02x\tCycles %04x\n",inputClock,reg,value,writeCycles);
 
 	}
 	return;
