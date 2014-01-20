@@ -115,10 +115,10 @@ void delay(int cycles) {
 
 	if(cycles <= 1) return;
 
-	timer = (long long int *)((char *)st_base + TIMER_OFFSET);
+	timer = (long long int *)((char *) GPIO_TIMER + TIMER_OFFSET);
 	target = (int) (*timer & 0xffff) + cycles & 0xffff;
 	do {
-		timer = (long long int *)((char *)st_base + TIMER_OFFSET);
+		timer = (long long int *)((char *) GPIO_TIMER + TIMER_OFFSET);
 		current = (int) (*timer & 0xffff);
 	} while(current < target);
 
