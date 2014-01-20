@@ -111,7 +111,7 @@ void sidWrite(int reg, int value, int cycles) {
 }
 void delay(int cycles) {
 
-	usleep(cycles);
+	usleep(cycles*10);
 }
 
 long getSidClock() {
