@@ -53,18 +53,14 @@ void *sidThread() {
 //
 	printf("Sid Thread Running...\n");
 	while (1) {
-		//print_queue(&buffer);
-		//printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
+
 		if (buffer.count >= 3 ) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
 			cycles = (int) dequeue(&buffer) << 8;
-			//printf("CYCLES 1 %04x",cycles);
 			cycles |= (int) dequeue(&buffer);
-			//printf("CYCLES 2 %04x",cycles);
 
-			//cycles=0;
 			printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
 			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
@@ -114,23 +110,12 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 
 }
 void delay(int cycles) {
-	long long int * timer;
-	int target, current;
+	struct timespec tim;
+	tim.tv_sec = 0;
+	tim.tv_nsec = (long) cycles * 900;
+	if(cycles <= 8) return;
 
-	if(cycles <= 1) return;
-	sleep(1);
-/*
-	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
-	target = (int) *timer + cycles;
-	do {
-
-		timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
-		current = (int) *timer;
-		printf("current : %08x\ttarget : %08x\tcycles : %08x\n",current,target,cycles);
-	} while(current < target);
-
-	//printf("current : %08x\ttarget : %08x\n",current,target);
-*/
+	nanosleep(&tim,NULL)
 }
 
 long getSidClock() {

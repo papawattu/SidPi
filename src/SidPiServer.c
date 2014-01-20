@@ -229,15 +229,15 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		//if(isBufferHalfFull) {
-		//	startPlayback();
-		//}
+		if(isBufferHalfFull) {
+			startPlayback();
+		}
 
-		//if (isBufferFull ) {
-			//printf("Buffer full \n");
-		//	dataWrite[dataWritePos++] = BUSY;
-		//	break;
-		//}
+		if (isBufferFull ) {
+			printf("Buffer full \n");
+			dataWrite[dataWritePos++] = BUSY;
+			break;
+		}
 
 		handleWritePacket(dataLength);
 		dataWrite[dataWritePos++] = OK;
@@ -342,23 +342,15 @@ void handleWritePacket(int dataLength) {
 	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
 
-	//if((dataLength *4) + getBufferCount() >= getBufferMax()) return -1;
-
 	for (i = 0; i < dataLength; i += 4) {
 		writeCycles = (int) ((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i];
-		//printf("hwp : %2X %2X\n ",dataRead[4 + i],dataRead[5 + i]);
-		//printf("hwp : cycles %4X\n ",writeCycles);
 		reg = dataRead[4 + i + 2];
 		sid = ((reg & 0xe0) >> 5);
 		reg &= 0x1f;
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
 		sidWrite(reg,value,(dataRead[4 + i] & 0xff),dataRead[5 + i]);
-		//if((dataRead[4 + i] & 0xff) != 0) printf("high byte\n");
-		//printf("SIDCMD current cycle %08x : reg : %02x : val %02x cycles %04x\n",inputClock,reg,value,writeCycles);
 
-		//delay(writeCycles);
-		//writeSid(reg,value);
 	}
 	return;
 }
