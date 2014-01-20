@@ -61,7 +61,7 @@ void *sidThread() {
 
 			cycles = ((dequeue(&buffer) &0xff) << 8) | (dequeue(&buffer) & 0xff);
 			//cycles=0;
-			printf("reg : %02x : val %02x cycles %04x\r",reg,val,cycles);
+			printf("SIDTHREAD reg : %02x : val %02x cycles %04x\r",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
