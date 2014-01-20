@@ -355,7 +355,7 @@ void handleWritePacket(int dataLength) {
 		inputClock += writeCycles;
 		//sidWrite(reg,value,writeCycles);
 		delay(writeCycles);
-		writeSid(reg,val);
+		writeSid(reg,value);
 	}
 	return;
 }
