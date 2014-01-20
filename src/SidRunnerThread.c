@@ -53,7 +53,7 @@ void *sidThread() {
 //
 	printf("Sid Thread Running...\n");
 	while (1) {
-		printf("buffer count : %08du first : %08du last : %08du\r",buffer.count,buffer.first,buffer.last);
+		printf("buffer count : %08d first : %08d last : %08d\r",buffer.count,buffer.first,buffer.last);
 		if (buffer.count >= 3 ) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
@@ -61,7 +61,7 @@ void *sidThread() {
 			cycles = (int) dequeue(&buffer) << 8;
 			cycles |= (int) dequeue(&buffer);
 
-			printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
+			//printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
 			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
 
