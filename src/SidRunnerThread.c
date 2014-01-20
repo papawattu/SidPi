@@ -13,9 +13,9 @@ pthread_t sidThreadHandle;
 
 typedef struct buffer {
         unsigned char q[BUFFER_SIZE+4];		/* body of queue */
-        long first;                      /* position of first element */
-        long last;                       /* position of last element */
-        long count;                      /* number of queue elements */
+        unsigned int first;                      /* position of first element */
+        unsigned int last;                       /* position of last element */
+        unsigned int  count;                      /* number of queue elements */
 } Buffer;
 
 Buffer buffer;
