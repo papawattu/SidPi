@@ -65,7 +65,7 @@ void *sidThread() {
 
 			if ((unsigned char) reg != 0xff) {
 
-				delay(0);
+				delay(cycles);
 				writeSid(reg,val);
 
 			} else {
@@ -100,13 +100,13 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycles) {
-	printf("reg = %02x\t: val = %02x\t: cycles = %04x\n",reg,value,cycles);
+	//printf("reg = %02x\t: val = %02x\t: cycles = %04x\n",reg,value,cycles);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
 	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 
-	printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
+	//printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
 
 }
 void delay(int cycles) {
