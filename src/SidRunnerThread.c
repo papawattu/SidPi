@@ -61,7 +61,7 @@ void *sidThread() {
 
 			cycles = ((dequeue(&buffer) &0xff) << 8) | (dequeue(&buffer) & 0xff);
 			//cycles=0;
-			printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
+			//printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
 			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
 
@@ -110,8 +110,19 @@ void sidWrite(int reg, int value, int cycles) {
 
 }
 void delay(int cycles) {
+	long long int * timer;
+	int target, current;
 
-	usleep(cycles*10);
+	if(cycles <= 1) return;
+
+	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	target = (int) (*timer & 0xffff)+ cycles & 0xffff;
+	do {
+	  	current = (int) (*timer & 0xffff)
+	} while(current < target);
+
+	printf("current : %08x\ttarget : %08x\n");
+
 }
 
 long getSidClock() {
