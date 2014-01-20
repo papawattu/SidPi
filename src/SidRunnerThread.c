@@ -103,12 +103,12 @@ void sidDelay(int cycles) {
 	enqueue(&buffer,(unsigned char) cycles & 0xff);
 
 }
-void sidWrite(int reg, int value, int cycles) {
+void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 	//printf("reg = %02x\t: val = %02x\t: cycles = %04x\n",reg,value,cycles);
 	enqueue(&buffer,(unsigned char) reg & 0xff);
 	enqueue(&buffer,(unsigned char) value & 0xff);
-	enqueue(&buffer,(unsigned char) (cycles & 0xff00) >> 8);
-	enqueue(&buffer,(unsigned char) cycles & 0xff);
+	enqueue(&buffer,(unsigned char) cycleHigh & 0xff);
+	enqueue(&buffer,(unsigned char) cycleLow & 0xff);
 
 	//printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
 

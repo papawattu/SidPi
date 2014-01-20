@@ -353,7 +353,7 @@ void handleWritePacket(int dataLength) {
 		reg &= 0x1f;
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
-		sidWrite(reg,value,writeCycles);
+		sidWrite(reg,value,(dataRead[4 + i] & 0xff),dataRead[5 + i]);
 		if((dataRead[4 + i] & 0xff) != 0) printf("high byte\n");
 		printf("SIDCMD current cycle %08x : reg : %02x : val %02x cycles %04x\n",inputClock,reg,value,writeCycles);
 
