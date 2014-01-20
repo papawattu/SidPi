@@ -206,7 +206,7 @@ void processReadBuffer(int len) {
 					"TRY_DELAY needs 2 bytes (16-bit delay value)");
 		}
 		printf("delay cmd\n");
-
+/*
 		if (isBufferHalfFull) {
 			startPlayback();
 		}
@@ -217,7 +217,7 @@ void processReadBuffer(int len) {
 		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
-		handleDelayPacket(sidNumber, cycles);
+		handleDelayPacket(sidNumber, cycles); */
 		dataWrite[dataWritePos++] = OK;
 
 		break;
@@ -230,12 +230,12 @@ void processReadBuffer(int len) {
 		}
 
 		//if(isBufferHalfFull) {
-			startPlayback();
+		//	startPlayback();
 		//}
 
 		//if (isBufferFull ) {
 			//printf("Buffer full \n");
-			dataWrite[dataWritePos++] = BUSY;
+		//	dataWrite[dataWritePos++] = BUSY;
 		//	break;
 		//}
 
