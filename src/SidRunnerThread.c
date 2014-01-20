@@ -120,7 +120,7 @@ void delay(int cycles) {
 
 	tim.tv_nsec = (long) cycles *900;
 
-	nanosleep(&tim, NULL);
+	usleep(cycles);
 
 	/*do {
 		afterCycle = *timer;
