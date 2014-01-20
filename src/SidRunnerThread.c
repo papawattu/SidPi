@@ -59,7 +59,7 @@ void *sidThread() {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
-			cycles = ((dequeue(&buffer) &0xff) << 8) | (dequeue(&buffer) & 0xff);
+			cycles = ((int) (dequeue(&buffer) &0xff) << 8) | (dequeue(&buffer) & 0xff);
 			//cycles=0;
 			//printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
 			currentClock +=cycles;
