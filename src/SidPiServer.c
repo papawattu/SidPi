@@ -229,15 +229,15 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		if(isBufferHalfFull) {
+		//if(isBufferHalfFull) {
 			startPlayback();
-		}
+		//}
 
-		if (isBufferFull ) {
+		//if (isBufferFull ) {
 			//printf("Buffer full \n");
 			dataWrite[dataWritePos++] = BUSY;
-			break;
-		}
+		//	break;
+		//}
 
 		handleWritePacket(dataLength);
 		dataWrite[dataWritePos++] = OK;
