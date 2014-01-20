@@ -116,6 +116,7 @@ void delay(int cycles) {
 	struct timespec tim ={0};
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	beforeCycle = *timer;
+	usleep(100);
 	if (cycles < 8) return;
 
 	tim.tv_nsec = (long) cycles *900;
