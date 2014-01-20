@@ -234,7 +234,7 @@ void processReadBuffer(int len) {
 		}
 
 		if (isBufferFull ) {
-			printf("Buffer full \n");
+		//	printf("Buffer full \n");
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
