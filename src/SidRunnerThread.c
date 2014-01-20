@@ -110,28 +110,8 @@ void sidWrite(int reg, int value, int cycles) {
 
 }
 void delay(int cycles) {
-	long long int * timer;
-	long long int beforeCycle, afterCycle, difference;
 
-	struct timespec tim ={0};
-	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
-	beforeCycle = *timer;
-	usleep(100);
-	printf("delay cycles %08x\n",cycles);
-	if (cycles < 8) return;
-
-	tim.tv_nsec = (long) cycles *900;
-
-	usleep(100);
-
-	/*do {
-		afterCycle = *timer;
-		difference = afterCycle - beforeCycle;
-		printf("target : %d\tdifference %llu\n",cycles,difference);
-	} while(cycles >= difference);
-*/
-
-
+	usleep(cycles);
 }
 
 long getSidClock() {
