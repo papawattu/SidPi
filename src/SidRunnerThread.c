@@ -118,16 +118,16 @@ void delay(int cycles) {
 	beforeCycle = *timer;
 	if (cycles < 8) return;
 
-	tim.tv_nsec = cycles * 900;
+	tim.tv_nsec = (long) cycles;
 
-	//nanosleep(&tim, NULL);
+	nanosleep(&tim, NULL);
 
-	do {
+	/*do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
 		printf("target : %d\tdifference %llu\n",cycles,difference);
 	} while(cycles >= difference);
-
+*/
 
 
 }
