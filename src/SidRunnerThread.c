@@ -271,7 +271,7 @@ int enqueue(Buffer *q, unsigned char x)
                 q->last = (q->last+1) % BUFFER_SIZE;
                 q->q[ q->last ] = x;
                 q->count = q->count + 1;
-               printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+              // printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         }
         return 0;
 }
