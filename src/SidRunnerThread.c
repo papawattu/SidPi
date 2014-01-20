@@ -262,7 +262,7 @@ void init_queue(Buffer *q)
 
 int enqueue(Buffer *q, unsigned char x)
 {
-		printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
+		//printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
         if (q->count >= BUFFER_SIZE) {
         	printf("Warning: queue overflow enqueue x=%d\n",x);
         	return -1;
