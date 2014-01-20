@@ -353,9 +353,11 @@ void handleWritePacket(int dataLength) {
 		reg &= 0x1f;
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
-		//sidWrite(reg,value,writeCycles);
-		delay(writeCycles);
-		writeSid(reg,value);
+		sidWrite(reg,value,writeCycles);
+		printf("SIDCMD current cycle %08x : reg : %02x : val %02x cycles %04x\r",inputClock,reg,value,writeCycles);
+
+		//delay(writeCycles);
+		//writeSid(reg,value);
 	}
 	return;
 }
