@@ -115,7 +115,7 @@ void delay(int cycles) {
 	tim.tv_nsec = (long) cycles * 900;
 	if(cycles <= 8) return;
 
-	nanosleep(&tim,NULL)
+	nanosleep(&tim,NULL);
 }
 
 long getSidClock() {
