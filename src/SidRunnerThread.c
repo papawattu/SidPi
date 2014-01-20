@@ -60,9 +60,9 @@ void *sidThread() {
 			val = dequeue(&buffer);
 
 			cycles = (int) dequeue(&buffer) << 8;
-			printf("CYCLES 1 %04x",cycles);
+			//printf("CYCLES 1 %04x",cycles);
 			cycles |= (int) dequeue(&buffer);
-			printf("CYCLES 2 %04x",cycles);
+			//printf("CYCLES 2 %04x",cycles);
 
 			//cycles=0;
 			printf("SIDTHREAD current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
@@ -118,7 +118,7 @@ void delay(int cycles) {
 	int target, current;
 
 	if(cycles <= 1) return;
-	usleep(100);
+	sleep(1);
 /*
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	target = (int) *timer + cycles;
