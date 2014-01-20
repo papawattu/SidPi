@@ -61,7 +61,7 @@ void *sidThread() {
 
 			cycles = (int) ((dequeue(&buffer) &0xff) << 8) | dequeue(&buffer);
 
-			printf("SID THREAD : cycles = %4x\n",cycles);
+			printf("reg : %2x : val %2x cycles %8x\r",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
@@ -121,13 +121,13 @@ void delay(int cycles) {
 	tim.tv_nsec = cycles * 900;
 
 	nanosleep(&tim, NULL);
-
+/*
 	do {
 		afterCycle = *timer;
 		difference = afterCycle - beforeCycle;
 		printf("target : %d\tdifference %llu\n",cycles,difference);
 	} while(cycles >= difference);
-
+*/
 
 
 }
@@ -148,7 +148,6 @@ long getSidClock() {
 	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
 */}
 void writeSid(int reg, int val) {
-	//printf("reg : %d val : %d data pins : %ul addr pins : %ul \n",reg,val,dataPins[val % 256],addrPins[reg % 32]);
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) ~addrPins[reg % 32] & addrPins[31];
 	delay(1);
