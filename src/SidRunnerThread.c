@@ -118,7 +118,7 @@ void delay(int cycles) {
 	int target, current;
 
 	if(cycles <= 1) return;
-	usleep(cycles);
+	usleep(100);
 /*
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	target = (int) *timer + cycles;
