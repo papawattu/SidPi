@@ -117,7 +117,7 @@ void delay(int cycles) {
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	beforeCycle = *timer;
 	usleep(100);
-	printf("delay cycles %08x\n",cycles)
+	printf("delay cycles %08x\n",cycles);
 	if (cycles < 8) return;
 
 	tim.tv_nsec = (long) cycles *900;
