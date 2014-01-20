@@ -59,14 +59,14 @@ void *sidThread() {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
-			cycles = (int) ((dequeue(&buffer) &0xff) << 8) | dequeue(&buffer);
+			cycles = (int) dequeue(&buffer) | ((dequeue(&buffer) &0xff) << 8) ;
 
 			printf("reg : %02x : val %02x cycles %08x\r",reg,val,cycles);
 
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
-				writeSid(reg,val);
+				writeSid(val,reg);
 
 			} else {
 				printf("delay thread\n");
