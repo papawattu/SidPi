@@ -12,7 +12,7 @@
 pthread_t sidThreadHandle;
 
 typedef struct buffer {
-        unsigned char q[BUFFER_SIZE+4];		/* body of queue */
+        unsigned char q[BUFFER_SIZE];		/* body of queue */
         unsigned int first;                      /* position of first element */
         unsigned int last;                       /* position of last element */
         unsigned int  count;                      /* number of queue elements */
@@ -254,7 +254,7 @@ void mmapRPIDevices() {
 void init_queue(Buffer *q)
 {
 		q->first = 0;
-        q->last = BUFFER_SIZE-4;
+        q->last = BUFFER_SIZE-1;
         q->count = 0;
         printf("CC count %d : last %d : queue %d\n",q->count,q->last,q->q[q->last]);
 
