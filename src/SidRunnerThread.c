@@ -121,7 +121,7 @@ void delay(int cycles) {
 		timer = (long long int *)((char *) GPIO_TIMER + TIMER_OFFSET);
 		current = (int) (*timer & 0xffff);
 //	} while(current < target);
-*/
+
 	printf("current : %08x\ttarget : %08x\n");
 
 }
