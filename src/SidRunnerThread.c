@@ -53,7 +53,7 @@ void *sidThread() {
 //
 	printf("Sid Thread Running...\n");
 	while (1) {
-
+		printf("buffer count : %08du first : %08du last : %08du\r",buffer.count,buffer.first,buffer.last);
 		if (buffer.count >= 3 ) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
