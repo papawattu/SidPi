@@ -122,7 +122,7 @@ void delay(int cycles) {
 		current = (int) *timer;
 	} while(current < target);
 
-	printf("current : %08x\ttarget : %08x\n");
+	printf("current : %08x\ttarget : %08x\n",current,target);
 
 }
 
