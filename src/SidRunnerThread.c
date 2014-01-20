@@ -118,7 +118,8 @@ void delay(int cycles) {
 	int target, current;
 
 	if(cycles <= 1) return;
-
+	usleep(cycles);
+/*
 	timer = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	target = (int) *timer + cycles;
 	do {
@@ -129,7 +130,7 @@ void delay(int cycles) {
 	} while(current < target);
 
 	//printf("current : %08x\ttarget : %08x\n",current,target);
-
+*/
 }
 
 long getSidClock() {
