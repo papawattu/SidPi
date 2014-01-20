@@ -55,7 +55,7 @@ void *sidThread() {
 	while (1) {
 		//print_queue(&buffer);
 		//printf("playback ready %d : empty : %d buffer count : %8x\r",playbackReady(),empty(&buffer),buffer.count);
-		if (buffer.count >= 3 && playbackReady()) {
+		if (buffer.count >= 3 ) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
