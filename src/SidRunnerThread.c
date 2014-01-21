@@ -118,11 +118,10 @@ void delay(int cycles) {
 	long targetCycles = getRealSidClock() + cycles;
 
 	while((current = getRealSidClock()) < targetCycles) {
-		if(cycles > 1500) {
+		if((cycles - 200) > 1000) {
 			tim.tv_sec = 0;
-			tim.tv_nsec = (long) (cycles % 1500) * 56;
+			tim.tv_nsec = (long) cycles * 100;
 			nanosleep(&tim,NULL);
-			cycles -=1500;
 		}
 	}
 	//printf("target cycles : %08x\t now : %08x\tdifference : %08x\n",targetCycles, current,current - targetCycles);
