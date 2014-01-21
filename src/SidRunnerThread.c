@@ -42,11 +42,11 @@ void setupSid() {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	realClockStart = getRealSidClock();
-	printf("Sid clock %08x\n",realClockStart);
-	sleep(1);
 	realClock = getRealSidClock();
-	printf("Sid clock %08x difference %08x\n",realClock,realClock - realClockStart);
+}
+
+void startSidThread() {
+	printf("Sid Thread Running...\n");
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
@@ -58,18 +58,14 @@ void *sidThread() {
 	long startClock;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
-//
-	printf("Sid Thread Running...\n");
 	while (1) {
-		//printf("buffer count : %08d first : %08d last : %08d\r",buffer.count,buffer.first,buffer.last);
-		if (buffer.count >= 3 ) {
+		if (buffer.count >= 3 && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
 			cycles = (int) dequeue(&buffer) << 8;
 			cycles |= (int) dequeue(&buffer);
 
-			//printf("***SIDTHREAD*** current cycle %08x : real cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,getRealSidClock() - startClock,reg,val,cycles);
 			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
 
@@ -77,7 +73,6 @@ void *sidThread() {
 				writeSid(reg,val);
 
 			} else {
-				printf("delay thread\n");
 				delay(cycles);
 			}
 
@@ -121,34 +116,18 @@ void delay(int cycles) {
 	struct timespec tim;
 	long current;
 	long targetCycles = getRealSidClock() + cycles;
-
-	//if(cycles > 200) {
-	//	tim.tv_sec = 0;
-	//	tim.tv_nsec = (long) cycles * 900;
-	//	nanosleep(&tim,NULL);
-	//}
-
-	while((current = getRealSidClock()) < targetCycles);
-
-
-
+	while((current = getRealSidClock()) < targetCycles) {
+		if(cycles > 1000) {
+			tim.tv_sec = 0;
+			tim.tv_nsec = (long) cycles * 900;
+			nanosleep(&tim,NULL);
+			cycles -=1000;
+		}
+	}
 }
-
 long getSidClock() {
 	return currentClock;
-/*	if(isPlaybackReady) {
-		if(lastClock == 0) {
-			lastClock = (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
-		}
-		currentClock =  (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff) - lastClock;
-		lastClock = currentClock;
-		return currentClock;
-	} else {
-		return lastClock;
-	}
-
-	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
-*/}
+}
 long getRealSidClock() {
 	long long int * clock;
 	clock = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
@@ -162,7 +141,7 @@ void writeSid(int reg, int val) {
 	*(gpio.addr + 10) = (unsigned long) 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256];
 	*(gpio.addr + 10) = (unsigned long) ~dataPins[val % 256] & dataPins[255];
-	for(i=0;i<100;i++);
+	pthread_yield();
 	*(gpio.addr + 7) = (unsigned long)  1 << CS;
 }
 void startSidClk(int freq) {
@@ -268,8 +247,6 @@ void init_queue(Buffer *q)
 		q->first = 0;
         q->last = BUFFER_SIZE-1;
         q->count = 0;
-        printf("CC count %d : last %d : queue %d\n",q->count,q->last,q->q[q->last]);
-
 }
 
 int enqueue(Buffer *q, unsigned char x)
