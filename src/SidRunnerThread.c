@@ -127,12 +127,12 @@ void delay(int cycles) {
 		if(current < targetCycles ) {
 			multi++;
 		}
-		if(current > targetCycles) {
+		if(current >= targetCycles) {
 			threshold++;
 		}
 	}
 
-	printf("threshold : %d\tmulti : %d" ,threshold,multi);
+	printf("threshold : %d\tmulti : %d\n" ,threshold,multi);
 }
 long getSidClock() {
 	return currentClock;
