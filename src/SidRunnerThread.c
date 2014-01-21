@@ -113,17 +113,17 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 
 }
 void delay(int cycles) {
-	struct timespec tim;
+	/*struct timespec tim;
 	int threshold = 10,multi = 1000;
 	long current;
-	long targetCycles = getRealSidClock() + cycles;
+*/	long targetCycles = (getRealSidClock() + cycles) -100;
 	//if(cycles <=1) return;
-	tim.tv_sec = 0;
+/*	tim.tv_sec = 0;
 	tim.tv_nsec = (long) (cycles * multi) - 100;
 	nanosleep(&tim,NULL);
 	//printf("Difference : %d\n" ,getRealSidClock() - targetCycles);
-
-	//while(getRealSidClock() < targetCycles);
+*/
+	while(getRealSidClock() < targetCycles);
 
 }
 long getSidClock() {
