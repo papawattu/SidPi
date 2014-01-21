@@ -46,7 +46,7 @@ void setupSid() {
 	printf("Sid clock %08x\n",realClockStart);
 	sleep(1);
 	realClock = getRealSidClock();
-	printf("Sid clock %08x difference\n",realClock,realClock - realClockStart);
+	printf("Sid clock %08x difference %08x\n",realClock,realClock - realClockStart);
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
