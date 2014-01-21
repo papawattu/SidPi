@@ -128,7 +128,7 @@ void delay(int cycles) {
 	//	nanosleep(&tim,NULL);
 	//}
 
-	while((current = getRealSidClock()) < targetCycles) if(current < targetCycles-200) pthread_yield();
+	while((current = getRealSidClock()) < targetCycles);
 
 
 
