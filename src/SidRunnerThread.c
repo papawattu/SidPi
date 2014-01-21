@@ -162,7 +162,7 @@ void writeSid(int reg, int val) {
 	*(gpio.addr + 10) = (unsigned long) 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256];
 	*(gpio.addr + 10) = (unsigned long) ~dataPins[val % 256] & dataPins[255];
-	for(i=0;i<5;i++);
+	for(i=0;i<10;i++);
 	*(gpio.addr + 7) = (unsigned long)  1 << CS;
 }
 void startSidClk(int freq) {
