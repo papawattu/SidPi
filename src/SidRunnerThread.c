@@ -116,12 +116,13 @@ void delay(int cycles) {
 	struct timespec tim;
 	long current;
 	long targetCycles = getRealSidClock() + cycles;
+
 	while((current = getRealSidClock()) < targetCycles) {
-		if(cycles > 1000) {
+		if(cycles > 500) {
 			tim.tv_sec = 0;
-			tim.tv_nsec = (long) cycles * 56;
+			tim.tv_nsec = (long) (cycles % 500) * 56;
 			nanosleep(&tim,NULL);
-			cycles -=1000;
+			cycles -=500;
 		}
 	}
 	//printf("target cycles : %08x\t now : %08x\tdifference : %08x\n",targetCycles, current,current - targetCycles);
@@ -142,7 +143,7 @@ void writeSid(int reg, int val) {
 	*(gpio.addr + 10) = (unsigned long) 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256];
 	*(gpio.addr + 10) = (unsigned long) ~dataPins[val % 256] & dataPins[255];
-	pthread_yield();
+	delay(1);
 	*(gpio.addr + 7) = (unsigned long)  1 << CS;
 }
 void startSidClk(int freq) {
