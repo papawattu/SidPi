@@ -116,7 +116,7 @@ void delay(int cycles) {
 	/*struct timespec tim;
 	int threshold = 10,multi = 1000;
 	long current;
-*/	long targetCycles = (getRealSidClock() + cycles) -100;
+*/	long targetCycles = (getRealSidClock() + cycles) ;
 	//if(cycles <=1) return;
 /*	tim.tv_sec = 0;
 	tim.tv_nsec = (long) (cycles * multi) - 100;
