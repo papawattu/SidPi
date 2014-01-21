@@ -114,7 +114,7 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 }
 void delay(int cycles) {
 	struct timespec tim;
-	int threshold = 0,multi = 1000;
+	int threshold = 100,multi = 1000;
 	long current;
 	long targetCycles = getRealSidClock() + cycles;
 
