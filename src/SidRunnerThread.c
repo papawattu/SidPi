@@ -117,7 +117,7 @@ void delay(int cycles) {
 	int threshold = 10,multi = 899;
 	long current;
 	long targetCycles = getRealSidClock() + cycles;
-	if(cycles <=1) return;
+	//if(cycles <=1) return;
 	tim.tv_sec = 0;
 	tim.tv_nsec = (long) cycles * multi;
 	nanosleep(&tim,NULL);
