@@ -17,6 +17,9 @@
 #define BLOCK_SIZE 				(4*1024)
 #define BCM_PASSWORD			0x5A000000
 #define GPIO_CLOCK_SOURCE       1
+#define TIMER_CONTROL			(0x408 >> 2)
+#define TIMER_IRQ_RAW			(0x410 >> 2)
+#define TIMER_PRE_DIV			(0x41C >> 2)
 
 static unsigned char gpioToGPFSEL [] =
 {

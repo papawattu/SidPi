@@ -24,7 +24,7 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
-long lastClock = 0,currentClock = 0;
+long lastClock = 0,currentClock = 0, realClock,realClockStart;
 
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
@@ -42,6 +42,12 @@ void setupSid() {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
+	realClockStart = getRealSidClock();
+	printf("Sid clock %08x\n",realClockStart);
+	sleep(1);
+	realClock = getRealSidClock();
+	printf("Sid clock %08x difference\n",realClock,realClock - realClockStart);
+
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 		perror("cannot create thread");
 }
@@ -49,7 +55,9 @@ void setupSid() {
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
+	long startClock;
 	init_queue(&buffer);
+	startClock = getRealSidClock();
 //
 	printf("Sid Thread Running...\n");
 	while (1) {
@@ -61,7 +69,7 @@ void *sidThread() {
 			cycles = (int) dequeue(&buffer) << 8;
 			cycles |= (int) dequeue(&buffer);
 
-			printf("***SIDTHREAD*** current cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,reg,val,cycles);
+			//printf("***SIDTHREAD*** current cycle %08x : real cycle %08x : reg : %02x : val %02x cycles %04x\n",currentClock,getRealSidClock() - startClock,reg,val,cycles);
 			currentClock +=cycles;
 			if ((unsigned char) reg != 0xff) {
 
@@ -133,6 +141,11 @@ long getSidClock() {
 
 	return (long) (*(long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET) & 0xffffffff);
 */}
+long getRealSidClock() {
+	long long int * clock;
+	clock = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	return *clock;
+}
 void writeSid(int reg, int val) {
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) ~addrPins[reg % 32] & addrPins[31];
@@ -159,6 +172,10 @@ void startSidClk(int freq) {
 
 	*(gpio_clock.addr + 29) = BCM_PASSWORD | (divi << 12) | divf;
 	*(gpio_clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE;
+
+	*(gpio_timer.addr + TIMER_CONTROL) = 0x0000280 ;
+	*(gpio_timer.addr + TIMER_PRE_DIV) = 0x00000F9 ;
+	//timerIrqRaw = gpio_timer.addr + TIMER_IRQ_RAW ;
 }
 
 void setPinsToOutput() {
