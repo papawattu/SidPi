@@ -114,10 +114,10 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 }
 void delay(int cycles) {
 	struct timespec tim;
-	int threshold = 10,multi = 999;
+	int threshold = 10,multi = 899;
 	long current;
 	long targetCycles = getRealSidClock() + cycles;
-
+	if(cycles <=1) return;
 	tim.tv_sec = 0;
 	tim.tv_nsec = (long) cycles * multi;
 	nanosleep(&tim,NULL);
