@@ -118,9 +118,9 @@ void delay(int cycles) {
 	long current;
 	long targetCycles = (getRealSidClock() + cycles) ;
 	while(getRealSidClock() < targetCycles) {
-		if(cycles > 150) {
+		if(cycles > 500) {
 			tim.tv_sec = 0;
-			tim.tv_nsec = (long) (cycles * 900) - 150;
+			tim.tv_nsec = (long) (cycles * 1000);
 			nanosleep(&tim,NULL);
 			return;
 		}
