@@ -38,5 +38,6 @@ int getBufferLast();
 int getBufferCount();
 int getBufferFull();
 int getBufferMax();
+long getRealSidClock();
 
 #endif /* SIDRUNNERTHREAD_H_ */
