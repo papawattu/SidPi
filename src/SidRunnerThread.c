@@ -121,11 +121,10 @@ void delay(int cycles) {
 	tim.tv_sec = 0;
 	tim.tv_nsec = (long) cycles * multi;
 	nanosleep(&tim,NULL);
-
-	while((current = getRealSidClock()) < targetCycles);
-
-
 	printf("Difference : %d\n" ,getRealSidClock() - targetCycles);
+
+	while(getRealSidClock() < targetCycles);
+
 }
 long getSidClock() {
 	return currentClock;
