@@ -114,6 +114,8 @@ int main(void) {
 		if (!fork()) { // this is the child process
 			setupSid();
 
+			startSidThread();
+
 			close(sockfd); // child doesn't need the listener
 			//memset(&data, 0, sizeof data);
 			rv = read(new_fd, dataRead, 16384);
@@ -234,7 +236,6 @@ void processReadBuffer(int len) {
 		}
 
 		if (isBufferFull ) {
-		//	printf("Buffer full \n");
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
