@@ -124,6 +124,7 @@ void delay(int cycles) {
 			cycles -=1000;
 		}
 	}
+	printf("target cycles : %08x\t now : %08x\r",targetCycles, current);
 }
 long getSidClock() {
 	return currentClock;
