@@ -121,7 +121,7 @@ void delay(int cycles) {
 	struct timespec tim;
 	long targetCycles = getRealSidClock() + cycles;
 
-	if(cycles > 100) {
+	if(cycles > 200) {
 		tim.tv_sec = 0;
 		tim.tv_nsec = (long) cycles * 900;
 		nanosleep(&tim,NULL);
