@@ -118,9 +118,9 @@ void delay(int cycles) {
 	long current;
 	long targetCycles = (getRealSidClock() + cycles) ;
 	while(getRealSidClock() < targetCycles) {
-		if(cycles > 80) {
+		if(cycles > 150) {
 			tim.tv_sec = 0;
-			tim.tv_nsec = (long) (cycles * 1000) - 80;
+			tim.tv_nsec = (long) (cycles * 900) - 150;
 			nanosleep(&tim,NULL);
 			return;
 		}
@@ -131,8 +131,7 @@ long getSidClock() {
 	return currentClock;
 }
 long getRealSidClock() {
-	long long int * clock;
-	clock = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
+	long long int * clock = (long long int *) ((char *) gpio_timer.addr + TIMER_OFFSET);
 	return *clock;
 }
 void writeSid(int reg, int val) {
