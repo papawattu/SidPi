@@ -125,7 +125,7 @@ void delay(int cycles) {
 	while((current = getRealSidClock()) < targetCycles);
 
 
-	//printf("Difference : %d\n" ,getRealSidClock() - targetCycles);
+	printf("Difference : %d\n" ,getRealSidClock() - targetCycles);
 }
 long getSidClock() {
 	return currentClock;
