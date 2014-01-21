@@ -119,6 +119,7 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 }
 void delay(int cycles) {
 	struct timespec tim;
+	long current;
 	long targetCycles = getRealSidClock() + cycles;
 
 	//if(cycles > 200) {
@@ -127,7 +128,7 @@ void delay(int cycles) {
 	//	nanosleep(&tim,NULL);
 	//}
 
-	while(getRealSidClock() < targetCycles) pthread_yield();
+	while((current = getRealSidClock()) < targetCycles) if(current < targetCycles-200) pthread_yield();
 
 
 
