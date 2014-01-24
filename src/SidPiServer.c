@@ -114,7 +114,7 @@ int main(void) {
 
 		if (!fork()) { // this is the child process
 			setupSid();
-			setMultiplier(multiplier);
+			setMultiplier(delayMulti);
 			setThreshold(threshold);
 
 			startSidThread();
