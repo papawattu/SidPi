@@ -57,10 +57,12 @@ void startSidThread() {
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
-	long startClock;
+	long startClock,targetCycle;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (1) {
+		targetCycle = getRealSidClock();
+
 		if (buffer.count >= 3 && playbackReady()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
@@ -69,9 +71,10 @@ void *sidThread() {
 			cycles |= (int) dequeue(&buffer);
 
 			currentClock +=cycles;
+			targetCycle += cycles;
 			if ((unsigned char) reg != 0xff) {
 
-				delay(cycles);
+				delay(targetCycle);
 				writeSid(reg,val);
 
 			} else {
@@ -114,16 +117,15 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 	//printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
 
 }
-void delay(int cycles) {
+void delay(long cycles) {
 	struct timespec tim;
 	long current;
-	long targetCycles = (getRealSidClock() + cycles) ;
-	if(cycles >= threshold) {
+/*	if(cycles >= threshold) {
 		tim.tv_sec = 0;
 		tim.tv_nsec = (long) (cycles * multiplier);
 		nanosleep(&tim,NULL);
-	}
-	while(getRealSidClock() < targetCycles);
+	} */
+	while(getRealSidClock() < cycles);
 }
 
 void setThreshold(int value) {
