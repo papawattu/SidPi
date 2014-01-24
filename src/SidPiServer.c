@@ -25,7 +25,7 @@ unsigned int dataReadPos = 0;
 long inputClock = 0;
 int latency = DEFAULT_LATENCY;
 int delayMulti = DEFAULT_DELAY_MULTI;
-int threshold = DEFAULT_THRESHOLD;
+int delayThreshold = DEFAULT_THRESHOLD;
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -115,7 +115,7 @@ int main(void) {
 		if (!fork()) { // this is the child process
 			setupSid();
 			setMultiplier(delayMulti);
-			setThreshold(threshold);
+			setThreshold(delayThreshold);
 
 			startSidThread();
 
