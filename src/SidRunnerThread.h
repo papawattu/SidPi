@@ -20,7 +20,7 @@
 const int DATA[]	= {2,3,17,27,22,10,9,11};
 const int ADDR[]	= {8,25,24,23,18};
 
-void sidDelay(int cycles);
+void sidDelay(long cycles);
 void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
 void setupSid();
 void *cmdThread();
