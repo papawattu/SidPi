@@ -61,9 +61,10 @@ void *sidThread() {
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (1) {
-		targetCycle = getRealSidClock();
+
 
 		if (buffer.count >= 3 && playbackReady()) {
+			targetCycle = getRealSidClock();
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
