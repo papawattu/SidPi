@@ -4,6 +4,9 @@
 #define DATA_WRITE_SIZE 260
 
 #define SID_PI				"SidPi"
+#define DEFAULT_LATENCY		100000
+#define DEFAULT_DELAY_MULTI	1000
+#define DEFAULT_THRESHOLD	100
 
 #define	FLUSH				0
 #define	TRY_SET_SID_COUNT	1
@@ -20,6 +23,9 @@
 #define	SET_SID_POSITION	12
 #define	SET_SID_LEVEL		13
 #define	TRY_SET_SID_MODEL	14
+#define SET_THRESHOLD		15
+#define SET_LATENCY			16
+#define SET_DELAY_MULTI		17
 
 #define OK					0
 #define	BUSY				1

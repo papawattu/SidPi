@@ -23,6 +23,9 @@ unsigned char *dataRead, *dataWrite;
 unsigned int dataWritePos = 0;
 unsigned int dataReadPos = 0;
 long inputClock = 0;
+int latency = DEFAULT_LATENCY;
+int delayMulti = DEFAULT_DELAY_MULTI;
+int threshold = DEFAULT_THRESHOLD;
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -41,8 +44,6 @@ int main(void) {
 
 	dataRead = malloc(DATA_READ_SIZE);
 	dataWrite = malloc(DATA_WRITE_SIZE);
-
-	//setupSid();
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -113,14 +114,18 @@ int main(void) {
 
 		if (!fork()) { // this is the child process
 			setupSid();
+			setMultiplier(multiplier);
+			setThreshold(threshold);
 
 			startSidThread();
 
 			close(sockfd); // child doesn't need the listener
-			//memset(&data, 0, sizeof data);
+
 			rv = read(new_fd, dataRead, 16384);
+
 			while (rv > -1) {
 				if (rv > 0) {
+
 					processReadBuffer(rv);
 
 					if (send(new_fd, dataWrite, dataWritePos, 0) == -1)
@@ -156,8 +161,8 @@ void processReadBuffer(int len) {
 	dataWritePos = 0;
 
 	long clientTimeDifference = inputClock - getSidClock();
-	int isBufferFull = (clientTimeDifference > 100000?1:0);
-	int isBufferHalfFull = (clientTimeDifference > 100000 / 2?1:0);
+	int isBufferFull = (clientTimeDifference > latency?1:0);
+	int isBufferHalfFull = (clientTimeDifference > latency / 2?1:0);
 
 	//printf("input clock : %d\n",inputClock);
 	//printf("input sid clock : %d\n",getSidClock());
@@ -329,7 +334,27 @@ void processReadBuffer(int len) {
 
 		dataWrite[dataWritePos++] = OK;
 		break;
-
+	case SET_DELAY_MULTI:
+		if (dataLength != 2) {
+			invalidCommandException("SET_SID_LEVEL needs 1 byte");
+		}
+		setMultiplier((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
+		dataWrite[dataWritePos++] = OK;
+		break;
+	case SET_LATENCY:
+			if (dataLength != 2) {
+				invalidCommandException("SET_SID_LEVEL needs 1 byte");
+			}
+			latency = (dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5];
+			dataWrite[dataWritePos++] = OK;
+			break;
+	case SET_THRESHOLD:
+			if (dataLength != 2) {
+				invalidCommandException("SET_SID_LEVEL needs 1 byte");
+			}
+			setThreshold((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
+			dataWrite[dataWritePos++] = OK;
+			break;
 	default:
 		invalidCommandException("Unsupported command");
 	}

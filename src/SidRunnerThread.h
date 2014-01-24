@@ -23,7 +23,8 @@ const int ADDR[]	= {8,25,24,23,18};
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
 void setupSid();
-void *sidThread() ;
+void *cmdThread();
+void *sidThread();
 void delay(int cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);
@@ -39,5 +40,7 @@ int getBufferCount();
 int getBufferFull();
 int getBufferMax();
 long getRealSidClock();
+void setThreshold(int value);
+void setMultiplier(int value);
 
 #endif /* SIDRUNNERTHREAD_H_ */

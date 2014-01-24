@@ -10,6 +10,7 @@
 #include "rpi.h"
 
 pthread_t sidThreadHandle;
+pthread_t cmdThreadHandle;
 
 typedef struct buffer {
         unsigned char q[BUFFER_SIZE];		/* body of queue */
@@ -25,6 +26,7 @@ unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
 long lastClock = 0,currentClock = 0, realClock,realClockStart;
+int threshold = 10,multiplier = 1000;
 
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
@@ -49,9 +51,27 @@ void startSidThread() {
 	printf("Sid Thread Running...\n");
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
-		perror("cannot create thread");
+		perror("cannot create Sid thread");
 }
 
+void startCmdThread() {
+	printf("Command Thread Running...\n");
+
+	if (pthread_create(&cmdThreadHandle, NULL, cmdThread, NULL) == -1)
+		perror("cannot create Cmd thread");
+
+}
+void *cmdThread() {
+    char c;
+    do  {
+    	printf("T <new threshold>\nM <new Multiplier\n");
+    	printf("Threshold %d Multiple %d\n",threshold,multi);
+        printf("Enter command => ");
+        c = getch();
+        handleCmd(c);
+    } while (c != 'q');
+
+}
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
@@ -114,19 +134,24 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 }
 void delay(int cycles) {
 	struct timespec tim;
-	int threshold = 10,multi = 1000;
 	long current;
 	long targetCycles = (getRealSidClock() + cycles) ;
-	while(getRealSidClock() < targetCycles) {
-		if(cycles > 500) {
-			tim.tv_sec = 0;
-			tim.tv_nsec = (long) (cycles * 1000);
-			nanosleep(&tim,NULL);
-			return;
-		}
+	if(cycles >= threshold) {
+		tim.tv_sec = 0;
+		tim.tv_nsec = (long) (cycles * multiplier);
+		nanosleep(&tim,NULL);
 	}
-
+	while(getRealSidClock() < targetCycles);
 }
+
+void setThreshold(int value) {
+	threshold = value;
+}
+
+void setMultiplier(int value) {
+	multiplier = value;
+}
+
 long getSidClock() {
 	return currentClock;
 }
