@@ -5,7 +5,7 @@
 
 #define SID_PI				"SidPi"
 #define DEFAULT_LATENCY		100000
-#define DEFAULT_DELAY_MULTI	500
+#define DEFAULT_DELAY_MULTI	400
 #define DEFAULT_THRESHOLD	1
 
 #define	FLUSH				0
