@@ -54,24 +54,6 @@ void startSidThread() {
 		perror("cannot create Sid thread");
 }
 
-void startCmdThread() {
-	printf("Command Thread Running...\n");
-
-	if (pthread_create(&cmdThreadHandle, NULL, cmdThread, NULL) == -1)
-		perror("cannot create Cmd thread");
-
-}
-void *cmdThread() {
-    char c;
-    do  {
-    	printf("T <new threshold>\nM <new Multiplier\n");
-    	printf("Threshold %d Multiple %d\n",threshold,multi);
-        printf("Enter command => ");
-        c = getch();
-        handleCmd(c);
-    } while (c != 'q');
-
-}
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
