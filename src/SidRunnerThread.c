@@ -134,7 +134,7 @@ void delay(long howLong) {
 	  /**/
 	   if (howLong ==   0)
 	    return ;
-	  else if (howLong  < 100) {
+	  else if (howLong  < 600) {
 		  gettimeofday (&tNow, NULL) ;
 		  	tLong.tv_sec  = howLong / 1000000 ;
 		  	tLong.tv_usec = howLong % 1000000 ;
