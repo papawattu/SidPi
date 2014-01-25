@@ -25,7 +25,7 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
-long lastClock = 0,currentClock = 0, realClock,realClockStart,targetCycle;
+long lastClock = 0,currentClock = 0, realClock,realClockStart,targetCycles;
 int threshold = 10,multiplier = 1000;
 
 void init_queue(Buffer *q);
