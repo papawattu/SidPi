@@ -25,7 +25,7 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 int isPlaybackReady = 0;
-long lastClock = 0,currentClock = 0, realClock,realClockStart;
+long lastClock = 0,currentClock = 0, realClock,realClockStart,targetCycle;
 int threshold = 10,multiplier = 1000;
 
 void init_queue(Buffer *q);
@@ -57,14 +57,14 @@ void startSidThread() {
 void *sidThread() {
 	unsigned char reg,val;
 	int cycles;
-	long startClock,targetCycle;
+	long startClock;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (1) {
 
 
 		if (buffer.count >= 3 && playbackReady()) {
-			targetCycle = getRealSidClock();
+			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
@@ -72,10 +72,10 @@ void *sidThread() {
 			cycles |= (int) dequeue(&buffer);
 
 			currentClock +=cycles;
-			targetCycle += cycles;
+			targetCycles += cycles;
 			if ((unsigned char) reg != 0xff) {
 
-				delay(targetCycle);
+				delay(cycles);
 				writeSid(reg,val);
 
 			} else {
@@ -121,12 +121,12 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 void delay(long cycles) {
 	struct timespec tim;
 	long current;
-/*	if(cycles >= threshold) {
+	if(cycles >= threshold) {
 		tim.tv_sec = 0;
 		tim.tv_nsec = (long) (cycles * multiplier);
 		nanosleep(&tim,NULL);
-	} */
-	while(getRealSidClock() < cycles);
+	}
+	while(getRealSidClock() < targetCycles);
 }
 
 void setThreshold(int value) {

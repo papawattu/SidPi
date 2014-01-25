@@ -115,7 +115,6 @@ int main(void) {
 		if (!fork()) { // this is the child process
 			setupSid();
 			setMultiplier(delayMulti);
-			setThreshold(delayThreshold);
 
 			startSidThread();
 
@@ -342,19 +341,19 @@ void processReadBuffer(int len) {
 		dataWrite[dataWritePos++] = OK;
 		break;
 	case SET_LATENCY:
-			if (dataLength != 2) {
-				invalidCommandException("SET_SID_LEVEL needs 1 byte");
-			}
-			latency = (dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5];
-			dataWrite[dataWritePos++] = OK;
-			break;
+		if (dataLength != 2) {
+			invalidCommandException("SET_SID_LEVEL needs 1 byte");
+		}
+		latency = (dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5];
+		dataWrite[dataWritePos++] = OK;
+		break;
 	case SET_THRESHOLD:
-			if (dataLength != 2) {
-				invalidCommandException("SET_SID_LEVEL needs 1 byte");
-			}
-			setThreshold((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
-			dataWrite[dataWritePos++] = OK;
-			break;
+		if (dataLength != 2) {
+			invalidCommandException("SET_SID_LEVEL needs 1 byte");
+		}
+		setThreshold((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
+		dataWrite[dataWritePos++] = OK;
+		break;
 	default:
 		invalidCommandException("Unsupported command");
 	}
