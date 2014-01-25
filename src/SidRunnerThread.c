@@ -119,7 +119,7 @@ void sidWrite(int reg, int value, int cycleHigh,int cycleLow) {
 	//printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
 
 }
-void delay(long cycles) {
+void delay(long howLong) {
 /*	struct timespec tim;
 	long current;
 	if(cycles >= threshold) {
@@ -129,14 +129,26 @@ void delay(long cycles) {
 	}
 	*/
 	//while(getRealSidClock() < targetCycles);
-	struct timeval tNow, tLong, tEnd ;
-	gettimeofday (&tNow, NULL) ;
-	tLong.tv_sec  = cycles / 1000000 ;
-	tLong.tv_usec = cycles % 1000000 ;
-	timeradd (&tNow, &tLong, &tEnd) ;
+	 struct timespec sleeper ;
+	 struct timeval tNow, tLong, tEnd ;
+	  /**/
+	   if (howLong ==   0)
+	    return ;
+	  else if (howLong  < 100) {
+		  gettimeofday (&tNow, NULL) ;
+		  	tLong.tv_sec  = howLong / 1000000 ;
+		  	tLong.tv_usec = howLong % 1000000 ;
+		  	timeradd (&tNow, &tLong, &tEnd) ;
 
-	while (timercmp (&tNow, &tEnd, <))
-		gettimeofday (&tNow, NULL) ;
+		  	while (timercmp (&tNow, &tEnd, <))
+		  		gettimeofday (&tNow, NULL) ;
+
+	  	  } else {
+	  		  sleeper.tv_sec  = 0 ;
+	  		  sleeper.tv_nsec = (long)(howLong * 1000) ;
+	  		  nanosleep (&sleeper, NULL) ;
+	  	  }
+
 }
 
 void setThreshold(int value) {
