@@ -52,12 +52,12 @@ void setupSid() {
 void startSidThread() {
 	struct sched_param params;
 	int ret;
-	params.sched_priority = sched_get_priority_max(SCHED_FIFO);
+	params.sched_priority = sched_get_priority_max(SCHED_RR);
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 			perror("cannot create Sid thread");
 
-	ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
+	ret = pthread_setschedparam(sidThreadHandle, SCHED_RR, &params);
 	if (ret != 0)
 	    // Print the error
 	    perror("Unsuccessful in setting thread realtime prio");
