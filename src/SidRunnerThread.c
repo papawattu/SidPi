@@ -52,15 +52,15 @@ void setupSid() {
 void startSidThread() {
 	struct sched_param params;
 	int ret;
-	//params.sched_priority = sched_get_priority_max(SCHED_FIFO) / 2;
+	params.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-	//if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
-	//		perror("cannot create Sid thread");
+	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
+			perror("cannot create Sid thread");
 
-	//ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
-	//if (ret != 0)
+	ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
+	if (ret != 0)
 	    // Print the error
-	 //   perror("Unsuccessful in setting thread realtime prio");
+	    perror("Unsuccessful in setting thread realtime prio");
 
 	printf("Sid Thread Running...\n");
 
@@ -147,7 +147,8 @@ void delay(long howLong) {
 	  /**/
 	   if (howLong ==   0)
 	    return ;
-	  else if (howLong  < 1024) {
+	  else
+		/*  if (howLong  < 1024) {
 		  gettimeofday (&tNow, NULL) ;
 		  //clock_gettime(CLOCK_REALTIME,&tNow);
 		  	tLong.tv_sec  = howLong / 1000000 ;
@@ -159,10 +160,10 @@ void delay(long howLong) {
 		  		//clock_gettime(CLOCK_REALTIME,&tNow);
 
 	  	  } else {
-	  		  sleeper.tv_sec  = 0 ;
+	  	*/	  sleeper.tv_sec  = 0 ;
 	  		  sleeper.tv_nsec = (long)(howLong * 1000) ;
 	  		  nanosleep (&sleeper, NULL) ;
-	  	  }
+	  	 // }
 
 }
 
