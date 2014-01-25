@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <time.h>
+#include <sys/time.h>
 #include "SidRunnerThread.h"
 #include "rpi.h"
 
