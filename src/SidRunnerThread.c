@@ -149,20 +149,24 @@ void delay(long howLong) {
 	    return ;
 	  else
 		if (howLong  < 100) {
-		  gettimeofday (&tNow, NULL) ;
-		  tLong.tv_sec  = howLong / 1000000 ;
-		  tLong.tv_usec = howLong % 1000000 ;
-		  timeradd (&tNow, &tLong, &tEnd) ;
 
-		  	while (timercmp (&tNow, &tEnd, <)) {
-		  		gettimeofday (&tNow, NULL) ;
-		  	}
 
 	  	  } else {
 	  		  sleeper.tv_sec  = 0 ;
 	  		  sleeper.tv_nsec = (long)(howLong * 1000) ;
 	  		  nanosleep (&sleeper, NULL) ;
 	  	  }
+
+		 gettimeofday (&tNow, NULL) ;
+		  tLong.tv_sec  = howLong / 1000000 ;
+		  tLong.tv_usec = howLong % 1000000 ;
+		  timeradd (&tNow, &tLong, &tEnd) ;
+
+	   while (timercmp (&tNow, &tEnd, <)) {
+	   		  		gettimeofday (&tNow, NULL) ;
+	   		  	}
+
+
 }
 
 void setThreshold(int value) {
