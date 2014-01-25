@@ -148,13 +148,15 @@ void delay(long howLong) {
 	   if (howLong ==   0)
 	    return ;
 	  else if (howLong  < 1024) {
-		  gettimeofday (&tNow, NULL) ;
+		 // gettimeofday (&tNow, NULL) ;
+		  clock_gettime(CLOCK_REALTIME,&tNow);
 		  	tLong.tv_sec  = howLong / 1000000 ;
 		  	tLong.tv_usec = howLong % 1000000 ;
 		  	timeradd (&tNow, &tLong, &tEnd) ;
 
 		  	while (timercmp (&tNow, &tEnd, <))
-		  		gettimeofday (&tNow, NULL) ;
+		  		//gettimeofday (&tNow, NULL) ;
+		  		clock_gettime(CLOCK_REALTIME,&tNow);
 
 	  	  } else {
 	  		  sleeper.tv_sec  = 0 ;
