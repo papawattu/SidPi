@@ -52,7 +52,7 @@ void setupSid() {
 void startSidThread() {
 	struct sched_param params;
 	int ret;
-	params.sched_priority = sched_get_priority_max(SCHED_FIFO) * 0.4;
+	params.sched_priority = sched_get_priority_max(SCHED_FIFO) ;
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 			perror("cannot create Sid thread");
@@ -148,26 +148,21 @@ void delay(long howLong) {
 	   if (howLong ==   0)
 	    return ;
 	  else
-		//  if (howLong  < 1024) {
+		if (howLong  < 100) {
 		  gettimeofday (&tNow, NULL) ;
-		  //clock_gettime(CLOCK_REALTIME,&tNow);
-		  	tLong.tv_sec  = howLong / 1000000 ;
-		  	tLong.tv_usec = howLong % 1000000 ;
-		  	timeradd (&tNow, &tLong, &tEnd) ;
+		  tLong.tv_sec  = howLong / 1000000 ;
+		  tLong.tv_usec = howLong % 1000000 ;
+		  timeradd (&tNow, &tLong, &tEnd) ;
 
 		  	while (timercmp (&tNow, &tEnd, <)) {
-
-		  		pthread_yield();
 		  		gettimeofday (&tNow, NULL) ;
 		  	}
-		  		//clock_gettime(CLOCK_REALTIME,&tNow);
 
-	  	 // } else {
-	  	/*	  sleeper.tv_sec  = 0 ;
+	  	  } else {
+	  		  sleeper.tv_sec  = 0 ;
 	  		  sleeper.tv_nsec = (long)(howLong * 1000) ;
 	  		  nanosleep (&sleeper, NULL) ;
-	  	 // }
-*/
+	  	  }
 }
 
 void setThreshold(int value) {
