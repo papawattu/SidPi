@@ -57,10 +57,10 @@ void startSidThread() {
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
 			perror("cannot create Sid thread");
 
-	ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
-	if (ret != 0)
+	//ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
+	//if (ret != 0)
 	    // Print the error
-	    perror("Unsuccessful in setting thread realtime prio");
+	 //   perror("Unsuccessful in setting thread realtime prio");
 
 	printf("Sid Thread Running...\n");
 
