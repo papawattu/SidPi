@@ -7,6 +7,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sched.h>
 #include "SidRunnerThread.h"
 #include "rpi.h"
 
@@ -49,6 +50,18 @@ void setupSid() {
 }
 
 void startSidThread() {
+	struct sched_param params;
+	int ret;
+	params.sched_priority = sched_get_priority_max(SCHED_FIFO);
+
+	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
+			perror("cannot create Sid thread");
+
+	ret = pthread_setschedparam(sidThreadHandle, SCHED_FIFO, &params);
+	if (ret != 0)
+	    // Print the error
+	    perror("Unsuccessful in setting thread realtime prio");
+
 	printf("Sid Thread Running...\n");
 
 	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
