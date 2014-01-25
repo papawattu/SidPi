@@ -148,7 +148,7 @@ void delay(long howLong) {
 	   if (howLong ==   0)
 	    return ;
 	  else
-		/*  if (howLong  < 1024) {
+		//  if (howLong  < 1024) {
 		  gettimeofday (&tNow, NULL) ;
 		  //clock_gettime(CLOCK_REALTIME,&tNow);
 		  	tLong.tv_sec  = howLong / 1000000 ;
@@ -159,12 +159,12 @@ void delay(long howLong) {
 		  		gettimeofday (&tNow, NULL) ;
 		  		//clock_gettime(CLOCK_REALTIME,&tNow);
 
-	  	  } else {
-	  	*/	  sleeper.tv_sec  = 0 ;
+	  	 // } else {
+	  	/*	  sleeper.tv_sec  = 0 ;
 	  		  sleeper.tv_nsec = (long)(howLong * 1000) ;
 	  		  nanosleep (&sleeper, NULL) ;
 	  	 // }
-
+*/
 }
 
 void setThreshold(int value) {
