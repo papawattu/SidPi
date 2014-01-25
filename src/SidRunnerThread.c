@@ -126,7 +126,7 @@ void delay(long cycles) {
 		tim.tv_nsec = (long) (cycles * multiplier);
 		nanosleep(&tim,NULL);
 	}
-	while(getRealSidClock() < targetCycles);
+	//while(getRealSidClock() < targetCycles);
 }
 
 void setThreshold(int value) {
