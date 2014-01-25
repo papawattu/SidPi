@@ -149,12 +149,12 @@ void delay(long howLong) {
 	  /**/
 	   if (howLong ==   0)
 	    return ;
-	   gettimeofday (&tNow, NULL) ;
-	   tLong.tv_sec  = howLong / 1000000 ;
-	   		  tLong.tv_usec = howLong % 1000000 ;
-	   		  timeradd (&tNow, &tLong, &tEnd) ;
 
-	   if (howLong  < 1000) {
+	   if (howLong  < 100) {
+		   gettimeofday (&tNow, NULL) ;
+		   	   tLong.tv_sec  = howLong / 1000000 ;
+		   	   		  tLong.tv_usec = howLong % 1000000 ;
+		   	   		  timeradd (&tNow, &tLong, &tEnd) ;
 
 
 	  	  } else {
