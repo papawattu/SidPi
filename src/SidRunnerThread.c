@@ -155,8 +155,11 @@ void delay(long howLong) {
 		  	tLong.tv_usec = howLong % 1000000 ;
 		  	timeradd (&tNow, &tLong, &tEnd) ;
 
-		  	while (timercmp (&tNow, &tEnd, <))
+		  	while (timercmp (&tNow, &tEnd, <)) {
+
+		  		pthread_yield();
 		  		gettimeofday (&tNow, NULL) ;
+		  	}
 		  		//clock_gettime(CLOCK_REALTIME,&tNow);
 
 	  	 // } else {
