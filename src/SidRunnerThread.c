@@ -345,5 +345,7 @@ int getBufferMax() {
 }
 void flush() {
 	init_queue(&buffer);
+	currentClock = 0;
+	stopPlayback();
 }
 

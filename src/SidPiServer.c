@@ -117,7 +117,7 @@ int main(void) {
 		//}
 		//child = fork();
 
-		setpriority(PRIO_PROCESS,child,PRIO_MIN);
+		setpriority(PRIO_PROCESS,0,PRIO_MIN);
 
 		if (1) { // this is the child process
 
@@ -182,6 +182,7 @@ void processReadBuffer(int len) {
 			invalidCommandException("FLUSH needs no data");
 		}
 		flush();
+		inputClock = 0;
 		dataWrite[dataWritePos++] = OK;
 		break;
 
