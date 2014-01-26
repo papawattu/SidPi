@@ -112,14 +112,14 @@ int main(void) {
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
 
-		if(child != 0) {
-			kill(child,SIGTERM);
-		}
-		child = fork();
+		//if(child != 0) {
+		//	kill(child,SIGTERM);
+		//}
+		//child = fork();
 
 		setpriority(PRIO_PROCESS,child,PRIO_MIN);
 
-		if (!child) { // this is the child process
+		if (1) { // this is the child process
 
 			setMultiplier(delayMulti);
 			setupSid();
