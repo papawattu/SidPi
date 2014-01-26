@@ -112,15 +112,10 @@ int main(void) {
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
 
-		setupSid();
-
-		startSidThread();
-
 		if (!fork()) { // this is the child process
 
 			setMultiplier(delayMulti);
-
-			//startSidThread();
+			setupSid();
 
 			close(sockfd); // child doesn't need the listener
 

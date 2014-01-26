@@ -27,6 +27,7 @@ unsigned long addrPins[32];
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
+int sidSetup = 0;
 
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
@@ -36,6 +37,8 @@ void print_queue(Buffer *q);
 
 void setupSid() {
 
+	if(sidSetup) return;
+
 	mmapRPIDevices();
 
 	generatePinTables();
@@ -43,6 +46,8 @@ void setupSid() {
 	setPinsToOutput();
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
+
+	startSidThread();
 
 }
 
