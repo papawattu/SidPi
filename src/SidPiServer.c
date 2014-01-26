@@ -45,10 +45,6 @@ int main(void) {
 	dataRead = malloc(DATA_READ_SIZE);
 	dataWrite = malloc(DATA_WRITE_SIZE);
 
-	setupSid();
-
-	startSidThread();
-
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
@@ -115,6 +111,10 @@ int main(void) {
 		inet_ntop(their_addr.ss_family,
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
+
+		setupSid();
+
+		startSidThread();
 
 		if (!fork()) { // this is the child process
 
