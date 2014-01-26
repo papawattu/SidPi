@@ -113,7 +113,7 @@ int main(void) {
 		printf("server: got connection from %s\n", s);
 
 		if(child != 0) {
-			kill(child);
+			kill(child,SIGTERM);
 		}
 		child = fork();
 

@@ -46,3 +46,4 @@ void signal_callback_handler(int signum);
 void processReadBuffer(int len);
 void sigchld_handler(int s);
 void *get_in_addr(struct sockaddr *sa);
+void startSidThread();
