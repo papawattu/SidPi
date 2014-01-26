@@ -38,7 +38,7 @@ int main(void) {
 	int rv;
 	unsigned char buffer[1024];
 	int iret1;
-	int i;
+	int i,child = 0;
 
 	signal(SIGINT, signal_callback_handler);
 
@@ -112,7 +112,12 @@ int main(void) {
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
 
-		if (!fork()) { // this is the child process
+		if(child != 0) {
+			kill(child);
+		}
+		child = fork();
+
+		if (!child) { // this is the child process
 
 			setMultiplier(delayMulti);
 			setupSid();
