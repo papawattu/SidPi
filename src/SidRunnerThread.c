@@ -49,6 +49,8 @@ void setupSid() {
 
 	startSidThread();
 
+	sidSetup = 1;
+
 }
 
 void startSidThread() {
