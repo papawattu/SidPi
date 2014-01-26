@@ -117,6 +117,8 @@ int main(void) {
 		}
 		child = fork();
 
+		setpriority(child,-20);
+
 		if (!child) { // this is the child process
 
 			setMultiplier(delayMulti);
