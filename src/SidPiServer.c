@@ -117,7 +117,7 @@ int main(void) {
 		}
 		child = fork();
 
-		setpriority(PRIO_PROCESS,child,PRIO_MIN;
+		setpriority(PRIO_PROCESS,child,PRIO_MIN);
 
 		if (!child) { // this is the child process
 

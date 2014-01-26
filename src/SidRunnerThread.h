@@ -42,5 +42,6 @@ int getBufferMax();
 long getRealSidClock();
 void setThreshold(int value);
 void setMultiplier(int value);
+void startSidThread();
 
 #endif /* SIDRUNNERTHREAD_H_ */
