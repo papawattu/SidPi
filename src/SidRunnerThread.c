@@ -106,7 +106,6 @@ void stopPlayback() {
 	isPlaybackReady = 0;
 }
 void sidDelay(int cycles) {
-	//printf("siddelay : cycles %d\n ",cycles);
 
 	enqueue(&buffer, (unsigned char) 0xff);
 	enqueue(&buffer, (unsigned char) 0);
@@ -115,13 +114,10 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
-	//printf("reg = %02x\t: val = %02x\t: cycles = %04x\n",reg,value,cycles);
 	enqueue(&buffer, (unsigned char) reg & 0xff);
 	enqueue(&buffer, (unsigned char) value & 0xff);
 	enqueue(&buffer, (unsigned char) cycleHigh & 0xff);
 	enqueue(&buffer, (unsigned char) cycleLow & 0xff);
-
-	//printf("cycles1 = %02x\tcycles2 = %02x\n",(cycles & 0xff00) >> 8, cycles & 0xff);
 
 }
 void delay(long howLong) {
@@ -194,7 +190,6 @@ void startSidClk(int freq) {
 
 	*(gpio_timer.addr + TIMER_CONTROL) = 0x0000280;
 	*(gpio_timer.addr + TIMER_PRE_DIV) = 0x00000F9;
-	//timerIrqRaw = gpio_timer.addr + TIMER_IRQ_RAW ;
 }
 
 void setPinsToOutput() {
@@ -280,7 +275,6 @@ void init_queue(Buffer *q) {
 }
 
 int enqueue(Buffer *q, unsigned char x) {
-	//printf("AA count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
 	if (q->count >= BUFFER_SIZE) {
 		printf("Warning: queue overflow enqueue x=%d\n", x);
 		return -1;
@@ -288,7 +282,6 @@ int enqueue(Buffer *q, unsigned char x) {
 		q->last = (q->last + 1) % BUFFER_SIZE;
 		q->q[q->last] = x;
 		q->count = q->count + 1;
-		// printf("BB count %d : last %d : queue %d : x %d\n",q->count,q->last,q->q[q->last],x);
 	}
 	return 0;
 }

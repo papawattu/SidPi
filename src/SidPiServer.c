@@ -218,19 +218,19 @@ void processReadBuffer(int len) {
 			invalidCommandException(
 					"TRY_DELAY needs 2 bytes (16-bit delay value)");
 		}
-		printf("delay cmd\n");
-/*
+	//	printf("delay cmd\n");
+
 		if (isBufferHalfFull) {
 			startPlayback();
 		}
 
-		if (isBufferFull || getBufferFull() ) {
+		if (isBufferFull) {
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
-		handleDelayPacket(sidNumber, cycles); */
+		handleDelayPacket(sidNumber, cycles);
 		dataWrite[dataWritePos++] = OK;
 
 		break;
@@ -340,27 +340,6 @@ void processReadBuffer(int len) {
 
 		dataWrite[dataWritePos++] = OK;
 		break;
-	case SET_DELAY_MULTI:
-		if (dataLength != 2) {
-			invalidCommandException("SET_SID_LEVEL needs 1 byte");
-		}
-		setMultiplier((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
-		dataWrite[dataWritePos++] = OK;
-		break;
-	case SET_LATENCY:
-		if (dataLength != 2) {
-			invalidCommandException("SET_SID_LEVEL needs 1 byte");
-		}
-		latency = (dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5];
-		dataWrite[dataWritePos++] = OK;
-		break;
-	case SET_THRESHOLD:
-		if (dataLength != 2) {
-			invalidCommandException("SET_SID_LEVEL needs 1 byte");
-		}
-		setThreshold((dataRead[dataReadPos + 4] << 8) | dataRead[dataReadPos + 5]);
-		dataWrite[dataWritePos++] = OK;
-		break;
 	default:
 		invalidCommandException("Unsupported command");
 	}
@@ -382,14 +361,11 @@ void handleWritePacket(int dataLength) {
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
 		sidWrite(reg,value,(dataRead[4 + i] & 0xff),dataRead[5 + i]);
-		//printf("***MAIN THREAD*** : Current Cycle %08x\tReg %02x\tValue %02x\tCycles %04x\n",inputClock,reg,value,writeCycles);
 
 	}
 	return;
 }
 void handleDelayPacket(int sidNumber, int cycles) {
-	//printf("cmd delay %d",cycles);
-	if(getBufferCount() >= getBufferMax()) return;
 
 	inputClock += cycles;
 	sidDelay(cycles);
