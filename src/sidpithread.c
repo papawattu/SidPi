@@ -237,7 +237,7 @@ void setPinsToOutput(void) {
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
 	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-					| (1 << shift),GPIO_BASE + fSel);usleep(10);
+					| (1 << shift),GPIO_BASE + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
 	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
