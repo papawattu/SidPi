@@ -8,7 +8,7 @@
 #include <linux/fs.h>
 #include <linux/init.h> 
 //#include <asm/uaccess.h>	/* for put_user */
-#include "SidRunnerThread.h"
+#include "sidpithread.h"
 
 /*  
  *  Prototypes - this would normally go in a .h file

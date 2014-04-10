@@ -11,7 +11,7 @@
 static struct task_struct *sidThreadHandle;
 
 typedef struct buffer {
-	unsigned char q[BUFFER_SIZE]; /* body of queue */
+	unsigned char q[SID_BUFFER_SIZE]; /* body of queue */
 	unsigned int first; /* position of first element */
 	unsigned int last; /* position of last element */
 	unsigned int count; /* number of queue elements */
