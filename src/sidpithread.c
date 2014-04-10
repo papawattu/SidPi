@@ -19,6 +19,28 @@ typedef struct buffer {
 
 Buffer buffer;
 
+static unsigned char gpioToGPFSEL [] =
+{
+  0,0,0,0,0,0,0,0,0,0,
+  1,1,1,1,1,1,1,1,1,1,
+  2,2,2,2,2,2,2,2,2,2,
+  3,3,3,3,3,3,3,3,3,3,
+  4,4,4,4,4,4,4,4,4,4,
+  5,5,5,5,5,5,5,5,5,5,
+} ;
+
+
+// gpioToShift
+//        Define the shift up for the 3 bits per pin in each GPFSEL port
+
+static unsigned char gpioToShift [] =
+{
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+  0,3,6,9,12,15,18,21,24,27,
+} ;
 
 const int DATA[] = {2,3,17,27,22,10,9,11};
 const int ADDR[] = {8,25,24,23,18};
@@ -40,8 +62,6 @@ void print_queue(Buffer *q);
 void setupSid(void) {
 
 	if(sidSetup) return;
-
-	mmapRPIDevices();
 
 	generatePinTables();
 
@@ -163,7 +183,7 @@ long getSidClock(void) {
 long getRealSidClock(void) {
 	//long long int * clock = (long long int *) ((char *) gpio_timer.addr
 	//		+ TIMER_OFFSET);
-	return 0 //*clock;
+	return 0; //*clock;
 }
 void writeSid(int reg, int val) {
 	int i;
@@ -203,33 +223,36 @@ void setPinsToOutput(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift))
-				| (1 << shift);
+		*(gpio.addr + fSel) = ;
+		writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+				| (1 << shift),GPIO_BASE + fSel);
 //		usleep(10);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift))
-				| (1 << shift);
+		writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+						| (1 << shift),GPIO_BASE + fSel);
 //		usleep(10);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
-//	usleep(10);
+	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+					| (1 << shift),GPIO_BASE + fSel);usleep(10);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
+	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+					| (1 << shift),GPIO_BASE + fSel);
 //	usleep(10);
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (1 << shift);
+	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+					| (1 << shift),GPIO_BASE + fSel);
 //	usleep(10);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (4 << shift);
-//	usleep(10);
+	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
+					| (1 << shift),GPIO_BASE + fSel);//	usleep(10);
 }
 
 void generatePinTables(void) {
@@ -253,23 +276,6 @@ void generatePinTables(void) {
 		addrPins[i] |= (unsigned long) ((i & 8) >> 3) << ADDR[3];
 		addrPins[i] |= (unsigned long) ((i & 16) >> 4) << ADDR[4];
 
-	}
-}
-void mmapRPIDevices(void) {
-	if (map_peripheral(&gpio) == -1) {
-		printk( KERN_INFO
-				"Failed to map the physical GPIO registers into the virtual memory space.\n");
-		return;
-	}
-	if (map_peripheral(&gpio_clock) == -1) {
-		printk( KERN_INFO
-				"Failed to map the physical Clock into the virtual memory space.\n");
-		return;
-	}
-	if (map_peripheral(&gpio_timer) == -1) {
-		printk( KERN_INFO
-				"Failed to map the physical Timer into the virtual memory space.\n");
-		return;
 	}
 }
 void init_queue(Buffer *q) {
