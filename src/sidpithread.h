@@ -8,6 +8,19 @@
 #ifndef __SIDRUNNERTHREAD_H_
 #define __SIDRUNNERTHREAD_H_
 
+#define BCM2708_PERI_BASE       0x20000000
+#define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
+#define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
+#define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x00101000)
+#define TIMER_OFFSET 			(4)
+#define BLOCK_SIZE 				(4*1024)
+#define BCM_PASSWORD			0x5A000000
+#define GPIO_CLOCK_SOURCE       1
+#define TIMER_CONTROL			(0x408 >> 2)
+#define TIMER_IRQ_RAW			(0x410 >> 2)
+#define TIMER_PRE_DIV			(0x41C >> 2)
+
+
 #define CS 	7
 #define RW 	0
 #define RES 0

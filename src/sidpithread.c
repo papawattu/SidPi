@@ -6,8 +6,7 @@
 #include <linux/ioctl.h>
 #include <linux/io.h>
 #include <mach/platform.h>
-#include "SidRunnerThread.h"
-#include "rpi.h"
+#include "sidpithread.h"
 
 static struct task_struct *sidThreadHandle;
 
@@ -185,16 +184,16 @@ void startSidClk(int freq) {
 
 	if (divi > 4095)
 		divi = 4095;
+	writel(BCM_PASSWORD | GPIO_CLOCK_SOURCE, __io_address(GPIO_CLOCK + 28));
 
-	*(gpio_clock.addr + 28) = BCM_PASSWORD | GPIO_CLOCK_SOURCE;
-	while ((*(gpio_clock.addr + 28) & 0x80) != 0)
+	while ((readl(GPIO_CLOCK + 28) & 0x80) != 0)
 		;
 
-	*(gpio_clock.addr + 29) = BCM_PASSWORD | (divi << 12) | divf;
-	*(gpio_clock.addr + 28) = BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE;
+	writel(BCM_PASSWORD | (divi << 12) | divf,GPIO_CLOCK + 29);
+	writel(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,GPIO_CLOCK + 28);
 
-	*(gpio_timer.addr + TIMER_CONTROL) = 0x0000280;
-	*(gpio_timer.addr + TIMER_PRE_DIV) = 0x00000F9;
+	writel(0x0000280,gpio_timer.addr + TIMER_CONTROL);
+	writel(0x00000F9,gpio_timer.addr + TIMER_PRE_DIV);
 }
 
 void setPinsToOutput(void) {

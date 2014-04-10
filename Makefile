@@ -1,6 +1,6 @@
 # kbuild part of makefile
-obj-m  += chardev.o 
-chardev-objs := src/chardev.o src/SidRunnerThread.o src/rpi.o
+obj-m  += sidpi.o 
+chardev-objs := src/sidpi.o src/sidpithread.o 
 
 
 all:
