@@ -212,8 +212,8 @@ void startSidClk(int freq) {
 	writel(BCM_PASSWORD | (divi << 12) | divf,GPIO_CLOCK + 29);
 	writel(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,GPIO_CLOCK + 28);
 
-	writel(0x0000280,gpio_timer.addr + TIMER_CONTROL);
-	writel(0x00000F9,gpio_timer.addr + TIMER_PRE_DIV);
+	writel(0x0000280,GPIO_TIMER + TIMER_CONTROL);
+	writel(0x00000F9,GPIO_TIMER + TIMER_PRE_DIV);
 }
 
 void setPinsToOutput(void) {
@@ -223,7 +223,6 @@ void setPinsToOutput(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		*(gpio.addr + fSel) = ;
 		writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
 				| (1 << shift),GPIO_BASE + fSel);
 //		usleep(10);
