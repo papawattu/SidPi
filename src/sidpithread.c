@@ -280,16 +280,16 @@ void generatePinTables(void) {
 }
 void init_queue(Buffer *q) {
 	q->first = 0;
-	q->last = BUFFER_SIZE - 1;
+	q->last = SID_BUFFER_SIZE - 1;
 	q->count = 0;
 }
 
 int enqueue(Buffer *q, unsigned char x) {
-	if (q->count >= BUFFER_SIZE) {
+	if (q->count >= SID_BUFFER_SIZE) {
 		printk(KERN_INFO "Warning: queue overflow enqueue x=%d\n", x);
 		return -1;
 	} else {
-		q->last = (q->last + 1) % BUFFER_SIZE;
+		q->last = (q->last + 1) % SID_BUFFER_SIZE;
 		q->q[q->last] = x;
 		q->count = q->count + 1;
 	}
@@ -303,7 +303,7 @@ unsigned char dequeue(Buffer *q) {
 		printk(KERN_INFO "Warning: empty queue dequeue.\n");
 	else {
 		x = q->q[q->first];
-		q->first = (q->first + 1) % BUFFER_SIZE;
+		q->first = (q->first + 1) % SID_BUFFER_SIZE;
 		q->count = q->count - 1;
 	}
 
@@ -324,7 +324,7 @@ void print_queue(Buffer *q) {
 
 	while (i != q->last) {
 		printk(KERN_INFO "%c ", q->q[i]);
-		i = (i + 1) % BUFFER_SIZE;
+		i = (i + 1) % SID_BUFFER_SIZE;
 	}
 
 	printk(KERN_INFO "%2d ", q->q[i]);
@@ -341,10 +341,10 @@ int getBufferCount(void) {
 	return buffer.count;
 }
 int getBufferFull(void) {
-	return (buffer.count >= BUFFER_SIZE - 4 ? 1 : 0);
+	return (buffer.count >= SID_BUFFER_SIZE - 4 ? 1 : 0);
 }
 int getBufferMax(void) {
-	return BUFFER_SIZE;
+	return SID_BUFFER_SIZE;
 }
 void flush(void) {
 	init_queue(&buffer);
