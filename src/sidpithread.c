@@ -126,7 +126,7 @@ int sidThread(void) {
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
-				writeSid(reg, val);
+				//writeSid(reg, val);
 
 			} else {
 				delay(cycles);
