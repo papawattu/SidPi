@@ -239,7 +239,7 @@ void startSidClk(int freq) {
 void setPinsToOutput(void) {
 
 	int i, fSel, shift;
-
+/*
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
@@ -269,7 +269,7 @@ void setPinsToOutput(void) {
 	shift = gpioToShift[CLK];
 	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
 					| (1 << shift),__io_address(gpio) + fSel);
-}
+*/}
 
 void generatePinTables(void) {
 	int i;
