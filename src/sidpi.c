@@ -46,7 +46,7 @@ static struct file_operations fops = {
  */
 static int __init _sid_init_module(void)
 {
-	Major = register_chrdev(0, DEVICE_NAME, &fops);
+	Major = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops);
 
 	if (Major < 0) {
 	  printk(KERN_ALERT "Registering char device failed with %d\n", Major);
