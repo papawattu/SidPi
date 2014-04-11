@@ -103,7 +103,7 @@ int sidThread(void) {
 	long startClock;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
-	while (1) {
+	while (!kthread_should_stop()) {
 
 		if (buffer.count >= 3 && playbackReady()) {
 			targetCycles = getRealSidClock();
