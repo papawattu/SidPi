@@ -49,7 +49,7 @@ const int ADDR[] = {8,25,24,23,18};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
-unsigned long gpio;
+unsigned long * gpio;
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
@@ -66,6 +66,8 @@ void setupSid(void) {
 	if(sidSetup) return;
 
 	if(mapGPIO() != 0) return;
+
+	printf(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
 
 	generatePinTables();
 
@@ -383,4 +385,5 @@ int mapGPIO(void) {
 
 void unmapGPIO(void) {
 	release_mem_region(GPIO_BASE, 4096);
+	iounmap(gpio);
 }
