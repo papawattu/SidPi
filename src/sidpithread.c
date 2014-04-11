@@ -78,6 +78,8 @@ void (void) {
 
 void startSidThread(void) {
 
+	int err;
+
 	thread = kthread_run(devtmpfsd, &err, THREAD_NAME);
 	if (IS_ERR(thread)) {
 		err = PTR_ERR(thread);
