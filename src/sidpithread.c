@@ -67,11 +67,11 @@ void setupSid(void) {
 
 	if(mapGPIO() != 0) return;
 
-	//generatePinTables();
+	generatePinTables();
 
-	//setPinsToOutput();
+	setPinsToOutput();
 
-	startSidClk(DEFAULT_SID_SPEED_HZ);
+	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	startSidThread();
 
