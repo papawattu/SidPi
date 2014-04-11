@@ -72,6 +72,7 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device 
 	 */
 //	unregister_chrdev(Major, DEVICE_NAME);
+	stopSidThread();
 }
 
 module_init(_sid_init_module);
