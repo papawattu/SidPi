@@ -60,7 +60,7 @@ unsigned char dequeue(Buffer *q);
 int empty(Buffer *q);
 void print_queue(Buffer *q);
 
-void (void) {
+void setupSid(void) {
 
 	if(sidSetup) return;
 
