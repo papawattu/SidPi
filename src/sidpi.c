@@ -39,15 +39,10 @@ static struct file_operations fops = {
 	.release = device_release
 };
 
-
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Lakshmanan");
-MODULE_DESCRIPTION("A Simple Hello World module");
-
 /*
  * This function is called when the module is loaded
  */
-static int __init init_module(void)
+static int __init _sid_init_module(void)
 {
 /*        Major = register_chrdev(0, DEVICE_NAME, &fops);
 
@@ -71,7 +66,7 @@ static int __init init_module(void)
 /*
  * This function is called when the module is unloaded
  */
-static void __exit cleanup_module(void)
+static void __exit _sid_cleanup_module(void)
 {
 	/* 
 	 * Unregister the device 
@@ -79,57 +74,8 @@ static void __exit cleanup_module(void)
 //	unregister_chrdev(Major, DEVICE_NAME);
 }
 
-/*
- * Methods
- */
-
-/* 
- * Called when a process tries to open the device file, like
- * "cat /dev/mycharfile"
- */
-static int device_open(struct inode *inode, struct file *file)
-{
-	static int counter = 0;
-
-	if (Device_Open)
-		return -EBUSY;
-
-	Device_Open++;
-	sprintf(msg, "I already told you %d times Hello world!\n", counter++);
-	msg_Ptr = msg;
-	try_module_get(THIS_MODULE);
-
-	return SUCCESS;
-}
-
-/* 
- * Called when a process closes the device file.
- */
-static int device_release(struct inode *inode, struct file *file)
-{
-	return 0;
-}
-
-/* 
- * Called when a process, which already opened the dev file, attempts to
- * read from it.
- */
-static ssize_t device_read(struct file *filp,	/* see include/linux/fs.h   */
-			   char *buffer,	/* buffer to fill with data */
-			   size_t length,	/* length of the buffer     */
-			   loff_t * offset)
-{
-	return 0;
-}
-
-/*  
- * Called when a process writes to dev file: echo "hi" > /dev/hello 
- */
-static ssize_t
-device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
-{
-	printk(KERN_INFO "HB %X LB %X REG %X VAL %X\n",buff[0],buff[1],buff[2],buff[3]);
-	return -EINVAL;
-}
-module_init(init_module);
-module_exit(cleanup_module);
+module_init(_sid_init_module);
+module_exit(_sid_cleanup_module);
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Lakshmanan");
+MODULE_DESCRIPTION("A Simple Hello World module");
