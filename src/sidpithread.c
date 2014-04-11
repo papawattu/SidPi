@@ -67,7 +67,7 @@ void setupSid(void) {
 
 	if(mapGPIO() != 0) return;
 
-	printf(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
+	printk(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
 
 	generatePinTables();
 
