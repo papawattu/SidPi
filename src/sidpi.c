@@ -44,7 +44,7 @@ static struct file_operations fops = {
  */
 static int __init _sid_init_module(void)
 {
-/*        Major = register_chrdev(0, DEVICE_NAME, &fops);
+	Major = register_chrdev(0, DEVICE_NAME, &fops);
 
 	if (Major < 0) {
 	  printk(KERN_ALERT "Registering char device failed with %d\n", Major);
@@ -57,7 +57,6 @@ static int __init _sid_init_module(void)
 	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
 	printk(KERN_INFO "the device file.\n");
 	printk(KERN_INFO "Remove the device file and module when done.\n");
-*/
 	setupSid();
 
 	return SUCCESS;
@@ -71,7 +70,7 @@ static void __exit _sid_cleanup_module(void)
 	/* 
 	 * Unregister the device 
 	 */
-//	unregister_chrdev(Major, DEVICE_NAME);
+	unregister_chrdev(Major, DEVICE_NAME);
 	closeSid();
 }
 

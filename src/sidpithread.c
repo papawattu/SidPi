@@ -77,8 +77,6 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	startSidThread();
-
 	sidSetup = 1;
 
 }
@@ -146,11 +144,14 @@ int playbackReady(void) {
 }
 
 void startPlayback(void) {
+	startSidThread();
+
 	isPlaybackReady = 1;
 }
 
 void stopPlayback(void) {
 	isPlaybackReady = 0;
+	stopSidThread();
 }
 void sidDelay(int cycles) {
 
@@ -210,12 +211,12 @@ long getRealSidClock(void) {
 }
 void writeSid(int reg, int val) {
 	int i;
-	writel((unsigned long) addrPins[reg % 32], __io_address(GPIO_BASE + 7));
-	writel((unsigned long) ~addrPins[reg % 32] & addrPins[31], __io_address(GPIO_BASE + 10));
-	writel((unsigned long) 1 << CS, __io_address(GPIO_BASE + 10));
-	writel((unsigned long) dataPins[val % 256], __io_address(GPIO_BASE + 7));
-	writel((unsigned long) ~dataPins[val % 256] & dataPins[255], __io_address(GPIO_BASE + 10));
-	writel((unsigned long) 1 << CS, __io_address(GPIO_BASE + 7));
+	iowrite32((unsigned long) addrPins[reg % 32],gpio + 7);
+	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], gpio + 10);
+	iowrite32((unsigned long) 1 << CS, gpio + 10);
+	iowrite32((unsigned long) dataPins[val % 256], gpio + 7);
+	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], gpio + 10);
+	iowrite32((unsigned long) 1 << CS, gpio + 7);
 
 }
 void startSidClk(int freq) {
