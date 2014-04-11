@@ -126,7 +126,7 @@ static ssize_t device_write(struct file *file,
 	     const char __user * buffer, size_t length, loff_t * offset)
 {
 	//printk(KERN_INFO "%x %x %x %x\n", buffer[0],buffer[1],buffer[2],buffer[3]);
-	if(!isPlaybackReady()) {
+	if(!playbackReady()) {
 		startPlayback();
 	}
 	sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]);
