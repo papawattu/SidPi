@@ -75,7 +75,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	//startSidClk(DEFAULT_SID_SPEED_HZ);
+	startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	startSidThread();
 
