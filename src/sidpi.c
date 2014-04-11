@@ -47,9 +47,9 @@ MODULE_DESCRIPTION("A Simple Hello World module");
 /*
  * This function is called when the module is loaded
  */
-int __init init_module(void)
+static int __init init_module(void)
 {
-        Major = register_chrdev(0, DEVICE_NAME, &fops);
+/*        Major = register_chrdev(0, DEVICE_NAME, &fops);
 
 	if (Major < 0) {
 	  printk(KERN_ALERT "Registering char device failed with %d\n", Major);
@@ -62,7 +62,7 @@ int __init init_module(void)
 	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
 	printk(KERN_INFO "the device file.\n");
 	printk(KERN_INFO "Remove the device file and module when done.\n");
-
+*/
 	setupSid();
 
 	return SUCCESS;
@@ -71,12 +71,12 @@ int __init init_module(void)
 /*
  * This function is called when the module is unloaded
  */
-void __exit cleanup_module(void)
+static void __exit cleanup_module(void)
 {
 	/* 
 	 * Unregister the device 
 	 */
-	unregister_chrdev(Major, DEVICE_NAME);
+//	unregister_chrdev(Major, DEVICE_NAME);
 }
 
 /*
@@ -131,3 +131,5 @@ device_write(struct file *filp, const char *buff, size_t len, loff_t * off)
 	printk(KERN_INFO "HB %X LB %X REG %X VAL %X\n",buff[0],buff[1],buff[2],buff[3]);
 	return -EINVAL;
 }
+module_init(init_module);
+module_exit(cleanup_module);

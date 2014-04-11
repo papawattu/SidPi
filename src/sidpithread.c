@@ -64,9 +64,12 @@ void setupSid(void) {
 
 	if(sidSetup) return;
 
+	mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
+	printk(KERN_INFO "Mem = %x",*mem);
+
 	generatePinTables();
 
-	setPinsToOutput();
+	//setPinsToOutput();
 
 	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
