@@ -79,6 +79,11 @@ void setupSid(void) {
 
 }
 
+void closeSid(void) {
+	stopSidThread();
+	unmapGPIO();
+}
+
 void startSidThread(void) {
 
 	int err;
@@ -374,4 +379,8 @@ int mapGPIO(void) {
 	   gpio = ioremap(GPIO_BASE, 4096);
 
 	   return 0;
+}
+
+void unmapGPIO(void) {
+	release_mem_region(unsigned long GPIO_BASE, unsigned long 4096);
 }
