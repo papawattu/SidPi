@@ -69,6 +69,7 @@ static int __init _sid_init_module(void)
  */
 static void __exit _sid_cleanup_module(void)
 {
+	int ret;
 	/* 
 	 * Unregister the device 
 	 */
