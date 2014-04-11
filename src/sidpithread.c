@@ -62,6 +62,8 @@ void print_queue(Buffer *q);
 
 void setupSid(void) {
 
+	unsigned long mem;
+
 	if(sidSetup) return;
 
 	mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
