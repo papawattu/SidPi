@@ -71,15 +71,6 @@ void setupSid(void) {
 
 	printk(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
 
-	fSel = gpioToGPFSEL[CS];
-	shift = gpioToShift[CS];
-	printk(KERN_INFO "About to write to pin %d.\n",CS);
-
-	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel);
-
-	printk(KERN_INFO "Written to pin %d.\n",CS);
-
 	generatePinTables();
 
 	//setPinsToOutput();
@@ -251,37 +242,37 @@ void startSidClk(int freq) {
 void setPinsToOutput(void) {
 
 	int i, fSel, shift;
-/*
+
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		writel(readl(__io_address(gpio + fSel)) & ~(7 << shift)
-				| (1 << shift),__io_address(gpio) + fSel);
+		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+				| (1 << shift),ioread32(gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
-						| (1 << shift),__io_address(gpio) + fSel);
+		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+						| (1 << shift),gpio + fSel;
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(gpio) + fSel);
+	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+					| (1 << shift),gpio + fSel;
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(gpio) + fSel);
+	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+					| (1 << shift),gpio + fSel;
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(gpio) + fSel);
+	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+					| (1 << shift),gpio + fSel;
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(gpio) + fSel);
-*/}
+	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+					| (1 << shift),gpio + fSel;
+}
 
 void generatePinTables(void) {
 	int i;
