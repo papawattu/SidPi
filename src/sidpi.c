@@ -125,7 +125,7 @@ static ssize_t device_read(struct file *file,	/* see include/linux/fs.h   */
 static ssize_t device_write(struct file *file,
 	     const char __user * buffer, size_t length, loff_t * offset)
 {
-	printk(KERN_INFO "device_write(%p,%x,%d)\n", file, buffer, length);
+	printk(KERN_INFO "device_write(%p,%x,%d)\n", file, *buffer, length);
 	return 0;
 }
 module_init(_sid_init_module);
