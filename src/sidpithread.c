@@ -382,5 +382,5 @@ int mapGPIO(void) {
 }
 
 void unmapGPIO(void) {
-	release_mem_region(unsigned long GPIO_BASE, unsigned long 4096);
+	release_mem_region(GPIO_BASE, 4096);
 }
