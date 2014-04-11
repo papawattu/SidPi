@@ -66,7 +66,7 @@ void setupSid(void) {
 
 	generatePinTables();
 
-	//setPinsToOutput();
+	setPinsToOutput();
 
 	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
@@ -224,12 +224,14 @@ void startSidClk(int freq) {
 void setPinsToOutput(void) {
 
 	int i, fSel, shift;
+	int ret;
 
 	for (i = 0; i < 8; i++) {
-		gpio_direction_output(DATA[i], 0);
+		ret = gpio_direction_output(DATA[i], 0);
+		if(ret != 0) printk(KERN_ERR "Cannot set pin to output\n");
 	}
 	for (i = 0; i < 5; i++) {
-		gpio_direction_output(ADDR[i],0);
+		ret = gpio_direction_output(ADDR[i],0);
 	}
 	gpio_direction_output(CS,0);
 	gpio_direction_output(RW,0);
