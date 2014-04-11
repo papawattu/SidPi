@@ -26,7 +26,7 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
  * Global variables are declared as static, so are global within the file. 
  */
 
-static int Device_Open = 0;
+
 static int Major;		/* Major number assigned to our device driver */
 static int Device_Open = 0;	/* Is device open?  
 				 * Used to prevent multiple access to device */
