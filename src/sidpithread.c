@@ -79,7 +79,7 @@ void startSidThread(void) {
 
 	int err;
 
-	thread = kthread_run(sidThrread, &err, THREAD_NAME);
+	thread = kthread_run(sidThread, &err, THREAD_NAME);
 	if (IS_ERR(thread)) {
 		err = PTR_ERR(thread);
 		thread = NULL;
