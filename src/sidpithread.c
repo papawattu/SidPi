@@ -73,7 +73,7 @@ void setupSid(void) {
 
 	generatePinTables();
 
-	setPinsToOutput();
+	//setPinsToOutput();
 
 	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
@@ -376,36 +376,35 @@ int mapGPIO(void) {
 	   unsigned long mem;
 
 	   mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
-
 	   if(mem == NULL) {
 		   printk(KERN_ERR "Cannot get GPIO");
 		   return -1;
 	   }
 	   gpio = ioremap(GPIO_BASE, 4096);
 
-	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclock");
-
+	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclk");
 	   if(mem == NULL) {
-		   printk(KERN_ERR "Cannot get GPIO clock");
+		   printk(KERN_ERR "Cannot get GPIO Clock");
 		   return -1;
 	   }
-
 	   gpio_clock = ioremap(GPIO_CLOCK, 4096);
 
-	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclock");
-
-   	   if(mem == NULL) {
-   		   printk(KERN_ERR "Cannot get GPIO timer");
-   		   return -1;
-   	   }
-
+	   mem = request_mem_region(GPIO_TIMER, 4096, "mygpiotimer");
+	   if(mem == NULL) {
+		   printk(KERN_ERR "Cannot get GPIO timer");
+		   return -1;
+	   }
    	   gpio_timer = ioremap(GPIO_TIMER, 4096);
-
 
 	   return 0;
 }
 
 void unmapGPIO(void) {
-	release_mem_region(GPIO_BASE, 4096);
 	iounmap(gpio);
+	iounmap(gpio_clock);
+	iounmap(gpio_timer);
+	release_mem_region(GPIO_BASE, 4096);
+	release_mem_region(GPIO_CLOCK, 4096);
+	release_mem_region(GPIO_TIMER, 4096);
+
 }
