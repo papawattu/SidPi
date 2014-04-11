@@ -67,7 +67,7 @@ void setupSid(void) {
 
 	if(mapGPIO() != 0) return;
 
-	generatePinTables();
+	//generatePinTables();
 
 	//setPinsToOutput();
 
