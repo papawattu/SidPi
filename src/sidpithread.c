@@ -48,6 +48,7 @@ const int ADDR[] = {8,25,24,23,18};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
+unsigned long gpio;
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
@@ -63,9 +64,11 @@ void setupSid(void) {
 
 	if(sidSetup) return;
 
+	if(mapGPIO() != 0) return;
+
 	generatePinTables();
 
-	setPinsToOutput();
+	//setPinsToOutput();
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
@@ -352,3 +355,17 @@ void flush(void) {
 	stopPlayback();
 }
 
+int mapGPIO(void) {
+
+	   unsigned long mem;
+
+	   mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
+
+	   if(mem == NULL) {
+		   printf(KERN_ERR "Cannot get GPIO");
+		   return -1;
+	   }
+	   gpio = ioremap(GPIO_BASE, 4096);
+
+	   return 0;
+}
