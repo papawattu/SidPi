@@ -61,5 +61,6 @@ void setMultiplier(int value);
 void startSidThread(void);
 void stopSidThread(void);
 int mapGPIO(void);
+void unmapGPIO(void);
 
 #endif /* __SIDRUNNERTHREAD_H_ */
