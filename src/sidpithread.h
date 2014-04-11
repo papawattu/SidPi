@@ -58,6 +58,6 @@ long getRealSidClock(void);
 void setThreshold(int value);
 void setMultiplier(int value);
 void startSidThread(void);
-void mapGPIO(void);
+int mapGPIO(void);
 
 #endif /* __SIDRUNNERTHREAD_H_ */

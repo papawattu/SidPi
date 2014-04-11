@@ -362,7 +362,7 @@ int mapGPIO(void) {
 	   mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
 
 	   if(mem == NULL) {
-		   printf(KERN_ERR "Cannot get GPIO");
+		   printk(KERN_ERR "Cannot get GPIO");
 		   return -1;
 	   }
 	   gpio = ioremap(GPIO_BASE, 4096);
