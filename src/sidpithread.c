@@ -63,11 +63,22 @@ void print_queue(Buffer *q);
 
 void setupSid(void) {
 
+	int i, fSel, shift;
+
 	if(sidSetup) return;
 
 	if(mapGPIO() != 0) return;
 
 	printk(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
+
+	fSel = gpioToGPFSEL[CS];
+	shift = gpioToShift[CS];
+	printk(KERN_INFO "About to write to pin %d.\n",CS);
+
+	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
+					| (1 << shift),gpi) + fSel);
+
+	printk(KERN_INFO "Written to pin %d.\n",CS);
 
 	generatePinTables();
 
@@ -102,6 +113,7 @@ void startSidThread(void) {
 void stopSidThread(void) {
 	int ret;
 	ret = kthread_stop(thread);
+	printk("Sid Thread Stopped...\n");
 }
 
 int sidThread(void) {
