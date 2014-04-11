@@ -76,7 +76,7 @@ void setupSid(void) {
 	printk(KERN_INFO "About to write to pin %d.\n",CS);
 
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpi) + fSel);
+					| (1 << shift),gpio + fSel);
 
 	printk(KERN_INFO "Written to pin %d.\n",CS);
 
