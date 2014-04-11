@@ -5,10 +5,11 @@
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
 #include <linux/io.h>
+#include <linux/gpio.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
-static struct task_struct *sidThreadHandle;
+static struct task_struct *thread;
 
 typedef struct buffer {
 	unsigned char q[SID_BUFFER_SIZE]; /* body of queue */
@@ -59,7 +60,7 @@ unsigned char dequeue(Buffer *q);
 int empty(Buffer *q);
 void print_queue(Buffer *q);
 
-void setupSid(void) {
+void (void) {
 
 	if(sidSetup) return;
 
@@ -67,7 +68,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	startSidClk(DEFAULT_SID_SPEED_HZ);
+	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	startSidThread();
 
@@ -77,11 +78,13 @@ void setupSid(void) {
 
 void startSidThread(void) {
 
-	const char * modname = THREAD_NAME;
-
-	sidThreadHandle = (void *) kthread_create(&sidThread, (void *) NULL , (void *) &modname);
-	printk(KERN_INFO "Sid Thread Running...\n");
-	
+	thread = kthread_run(devtmpfsd, &err, THREAD_NAME);
+	if (IS_ERR(thread)) {
+		err = PTR_ERR(thread);
+		thread = NULL;
+	}	else {
+		printk(KERN_INFO "Sid Thread Running...\n");
+	}
 }
 
 int sidThread(void) {
@@ -221,37 +224,16 @@ void setPinsToOutput(void) {
 	int i, fSel, shift;
 
 	for (i = 0; i < 8; i++) {
-		fSel = gpioToGPFSEL[DATA[i]];
-		shift = gpioToShift[DATA[i]];
-		writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-				| (1 << shift),GPIO_BASE + fSel);
-//		usleep(10);
+		gpio_direction_output(DATA[i], 0);
 	}
 	for (i = 0; i < 5; i++) {
-		fSel = gpioToGPFSEL[ADDR[i]];
-		shift = gpioToShift[ADDR[i]];
-		writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-						| (1 << shift),GPIO_BASE + fSel);
-//		usleep(10);
+		gpio_direction_output(ADDR[i],0);
 	}
-	fSel = gpioToGPFSEL[CS];
-	shift = gpioToShift[CS];
-	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-					| (1 << shift),GPIO_BASE + fSel);
-	fSel = gpioToGPFSEL[RW];
-	shift = gpioToShift[RW];
-	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-					| (1 << shift),GPIO_BASE + fSel);
-//	usleep(10);
-	fSel = gpioToGPFSEL[RES];
-	shift = gpioToShift[RES];
-	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-					| (1 << shift),GPIO_BASE + fSel);
-//	usleep(10);
-	fSel = gpioToGPFSEL[CLK];
-	shift = gpioToShift[CLK];
-	writel(readl(GPIO_BASE + fSel) & ~(7 << shift)
-					| (1 << shift),GPIO_BASE + fSel);//	usleep(10);
+	gpio_direction_output(CS,0);
+	gpio_direction_output(RW,0);
+	gpio_direction_output(RES,0);
+	gpio_direction_output(CLK,0);
+
 }
 
 void generatePinTables(void) {
