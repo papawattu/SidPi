@@ -76,10 +76,6 @@ static void __exit _sid_cleanup_module(void)
 }
 static int device_open(struct inode *inode, struct file *file)
 {
-#ifdef DEBUG
-	printk(KERN_INFO "device_open(%p)\n", file);
-#endif
-
 	/*
 	 * We don't want to talk to two processes at the same time
 	 */
@@ -87,10 +83,7 @@ static int device_open(struct inode *inode, struct file *file)
 		return -EBUSY;
 
 	Device_Open++;
-	/*
-	 * Initialize the message
-	 */
-	Message_Ptr = Message;
+
 	try_module_get(THIS_MODULE);
 	return SUCCESS;
 }
