@@ -40,6 +40,7 @@ void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
 void setupSid(void);
 void *cmdThread(void);
 int sidThread(void);
+void stopSidThread(void);
 void delay(long cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);

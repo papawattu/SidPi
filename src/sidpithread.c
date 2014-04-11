@@ -92,6 +92,11 @@ void startSidThread(void) {
 	}
 }
 
+void stopSidThread(void) {
+	int ret;
+	ret = kthread_stop(thread);
+}
+
 int sidThread(void) {
 	unsigned char reg, val;
 	int cycles;
