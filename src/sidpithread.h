@@ -13,7 +13,7 @@
 #define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
 #define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x00101000)
 #define TIMER_OFFSET 			(4)
-#define GPIP_BLOCK_SIZE			(4*1024)
+#define GPIO_BLOCK_SIZE			(4*1024)
 #define BCM_PASSWORD			0x5A000000
 #define GPIO_CLOCK_SOURCE       1
 #define TIMER_CONTROL			(0x408 >> 2)

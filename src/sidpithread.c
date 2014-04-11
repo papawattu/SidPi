@@ -382,19 +382,19 @@ int mapGPIO(void) {
 	   }
 	   gpio = ioremap(GPIO_BASE, 4096);
 
-	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclk");
+	   mem = request_mem_region(GPIO_CLOCK, 32, "mygpioclk");
 	   if(mem == NULL) {
 		   printk(KERN_ERR "Cannot get GPIO Clock");
 		   return -1;
 	   }
-	   gpio_clock = ioremap(GPIO_CLOCK, 4096);
+	   gpio_clock = ioremap(GPIO_CLOCK, 32);
 
-	   mem = request_mem_region(GPIO_TIMER, 4096, "mygpiotimer");
+	   mem = request_mem_region(GPIO_TIMER, 256, "mygpiotimer");
 	   if(mem == NULL) {
 		   printk(KERN_ERR "Cannot get GPIO timer");
 		   return -1;
 	   }
-   	   gpio_timer = ioremap(GPIO_TIMER, 4096);
+   	   gpio_timer = ioremap(GPIO_TIMER, 256);
 
 	   return 0;
 }
@@ -404,7 +404,7 @@ void unmapGPIO(void) {
 	iounmap(gpio_clock);
 	iounmap(gpio_timer);
 	release_mem_region(GPIO_BASE, 4096);
-	release_mem_region(GPIO_CLOCK, 4096);
-	release_mem_region(GPIO_TIMER, 4096);
+	release_mem_region(GPIO_CLOCK, 32);
+	release_mem_region(GPIO_TIMER, 256);
 
 }
