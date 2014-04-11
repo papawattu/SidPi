@@ -73,13 +73,8 @@ static void __exit _sid_cleanup_module(void)
 	/* 
 	 * Unregister the device 
 	 */
-	ret = unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
+	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
 
-		/*
-		 * If there's an error, report it
-		 */
-	if (ret < 0)
-		printk(KERN_ALERT "Error: unregister_chrdev: %d\n", ret);
 	//closeSid();
 }
 static int device_open(struct inode *inode, struct file *file)
