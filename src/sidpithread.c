@@ -5,7 +5,6 @@
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
 #include <linux/io.h>
-#include <linux/gpio.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
@@ -62,18 +61,13 @@ void print_queue(Buffer *q);
 
 void setupSid(void) {
 
-	unsigned long mem;
-
 	if(sidSetup) return;
-
-	mem = request_mem_region(GPIO_BASE, 4096, "mygpio");
-	printk(KERN_INFO "Mem = %x",*mem);
 
 	generatePinTables();
 
-	//setPinsToOutput();
+	setPinsToOutput();
 
-	//startSidClk(DEFAULT_SID_SPEED_HZ);
+	startSidClk(DEFAULT_SID_SPEED_HZ);
 
 	startSidThread();
 
@@ -85,7 +79,7 @@ void startSidThread(void) {
 
 	int err;
 
-	thread = kthread_run(&sidThread, &err, THREAD_NAME);
+	thread = kthread_run(sidThrread, &err, THREAD_NAME);
 	if (IS_ERR(thread)) {
 		err = PTR_ERR(thread);
 		thread = NULL;
@@ -216,33 +210,49 @@ void startSidClk(int freq) {
 		divi = 4095;
 	writel(BCM_PASSWORD | GPIO_CLOCK_SOURCE, __io_address(GPIO_CLOCK + 28));
 
-	while ((readl(GPIO_CLOCK + 28) & 0x80) != 0)
+	while ((readl(__io_address(GPIO_CLOCK) + 28) & 0x80) != 0)
 		;
 
-	writel(BCM_PASSWORD | (divi << 12) | divf,GPIO_CLOCK + 29);
-	writel(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,GPIO_CLOCK + 28);
+	writel(BCM_PASSWORD | (divi << 12) | divf,__io_address(GPIO_CLOCK) + 29);
+	writel(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,__io_address(GPIO_CLOCK) + 28);
 
-	writel(0x0000280,GPIO_TIMER + TIMER_CONTROL);
-	writel(0x00000F9,GPIO_TIMER + TIMER_PRE_DIV);
+	writel(0x0000280,__io_address(GPIO_TIMER) + TIMER_CONTROL);
+	writel(0x00000F9,__io_address(GPIO_TIMER) + TIMER_PRE_DIV);
 }
 
 void setPinsToOutput(void) {
 
 	int i, fSel, shift;
-	int ret;
 
 	for (i = 0; i < 8; i++) {
-		ret = gpio_direction_output(DATA[i], 0);
-		if(ret != 0) printk(KERN_ERR "Cannot set pin to output\n");
+		fSel = gpioToGPFSEL[DATA[i]];
+		shift = gpioToShift[DATA[i]];
+		writel(readl(__io_address(GPIO_BASE + fSel)) & ~(7 << shift)
+				| (1 << shift),__io_address(GPIO_BASE) + fSel);
 	}
 	for (i = 0; i < 5; i++) {
-		ret = gpio_direction_output(ADDR[i],0);
+		fSel = gpioToGPFSEL[ADDR[i]];
+		shift = gpioToShift[ADDR[i]];
+		writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
+						| (1 << shift),__io_address(GPIO_BASE) + fSel);
 	}
-	gpio_direction_output(CS,0);
-	gpio_direction_output(RW,0);
-	gpio_direction_output(RES,0);
-	gpio_direction_output(CLK,0);
+	fSel = gpioToGPFSEL[CS];
+	shift = gpioToShift[CS];
+	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	fSel = gpioToGPFSEL[RW];
+	shift = gpioToShift[RW];
+	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(GPIO_BASE) + fSel);
 
+	fSel = gpioToGPFSEL[RES];
+	shift = gpioToShift[RES];
+	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	fSel = gpioToGPFSEL[CLK];
+	shift = gpioToShift[CLK];
+	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(GPIO_BASE) + fSel);
 }
 
 void generatePinTables(void) {
