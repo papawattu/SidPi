@@ -247,31 +247,31 @@ void setPinsToOutput(void) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
 		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-				| (1 << shift),ioread32(gpio + fSel);
+				| (1 << shift),gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
 		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-						| (1 << shift),gpio + fSel;
+						| (1 << shift),gpio + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel;
+					| (1 << shift),gpio + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel;
+					| (1 << shift),gpio + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel;
+					| (1 << shift),gpio + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel;
+					| (1 << shift),gpio + fSel);
 }
 
 void generatePinTables(void) {
