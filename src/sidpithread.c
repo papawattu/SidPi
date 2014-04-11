@@ -231,32 +231,32 @@ void setPinsToOutput(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		writel(readl(__io_address(GPIO_BASE + fSel)) & ~(7 << shift)
-				| (1 << shift),__io_address(GPIO_BASE) + fSel);
+		writel(readl(__io_address(gpio + fSel)) & ~(7 << shift)
+				| (1 << shift),__io_address(gpio) + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
-						| (1 << shift),__io_address(GPIO_BASE) + fSel);
+		writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
+						| (1 << shift),__io_address(gpio) + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(gpio) + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(gpio) + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(gpio) + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	writel(readl(__io_address(GPIO_BASE) + fSel) & ~(7 << shift)
-					| (1 << shift),__io_address(GPIO_BASE) + fSel);
+	writel(readl(__io_address(gpio) + fSel) & ~(7 << shift)
+					| (1 << shift),__io_address(gpio) + fSel);
 }
 
 void generatePinTables(void) {
