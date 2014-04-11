@@ -49,7 +49,7 @@ const int ADDR[] = {8,25,24,23,18};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
-unsigned long * gpio;
+unsigned long * gpio, *gpio_clock, *gpio_timer;
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
@@ -73,7 +73,7 @@ void setupSid(void) {
 
 	generatePinTables();
 
-	//setPinsToOutput();
+	setPinsToOutput();
 
 	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
@@ -227,16 +227,16 @@ void startSidClk(int freq) {
 
 	if (divi > 4095)
 		divi = 4095;
-	writel(BCM_PASSWORD | GPIO_CLOCK_SOURCE, __io_address(GPIO_CLOCK + 28));
+	iowrite32(BCM_PASSWORD | GPIO_CLOCK_SOURCE, gpio_clock + 28);
 
-	while ((readl(__io_address(GPIO_CLOCK) + 28) & 0x80) != 0)
+	while ((ioread32(gpio_clock + 28) & 0x80) != 0)
 		;
 
-	writel(BCM_PASSWORD | (divi << 12) | divf,__io_address(GPIO_CLOCK) + 29);
-	writel(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,__io_address(GPIO_CLOCK) + 28);
+	iowrite32(BCM_PASSWORD | (divi << 12) | divf,gpio_clock + 29);
+	iowrite32(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,gpio_clock + 28);
 
-	writel(0x0000280,__io_address(GPIO_TIMER) + TIMER_CONTROL);
-	writel(0x00000F9,__io_address(GPIO_TIMER) + TIMER_PRE_DIV);
+	iowrite32(0x0000280,gpio_timer + TIMER_CONTROL);
+	iowrite32(0x00000F9,gpio_timer + TIMER_PRE_DIV);
 }
 
 void setPinsToOutput(void) {
@@ -382,6 +382,25 @@ int mapGPIO(void) {
 		   return -1;
 	   }
 	   gpio = ioremap(GPIO_BASE, 4096);
+
+	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclock");
+
+	   if(mem == NULL) {
+		   printk(KERN_ERR "Cannot get GPIO clock");
+		   return -1;
+	   }
+
+	   gpio_clock = ioremap(GPIO_CLOCK, 4096);
+
+	   mem = request_mem_region(GPIO_CLOCK, 4096, "mygpioclock");
+
+   	   if(mem == NULL) {
+   		   printk(KERN_ERR "Cannot get GPIO timer");
+   		   return -1;
+   	   }
+
+   	   gpio_timer = ioremap(GPIO_TIMER, 4096);
+
 
 	   return 0;
 }
