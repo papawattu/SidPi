@@ -73,7 +73,7 @@ void setupSid(void) {
 
 	generatePinTables();
 
-	//setPinsToOutput();
+	setPinsToOutput();
 
 	//startSidClk(DEFAULT_SID_SPEED_HZ);
 
