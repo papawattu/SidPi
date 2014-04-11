@@ -26,6 +26,7 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
  * Global variables are declared as static, so are global within the file. 
  */
 
+static int Device_Open = 0;
 static int Major;		/* Major number assigned to our device driver */
 static int Device_Open = 0;	/* Is device open?  
 				 * Used to prevent multiple access to device */
@@ -73,7 +74,64 @@ static void __exit _sid_cleanup_module(void)
 	unregister_chrdev(Major, DEVICE_NAME);
 	closeSid();
 }
+static int device_open(struct inode *inode, struct file *file)
+{
+#ifdef DEBUG
+	printk(KERN_INFO "device_open(%p)\n", file);
+#endif
 
+	/*
+	 * We don't want to talk to two processes at the same time
+	 */
+	if (Device_Open)
+		return -EBUSY;
+
+	Device_Open++;
+	/*
+	 * Initialize the message
+	 */
+	Message_Ptr = Message;
+	try_module_get(THIS_MODULE);
+	return SUCCESS;
+}
+static int device_release(struct inode *inode, struct file *file)
+{
+#ifdef DEBUG
+	printk(KERN_INFO "device_release(%p,%p)\n", inode, file);
+#endif
+
+	/*
+	 * We're now ready for our next caller
+	 */
+	Device_Open--;
+
+	module_put(THIS_MODULE);
+	return SUCCESS;
+}
+
+/*
+ * This function is called whenever a process which has already opened the
+ * device file attempts to read from it.
+ */
+static ssize_t device_read(struct file *file,	/* see include/linux/fs.h   */
+			   char __user * buffer,	/* buffer to be
+							 * filled with data */
+			   size_t length,	/* length of the buffer     */
+			   loff_t * offset)
+{
+	return 0;
+}
+/*
+ *
+ * This function is called when somebody tries to
+ * write into our device file.
+ */
+static ssize_t device_write(struct file *file,
+	     const char __user * buffer, size_t length, loff_t * offset)
+{
+	printk(KERN_INFO "device_write(%p,%s,%d)", file, buffer, length);
+	return 0;
+}
 module_init(_sid_init_module);
 module_exit(_sid_cleanup_module);
 MODULE_LICENSE("GPL");
