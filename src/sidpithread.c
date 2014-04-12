@@ -78,14 +78,14 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	startSidThread();
+	//startSidThread();
 
 	sidSetup = 1;
 
 }
 
 void closeSid(void) {
-	stopSidThread();
+	//stopSidThread();
 	unmapGPIO();
 }
 

@@ -147,14 +147,23 @@ static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
 static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
+	int delay,reg,val;
+
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
 	/*while(getBufferFull()) {
 		mdelay(100);
 	} */
-	if(sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]) != 0) {
-		return 0;
-	}
+
+	delay = buffer[3] << 8 | buffer[2];
+	reg = buffer[1];
+	val = buffer[0];
+
+	printk("Sid write - reg %x - val %x - delay %x",reg,val,delay);
+	udelay(delay);
+
+	writeSid(reg, val);
+
 	return length;
 }
 module_init( _sid_init_module);
