@@ -149,7 +149,7 @@ static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
 	int cycles,reg,val;
-	struct timespec *ts,*now;
+	struct timespec ts,now;
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
 	/*while(getBufferFull()) {
@@ -168,7 +168,7 @@ static ssize_t device_write(struct file *file,
 		ts.tv_usec = (cycles % 1000000) + now.tv_usec;
 		{
 			getnstimeofday(&now);
-		} while (timespec_compare(now,ts) <=0 );
+		} while (timespec_compare(&now,&ts) <=0 );
 
 	}
 	writeSid(reg, val);
