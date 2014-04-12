@@ -155,7 +155,7 @@ static ssize_t device_write(struct file *file,
 		mdelay(100);
 	} */
 
-	delay = buffer[3] << 8 | buffer[2];
+	cycles = buffer[3] << 8 | buffer[2];
 	reg = buffer[1];
 	val = buffer[0];
 
