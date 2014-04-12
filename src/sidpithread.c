@@ -266,7 +266,7 @@ void setPinsToOutput(void) {
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
 	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel);
+					| (4 << shift),gpio + fSel);
 }
 
 void generatePinTables(void) {
