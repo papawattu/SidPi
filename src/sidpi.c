@@ -9,8 +9,17 @@
 #include <linux/init.h> 
 #include <linux/delay.h>
 //#include <asm/uaccess.h>	/* for put_user */
+#include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
+
 #include "sidpithread.h"
 
+#define procfs_name "sidpi"
+
+/**
+ * This structure hold information about the /proc file
+ *
+ */
+struct proc_dir_entry *Our_Proc_File;
 /*  
  *  Prototypes - this would normally go in a .h file
  */
@@ -28,19 +37,14 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
  * Global variables are declared as static, so are global within the file. 
  */
 
-
-static int Major;		/* Major number assigned to our device driver */
-static int Device_Open = 0;	/* Is device open?  
-				 * Used to prevent multiple access to device */
-static char msg[BUF_LEN];	/* The msg the device will give when asked */
+static int Major; /* Major number assigned to our device driver */
+static int Device_Open = 0; /* Is device open?
+ * Used to prevent multiple access to device */
+static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
 
-static struct file_operations fops = {
-	.read = device_read,
-	.write = device_write,
-	.open = device_open,
-	.release = device_release
-};
+static struct file_operations fops = { .read = device_read, .write =
+		device_write, .open = device_open, .release = device_release };
 
 /*
  * This function is called when the module is loaded
@@ -50,21 +54,58 @@ static int __init _sid_init_module(void)
 	Major = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops);
 
 	if (Major < 0) {
-	  printk(KERN_ALERT "Registering char device failed with %d\n", Major);
-	  return Major;
+		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
+		return Major;
 	}
 
-	printk(KERN_INFO "I was assigned major number %d. To talk to\n", Major);
-	printk(KERN_INFO "the driver, create a dev file with\n");
-	printk(KERN_INFO "'mknod /dev/%s c %d 0'.\n", DEVICE_NAME, Major);
-	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
-	printk(KERN_INFO "the device file.\n");
-	printk(KERN_INFO "Remove the device file and module when done.\n");
-	setupSid();
+	Our_Proc_File = create_proc_entry(procfs_name, 0644, NULL);
+
+	if (Our_Proc_File == NULL) {
+		remove_proc_entry(procfs_name, &proc_root);
+		printk(KERN_ALERT "Error: Could not initialize /proc/%s\n",
+				procfs_name);
+		return -ENOMEM;
+	}
+
+	Our_Proc_File->read_proc = procfile_read;
+	Our_Proc_File->owner = THIS_MODULE;
+	Our_Proc_File->mode = S_IFREG | S_IRUGO;
+	Our_Proc_File->uid = 0;
+	Our_Proc_File->gid = 0;
+	Our_Proc_File->size = 37;
+	//setupSid();
 
 	return SUCCESS;
 }
+int procfile_read(char *buffer,
+	      char **buffer_location,
+	      off_t offset, int buffer_length, int *eof, void *data)
+{
+	int ret;
 
+	printk(KERN_INFO "procfile_read (/proc/%s) called\n", procfs_name);
+
+	/*
+	 * We give all of our information in one go, so if the
+	 * user asks us if we have more information the
+	 * answer should always be no.
+	 *
+	 * This is important because the standard read
+	 * function from the library would continue to issue
+	 * the read system call until the kernel replies
+	 * that it has no more information, or until its
+	 * buffer is filled.
+	 */
+	if (offset > 0) {
+		/* we have finished to read, return 0 */
+		ret  = 0;
+	} else {
+		/* fill the buffer, return the buffer size */
+		ret = sprintf(buffer, "HelloWorld!\n");
+	}
+
+	return ret;
+}
 /*
  * This function is called when the module is unloaded
  */
@@ -75,11 +116,10 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device 
 	 */
 	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
-
-	closeSid();
+	remove_proc_entry(procfs_name, &proc_root);
+	//closeSid();
 }
-static int device_open(struct inode *inode, struct file *file)
-{
+static int device_open(struct inode *inode, struct file *file) {
 	/*
 	 * We don't want to talk to two processes at the same time
 	 */
@@ -91,8 +131,7 @@ static int device_open(struct inode *inode, struct file *file)
 	try_module_get(THIS_MODULE);
 	return SUCCESS;
 }
-static int device_release(struct inode *inode, struct file *file)
-{
+static int device_release(struct inode *inode, struct file *file) {
 #ifdef DEBUG
 	printk(KERN_INFO "device_release(%p,%p)\n", inode, file);
 #endif
@@ -110,11 +149,11 @@ static int device_release(struct inode *inode, struct file *file)
  * This function is called whenever a process which has already opened the
  * device file attempts to read from it.
  */
-static ssize_t device_read(struct file *file,	/* see include/linux/fs.h   */
-			   char __user * buffer,	/* buffer to be
-							 * filled with data */
-			   size_t length,	/* length of the buffer     */
-			   loff_t * offset)
+static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
+		char __user * buffer, /* buffer to be
+		 * filled with data */
+		size_t length, /* length of the buffer     */
+		loff_t * offset)
 {
 	return 0;
 }
@@ -124,20 +163,20 @@ static ssize_t device_read(struct file *file,	/* see include/linux/fs.h   */
  * write into our device file.
  */
 static ssize_t device_write(struct file *file,
-	     const char __user * buffer, size_t length, loff_t * offset)
+		const char __user * buffer, size_t length, loff_t * offset)
 {
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
-	while(getBufferFull()) {
+	/*while(getBufferFull()) {
 		mdelay(100);
 	}
 	if(sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]) != 0) {
 		return 0;
-	}
+	} */
 	return length;
 }
-module_init(_sid_init_module);
-module_exit(_sid_cleanup_module);
+module_init( _sid_init_module);
+module_exit( _sid_cleanup_module);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lakshmanan");
 MODULE_DESCRIPTION("A Simple Hello World module");
