@@ -176,7 +176,7 @@ void delay(long howLong) {
 	if (howLong == 0) {
 		return;
 	} else {
-		if(howlLong < 1000000) {
+		if(howLong < 1000000) {
 			udelay(howLong);
 		} else {
 			do_gettimeofday(&tNow);
