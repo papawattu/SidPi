@@ -1,5 +1,5 @@
 #include <linux/kthread.h>
-#include <linux/time.h>
+#include <linux/delay.h>
 #include <linux/module.h>    // included for all kernel modules
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
