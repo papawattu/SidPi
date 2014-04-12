@@ -130,9 +130,11 @@ int sidThread(void) {
 
 				delay(cycles);
 				//writeSid(reg, val);
+				printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
 
 			} else {
 				delay(cycles);
+				printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 
 		} else {
