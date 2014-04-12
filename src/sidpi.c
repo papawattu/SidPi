@@ -13,7 +13,7 @@
 #include <linux/seq_file.h>
 #include "sidpithread.h"
 
-#define procfs_name "sidpi"
+#define PROC_FS_NAME "sidpi"
 
 /**
  * This structure hold information about the /proc file
@@ -46,18 +46,24 @@ static char *msg_Ptr;
 static struct file_operations fops = { .read = device_read, .write =
 		device_write, .open = device_open, .release = device_release };
 
-static int hello_proc_show(struct seq_file *m, void *v) {
-  seq_printf(m, "Hello proc!\n");
+static int sid_proc_show(struct seq_file *m, void *v) {
+  seq_printf(m, "SIDPi version 0.1\n");
+  seq_printf(m, "Buffer size : %d\n",getBufferMax());
+  seq_printf(m, "Buffer count : %d\n",getBufferCount());
+  seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
+  seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
+  seq_printf(m, "Buffer full : %d\n",getBufferFull());
+
   return 0;
 }
 
-static int hello_proc_open(struct inode *inode, struct  file *file) {
-  return single_open(file, hello_proc_show, NULL);
+static int sid_proc_open(struct inode *inode, struct  file *file) {
+  return single_open(file, sid_proc_show, NULL);
 }
 
-static const struct file_operations hello_proc_fops = {
+static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
-  .open = hello_proc_open,
+  .open = sid_proc_open,
   .read = seq_read,
   .llseek = seq_lseek,
   .release = single_release,
@@ -76,8 +82,8 @@ static int __init _sid_init_module(void)
 		return Major;
 	}
 
-	proc_create("hello_proc", 0, NULL, &hello_proc_fops);
-	//setupSid();
+	proc_create(PROC_FS_NAME, 0, NULL, &hello_proc_fops);
+	setupSid();
 
 	return SUCCESS;
 }
@@ -92,8 +98,8 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device 
 	 */
 	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
-	remove_proc_entry("hello_proc", NULL);
-	//closeSid();
+	remove_proc_entry(PROC_FS_NAME, NULL);
+	closeSid();
 }
 static int device_open(struct inode *inode, struct file *file) {
 	/*

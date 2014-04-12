@@ -115,7 +115,6 @@ int sidThread(void) {
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
-		printk(KERN_INFO "Buffer count %d\n",buffer.count);
 		if (buffer.count > 3) {
 			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
@@ -130,16 +129,16 @@ int sidThread(void) {
 
 				delay(cycles);
 				//writeSid(reg, val);
-				printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
+		//		printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
 
 			} else {
 				delay(cycles);
-				printk(KERN_INFO "Delay %2x\n", cycles);
+		//		printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 
 		} else {
 			msleep(500);
-			printk(KERN_INFO "Sleep\n");
+		//	printk(KERN_INFO "Sleep\n");
 		}
 	}
 	return 0;
@@ -304,7 +303,7 @@ void init_queue(Buffer *q) {
 
 int enqueue(Buffer *q, unsigned char x) {
 	if (q->count >= SID_BUFFER_SIZE) {
-		printk(KERN_INFO "Warning: queue overflow enqueue x=%d\n", x);
+	//	printk(KERN_INFO "Warning: queue overflow enqueue x=%d\n", x);
 		return -1;
 	} else {
 		q->last = (q->last + 1) % SID_BUFFER_SIZE;
