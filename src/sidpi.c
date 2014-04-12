@@ -11,6 +11,7 @@
 //#include <asm/uaccess.h>	/* for put_user */
 #include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
 #include <linux/seq_file.h>
+#include <linux/sched.h>
 #include "sidpithread.h"
 
 #define PROC_FS_NAME "sidpi"
