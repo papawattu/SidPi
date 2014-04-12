@@ -160,7 +160,7 @@ static ssize_t device_write(struct file *file,
 	val = buffer[0];
 
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,delay);
-	udelay(delay);
+	delay(delay);
 
 	writeSid(reg, val);
 
