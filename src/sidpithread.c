@@ -7,6 +7,7 @@
 #include <linux/ioctl.h>
 #include <linux/io.h>
 #include <linux/ioport.h>
+#include <linux/types.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
@@ -50,7 +51,7 @@ const int ADDR[] = {8,25,24,23,18};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
-volatile void * gpio, * gpio_clock, * gpio_timer;
+static void __iomem * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
@@ -205,12 +206,12 @@ long getRealSidClock(void) {
 	return 0; //*clock;
 }
 void writeSid(int reg, int val) {
-	iowrite32((unsigned long) addrPins[reg % 32],gpio + 7);
-	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], gpio + 10);
-	iowrite32((unsigned long) 1 << CS, gpio + 10);
-	iowrite32((unsigned long) dataPins[val % 256], gpio + 7);
-	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], gpio + 10);
-	iowrite32((unsigned long) 1 << CS, gpio + 7);
+	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
+	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);
+	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
+	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
+	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
+	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
 
 }
 void startSidClk(int freq) {
@@ -222,16 +223,16 @@ void startSidClk(int freq) {
 
 	if (divi > 4095)
 		divi = 4095;
-	iowrite32(BCM_PASSWORD | GPIO_CLOCK_SOURCE, gpio_clock + 28);
+	iowrite32(BCM_PASSWORD | GPIO_CLOCK_SOURCE, (u32 *) gpio_clock + 28);
 
 	while ((ioread32(gpio_clock + 28) & 0x80) != 0)
 		;
 
-	iowrite32(BCM_PASSWORD | (divi << 12) | divf,gpio_clock + 29);
-	iowrite32(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,gpio_clock + 28);
+	iowrite32(BCM_PASSWORD | (divi << 12) | divf,(u32 *) gpio_clock + 29);
+	iowrite32(BCM_PASSWORD | 0x10 | GPIO_CLOCK_SOURCE,(u32 *) gpio_clock + 28);
 
-	iowrite32(0x0000280,gpio_timer + TIMER_CONTROL);
-	iowrite32(0x00000F9,gpio_timer + TIMER_PRE_DIV);
+	iowrite32(0x0000280,(u32 *) gpio_timer + TIMER_CONTROL);
+	iowrite32(0x00000F9,(u32 *) gpio_timer + TIMER_PRE_DIV);
 }
 
 void setPinsToOutput(void) {
@@ -241,32 +242,32 @@ void setPinsToOutput(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-				| (1 << shift),gpio + fSel);
+		iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+				| (1 << shift),(u32 *)gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-						| (1 << shift),gpio + fSel);
+		iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+						| (1 << shift),(u32 *) gpio + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+					| (1 << shift),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+					| (1 << shift),(u32 *) gpio + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (1 << shift),gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+					| (1 << shift),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	iowrite32(ioread32(gpio + fSel) & ~(7 << shift)
-					| (4 << shift),gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
+					| (4 << shift),(u32 *) gpio + fSel);
 }
 
 void generatePinTables(void) {
