@@ -170,7 +170,7 @@ static ssize_t device_write(struct file *file,
 		getnstimeofday(&now);
 		printk (KERN_INFO "cycles %d : now (s) %d (u) %d : target (s) %d (u) %d \n",cycles,now.tv_sec,now.tv_usec,ts.tv_sec,ts.tv_usec);
 
-		printk (KERN_INFO "time comp %d\n",timespec_compare(&now,&ts));
+		printk (KERN_INFO "time comp %d\n",timeval_compare(&now,&ts));
 
 	}
 	writeSid(reg, val);
