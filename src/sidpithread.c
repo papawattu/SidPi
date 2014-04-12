@@ -177,7 +177,7 @@ void delay(long howLong) {
 		return;
 	} else {
 		if(howlLong < 1000000) {
-			usleep(howLong);
+			udelay(howLong);
 		} else {
 			do_gettimeofday(&tNow);
 			tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
