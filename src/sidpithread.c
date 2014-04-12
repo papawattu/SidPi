@@ -70,8 +70,6 @@ void setupSid(void) {
 
 	if(mapGPIO() != 0) return;
 
-	printk(KERN_INFO "GPIO mapped addr is %x and value is %x\n",gpio,ioread32(gpio));
-
 	generatePinTables();
 
 	setPinsToOutput();
@@ -207,13 +205,13 @@ long getRealSidClock(void) {
 	return 0; //*clock;
 }
 void writeSid(int reg, int val) {
-/*	iowrite32((unsigned long) addrPins[reg % 32],gpio + 7);
+	iowrite32((unsigned long) addrPins[reg % 32],gpio + 7);
 	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], gpio + 10);
 	iowrite32((unsigned long) 1 << CS, gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], gpio + 10);
 	iowrite32((unsigned long) 1 << CS, gpio + 7);
-*/
+
 }
 void startSidClk(int freq) {
 	int divi, divr, divf;
