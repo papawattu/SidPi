@@ -129,8 +129,8 @@ static ssize_t device_write(struct file *file,
 	if(!playbackReady()) {
 		startPlayback();
 	}
-	sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]);
-	return 0;
+	//sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]);
+	return -EBUSY;
 }
 module_init(_sid_init_module);
 module_exit(_sid_cleanup_module);
