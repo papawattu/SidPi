@@ -177,22 +177,17 @@ void delay(long howLong) {
 		return;
 	} else {
 		if(howlLong < 1000000) {
-			usleep(howLong)
+			usleep(howLong);
 		} else {
 			do_gettimeofday(&tNow);
 			tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
 			tLong.tv_usec = tNow.tv_usec + (howLong % 1000000);
-			while(timeval_compare(&tNow,&tLong) < 0) {
+			{
 				schedule();
-			}
+				do_gettimeofday(&tNow);
+			} while(timeval_compare(&tNow,&tLong) < 0);
 		}
 	}
-
-	do_gettimeofday(&tNow);
-	tLong.tv_sec = howLong / 1000000;
-	tLong.tv_usec = howLong % 1000000;
-	timeradd(&tNow, &tLong, &tEnd);
-
 }
 
 void setThreshold(int value) {
