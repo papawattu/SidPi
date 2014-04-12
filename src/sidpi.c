@@ -163,12 +163,12 @@ static ssize_t device_write(struct file *file,
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,delay);
 	if(cycles > 0) {
 
-		getnstimeofday(&now);
+		gettimeofday(&now);
 		ts.tv_sec = (cycles / 1000000) + now.tv_sec;
 		ts.tv_usec = (cycles % 1000000) + now.tv_usec;
 
 		while(timeval_compare(&now,&ts) <=0) {
-			getnstimeofday(&now);
+			gettimeofday(&now);
 		}
 		//printk (KERN_INFO "cycles %d : now (s) %d (u) %d : target (s) %d (u) %d \n",cycles,now.tv_sec,now.tv_usec,ts.tv_sec,ts.tv_usec);
 
