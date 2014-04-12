@@ -1,5 +1,7 @@
 #include <linux/kthread.h>
 #include <linux/delay.h>
+#include <linux/time.h>
+#include <linux/sched.h>
 #include <linux/module.h>    // included for all kernel modules
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
@@ -169,28 +171,28 @@ void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
 }
 void delay(long howLong) {
 
-	ndelay(howLong * 1000);
-/*	struct timespec sleeper;
+
 	struct timeval tNow, tLong, tEnd;
-	if (howLong == 0)
+	if (howLong == 0) {
 		return;
-
-	if (howLong < 100) {
-		gettimeofday(&tNow, NULL);
-		tLong.tv_sec = howLong / 1000000;
-		tLong.tv_usec = howLong % 1000000;
-		timeradd(&tNow, &tLong, &tEnd);
-
 	} else {
-		sleeper.tv_sec = 0;
-		sleeper.tv_nsec = (long) (howLong * 1000);
-		nanosleep(&sleeper, NULL);
+		if(howlLong < 1000000) {
+			usleep(howLong)
+		} else {
+			do_gettimeofday(&tNow);
+			tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
+			tLong.tv_usec = tNow.tv_usec + (howLong % 1000000);
+			while(timeval_compare(&tNow,&tLong) < 0) {
+				schedule();
+			}
+		}
 	}
 
-	while (timercmp (&tNow, &tEnd, <)) {
-		gettimeofday(&tNow, NULL);
-	}
-*/
+	do_gettimeofday(&tNow);
+	tLong.tv_sec = howLong / 1000000;
+	tLong.tv_usec = howLong % 1000000;
+	timeradd(&tNow, &tLong, &tEnd);
+
 }
 
 void setThreshold(int value) {
