@@ -175,19 +175,15 @@ void delay(long howLong) {
 	struct timeval tNow, tLong, tEnd;
 	if (howLong == 0) {
 		return;
-	} else {
-		if(howLong < 1000000) {
-			udelay(howLong);
-		} else {
-			do_gettimeofday(&tNow);
-			tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
-			tLong.tv_usec = tNow.tv_usec + (howLong % 1000000);
-			{
-				schedule();
-				do_gettimeofday(&tNow);
-			} while(timeval_compare(&tNow,&tLong) < 0);
-		}
 	}
+	do_gettimeofday(&tNow);
+	tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
+	tLong.tv_usec = tNow.tv_usec + (howLong % 1000000);
+	{
+		schedule();
+		do_gettimeofday(&tNow);
+	} while(timeval_compare(&tNow,&tLong) < 0);
+
 }
 
 void setThreshold(int value) {
