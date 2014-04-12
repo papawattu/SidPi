@@ -149,7 +149,7 @@ static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
 	int cycles,reg,val;
-
+	struct timespec *ts,*now;
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
 	/*while(getBufferFull()) {
@@ -161,11 +161,16 @@ static ssize_t device_write(struct file *file,
 	val = buffer[0];
 
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,delay);
+	if(cycles > 0) {
 
-	unsigned long delay = jiffies + cycles;
+		getnstimeofday(&now);
+		ts.tv_sec = (howLong / 1000000) + now.tv_sec;
+		ts.tv_usec = (howLong % 1000000) + now.tv_usec;
+		{
+			getnstimeofday(&now);
+		} while (timespec_compare(now,ts) <=0 );
 
-	while (time_before(jiffies, delay))
-	        cond_resched();
+	}
 	writeSid(reg, val);
 
 	return length;
