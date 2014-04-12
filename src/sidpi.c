@@ -125,12 +125,10 @@ static ssize_t device_read(struct file *file,	/* see include/linux/fs.h   */
 static ssize_t device_write(struct file *file,
 	     const char __user * buffer, size_t length, loff_t * offset)
 {
-	printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
-	if(!playbackReady()) {
-		startPlayback();
-	}
+	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
+
 	sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]);
-	return length;
+	return -1;
 }
 module_init(_sid_init_module);
 module_exit(_sid_cleanup_module);
