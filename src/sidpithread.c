@@ -50,7 +50,7 @@ const int ADDR[] = {8,25,24,23,18};
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
-unsigned long * gpio, *gpio_clock, *gpio_timer;
+unsigned long gpio, gpio_clock, gpio_timer;
 int isPlaybackReady = 0;
 long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
