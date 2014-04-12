@@ -115,7 +115,7 @@ int sidThread(void) {
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
-
+		printk(KERN_INFO "Buffer count %d\n",buffer.count);
 		if (buffer.count > 3) {
 			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
@@ -139,6 +139,7 @@ int sidThread(void) {
 
 		} else {
 			msleep(500);
+			printk(KERN_INFO "Sleep\n");
 		}
 	}
 	return 0;
