@@ -170,6 +170,7 @@ void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
 }
 void delay(long howLong) {
 
+	ndelay(howlog * 1000);
 /*	struct timespec sleeper;
 	struct timeval tNow, tLong, tEnd;
 	if (howLong == 0)
