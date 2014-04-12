@@ -164,8 +164,8 @@ static ssize_t device_write(struct file *file,
 	if(cycles > 0) {
 
 		getnstimeofday(&now);
-		ts.tv_sec = (howLong / 1000000) + now.tv_sec;
-		ts.tv_usec = (howLong % 1000000) + now.tv_usec;
+		ts.tv_sec = (cycles / 1000000) + now.tv_sec;
+		ts.tv_usec = (cycles % 1000000) + now.tv_usec;
 		{
 			getnstimeofday(&now);
 		} while (timespec_compare(now,ts) <=0 );
