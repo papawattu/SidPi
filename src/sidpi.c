@@ -46,6 +46,13 @@ static char *msg_Ptr;
 static struct file_operations fops = { .read = device_read, .write =
 		device_write, .open = device_open, .release = device_release };
 
+static const struct file_operations hello_proc_fops = {
+  .owner = THIS_MODULE,
+  .open = hello_proc_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
+};
 /*
  * This function is called when the module is loaded
  */
@@ -73,13 +80,7 @@ static int hello_proc_open(struct inode *inode, struct  file *file) {
   return single_open(file, hello_proc_show, NULL);
 }
 
-static const struct file_operations hello_proc_fops = {
-  .owner = THIS_MODULE,
-  .open = hello_proc_open,
-  .read = seq_read,
-  .llseek = seq_lseek,
-  .release = single_release,
-};
+
 /*
  * This function is called when the module is unloaded
  */
