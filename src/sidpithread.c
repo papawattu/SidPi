@@ -157,22 +157,21 @@ void stopPlayback(void) {
 	isPlaybackReady = 0;
 
 }
-void sidDelay(int cycles) {
+int sidDelay(int cycles) {
 
-	enqueue(&buffer, (unsigned char) 0xff);
-	enqueue(&buffer, (unsigned char) 0);
-	enqueue(&buffer, (unsigned char) (cycles & 0xff00) >> 8);
-	enqueue(&buffer, (unsigned char) cycles & 0xff);
+	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) (cycles & 0xff00) >> 8) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
+	return 0;
 
 }
 int sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
-	if(getBufferFull() == 1) {
-		return -1;
-	}
-	enqueue(&buffer, (unsigned char) reg & 0xff);
-	enqueue(&buffer, (unsigned char) value & 0xff);
-	enqueue(&buffer, (unsigned char) cycleHigh & 0xff);
-	enqueue(&buffer, (unsigned char) cycleLow & 0xff);
+
+	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycleHigh & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycleLow & 0xff) != 0) return -1;
 	return 0;
 }
 void delay(long howLong) {
