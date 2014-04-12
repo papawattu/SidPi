@@ -162,7 +162,7 @@ static ssize_t device_write(struct file *file,
 
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,delay);
 
-	unsigned long delay = jiffies + usecs_to_jiffies(cycles);
+	unsigned long delay = jiffies + cycles;
 
 	while (time_before(jiffies, delay))
 	        cond_resched();
