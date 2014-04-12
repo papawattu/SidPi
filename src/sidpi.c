@@ -149,7 +149,7 @@ static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
 	int cycles,reg,val;
-	struct timespec ts,now;
+	struct timeval ts,now;
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
 	/*while(getBufferFull()) {
