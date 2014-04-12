@@ -82,7 +82,7 @@ static int __init _sid_init_module(void)
 		return Major;
 	}
 
-	proc_create(PROC_FS_NAME, 0, NULL, &hello_proc_fops);
+	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	setupSid();
 
 	return SUCCESS;
