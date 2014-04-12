@@ -7,6 +7,7 @@
 #include <linux/module.h>
 #include <linux/fs.h>
 #include <linux/init.h> 
+#include <linux/delay.h>
 //#include <asm/uaccess.h>	/* for put_user */
 #include "sidpithread.h"
 
