@@ -78,6 +78,8 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
+	startSidThread();
+
 	sidSetup = 1;
 
 }
@@ -114,7 +116,7 @@ int sidThread(void) {
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
 
-		if (buffer.count >= 3 && playbackReady()) {
+		if (buffer.count > 3 && playbackReady()) {
 			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
@@ -134,7 +136,7 @@ int sidThread(void) {
 			}
 
 		} else {
-//			usleep(100);
+			msleep(500);
 		}
 	}
 	return 0;
@@ -145,14 +147,12 @@ int playbackReady(void) {
 }
 
 void startPlayback(void) {
-	startSidThread();
-
 	isPlaybackReady = 1;
 }
 
 void stopPlayback(void) {
 	isPlaybackReady = 0;
-	stopSidThread();
+
 }
 void sidDelay(int cycles) {
 
