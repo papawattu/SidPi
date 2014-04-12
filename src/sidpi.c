@@ -128,6 +128,9 @@ static ssize_t device_write(struct file *file,
 {
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
+	while(getBufferFull()) {
+		mdelay(100);
+	}
 	if(sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]) != 0) {
 		return 0;
 	}
