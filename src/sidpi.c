@@ -59,7 +59,7 @@ static int __init _sid_init_module(void)
 	printk(KERN_INFO "Try various minor numbers. Try to cat and echo to\n");
 	printk(KERN_INFO "the device file.\n");
 	printk(KERN_INFO "Remove the device file and module when done.\n");
-	//setupSid();
+	setupSid();
 
 	return SUCCESS;
 }
@@ -75,7 +75,7 @@ static void __exit _sid_cleanup_module(void)
 	 */
 	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
 
-	//closeSid();
+	closeSid();
 }
 static int device_open(struct inode *inode, struct file *file)
 {
