@@ -127,8 +127,14 @@ static ssize_t device_write(struct file *file,
 {
 	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
-	sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]);
-	return -1;
+	if(sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]) != 0) {
+		{
+			mdelay(100);
+
+		} while (sidWrite(buffer[1], buffer[0], buffer[3], buffer[2]) != 0);
+	}
+
+	return length;
 }
 module_init(_sid_init_module);
 module_exit(_sid_cleanup_module);

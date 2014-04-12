@@ -36,7 +36,7 @@ extern const int DATA[];
 extern const int ADDR[];
 
 void sidDelay(int cycles);
-void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
+int sidWrite(int reg,int value,int cycleHigh,int cycleLow);
 void setupSid(void);
 void closeSid(void);
 void *cmdThread(void);
