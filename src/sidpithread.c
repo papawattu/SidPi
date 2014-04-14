@@ -122,8 +122,8 @@ int sidThread(void) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
-			cycles = (unsigned int) dequeue(&buffer) << 8;
-			cycles |= (unsigned int) dequeue(&buffer);
+			cycles = (unsigned int) dequeue(&buffer);
+			cycles |= (unsigned int) dequeue(&buffer) << 8;
 
 			currentClock += cycles;
 			targetCycles += cycles;
