@@ -57,6 +57,9 @@ long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
 
+struct semaphore     bufferSem;
+struct semaphore     todoSem;
+
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
 unsigned char dequeue(Buffer *q);
@@ -74,6 +77,10 @@ void setupSid(void) {
 	generatePinTables();
 
 	setPinsToOutput();
+
+	sema_init(&bufferSem, SID_BUFFER_SIZE);
+
+	sema_init(&todoSem, 0);
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
@@ -117,6 +124,7 @@ int sidThread(void) {
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
+		down_interruptible(&todoSem);
 		if (buffer.count > 3) {
 			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
@@ -141,6 +149,7 @@ int sidThread(void) {
 			msleep(500);
 		//	printk(KERN_INFO "Sleep\n");
 		}
+		up(&bufferSem);
 	}
 	return 0;
 }
@@ -159,25 +168,28 @@ void stopPlayback(void) {
 }
 int sidDelay(unsigned int cycles) {
 
+	down(bufferSem);
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
+	up(&todoSem);
 	return 0;
 
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
-
+	down(bufferSem);
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
+	up(&todoSem);
 	return 0;
 }
 void delay(unsigned int howLong) {
 
 	unsigned long cycles = howLong,clocks;
-	do_gettimeofday(&tv);
+/*	do_gettimeofday(&tv);
 	clocks = (tv.tv_sec - sid->tv.tv_sec) * 1000000
 	                + ( tv.tv_usec - sid->tv.tv_usec);
 
@@ -185,10 +197,9 @@ void delay(unsigned int howLong) {
 
 	cycles -= clocks;
 	while (cycles > 1000000 / HZ ) {
-	                /* Long wait, schedule */
+
 		current->state = TASK_INTERRUPTIBLE;
 	    schedule_timeout(howLong / 1000000);
-	              /* Now we should only have to delay a short while if at all */
 	    do_gettimeofday(&tv);
 
 			/* Update cycle status */
@@ -204,12 +215,11 @@ void delay(unsigned int howLong) {
 
 	            if ( sid->cycles > 4 )
 	            {
-	                /* Short delay */
 	                udelay(sid->cycles);
 			sid->shortDelay++;
 			sid->shortDelays += sid->cycles;
-	    }
-
+	    } */
+	udelay(howLong);
 }
 
 void setThreshold(int value) {
