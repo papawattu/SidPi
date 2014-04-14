@@ -11,7 +11,6 @@
 #include <linux/types.h>
 #include <linux/spinlock.h>
 #include <mach/platform.h>
-#include "sidpithread.h"
 
 static struct task_struct *thread;
 
@@ -170,7 +169,7 @@ void stopPlayback(void) {
 }
 int sidDelay(unsigned int cycles) {
 
-	down(bufferSem);
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
@@ -180,7 +179,7 @@ int sidDelay(unsigned int cycles) {
 
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
-	down(bufferSem);
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
