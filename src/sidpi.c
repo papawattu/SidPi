@@ -157,7 +157,7 @@ static ssize_t device_write(struct file *file,
 	} */
 
 
-	cycles = buffer[3] << 8 | buffer[2];
+	cycles = (buffer[3] << 8 | buffer[2]) & 0xffff;
 	reg = buffer[1];
 	val = buffer[0];
 
