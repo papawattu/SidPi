@@ -109,7 +109,7 @@ void stopSidThread(void) {
 
 int sidThread(void) {
 	unsigned char reg, val;
-	int cycles;
+	unsigned int cycles;
 	long startClock;
 	//daemonize();
 	current->policy=SCHED_FIFO;
@@ -122,8 +122,8 @@ int sidThread(void) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
-			cycles = (int) dequeue(&buffer) << 8;
-			cycles |= (int) dequeue(&buffer);
+			cycles = (unsigned int) dequeue(&buffer) << 8;
+			cycles |= (unsigned int) dequeue(&buffer);
 
 			currentClock += cycles;
 			targetCycles += cycles;
@@ -162,8 +162,8 @@ int sidDelay(unsigned int cycles) {
 
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	return 0;
 
 }
@@ -171,8 +171,8 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	return 0;
 }
 void delay(long howLong) {
