@@ -26,7 +26,7 @@
 #define RES 0
 #define CLK 4
 
-#define SID_BUFFER_SIZE (65536)
+#define SID_BUFFER_SIZE (8192)
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 #define THREAD_NAME "sidpithread"
@@ -35,8 +35,8 @@
 extern const int DATA[];
 extern const int ADDR[];
 
-int sidDelay(int cycles);
-int sidWrite(int reg,int value,int cycleHigh,int cycleLow);
+int sidDelay(unsigned int cycles);
+int sidWrite(int reg,int value,unsigned int cycles);
 void setupSid(void);
 void closeSid(void);
 void *cmdThread(void);

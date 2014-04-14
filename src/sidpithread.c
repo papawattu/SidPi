@@ -77,14 +77,14 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	//startSidThread();
+	startSidThread();
 
 	sidSetup = 1;
 
 }
 
 void closeSid(void) {
-	//stopSidThread();
+	stopSidThread();
 	unmapGPIO();
 }
 
@@ -111,6 +111,9 @@ int sidThread(void) {
 	unsigned char reg, val;
 	int cycles;
 	long startClock;
+	daemonize();
+	current->policy=SCHED_FIFO;
+	current->rt_priority=1;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
@@ -127,7 +130,7 @@ int sidThread(void) {
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
-				//writeSid(reg, val);
+				writeSid(reg, val);
 		//		printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
 
 			} else {
@@ -155,38 +158,27 @@ void stopPlayback(void) {
 	isPlaybackReady = 0;
 
 }
-int sidDelay(int cycles) {
+int sidDelay(unsigned int cycles) {
 
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) (cycles & 0xff00) >> 8) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles >> 8 0xff) != 0) return -1;
 	return 0;
 
 }
-int sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
+int sidWrite(int reg, int value, unsigned int cycles) {
 
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycleHigh & 0xff) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycleLow & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
+	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	return 0;
 }
 void delay(long howLong) {
 
 
-	struct timeval tNow, tLong, tEnd;
-	if (howLong == 0) {
-		return;
-	}
-	do_gettimeofday(&tNow);
-	tLong.tv_sec = tNow.tv_sec + (howLong / 1000000);
-	tLong.tv_usec = tNow.tv_usec + (howLong % 1000000);
-	{
-		schedule();
-		do_gettimeofday(&tNow);
-	} while(timeval_compare(&tNow,&tLong) < 0);
-
+	udelay(howlong);
 }
 
 void setThreshold(int value) {
