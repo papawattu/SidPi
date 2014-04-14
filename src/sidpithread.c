@@ -176,7 +176,40 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 void delay(unsigned int howLong) {
 
-	udelay(howLong);
+	unsigned long cycles = howLong,clocks;
+	do_gettimeofday(&tv);
+	clocks = (tv.tv_sec - sid->tv.tv_sec) * 1000000
+	                + ( tv.tv_usec - sid->tv.tv_usec);
+
+	memcpy(&sid->tv, &tv, sizeof(tv));
+
+	cycles -= clocks;
+	while (cycles > 1000000 / HZ ) {
+	                /* Long wait, schedule */
+		current->state = TASK_INTERRUPTIBLE;
+	    schedule_timeout(howLong / 1000000);
+	              /* Now we should only have to delay a short while if at all */
+	    do_gettimeofday(&tv);
+
+			/* Update cycle status */
+	    /* clocks = (tv.tv_sec - sid->tv.tv_sec) * 1000000
+	                    + ( tv.tv_usec - sid->tv.tv_usec);
+
+	                memcpy(&sid->tv, &tv, sizeof(tv));
+			sid->longDelay++;
+			sid->longDelays += sid->cycles;
+	                sid->cycles -= clocks;
+			delayed = 1;
+	            }
+
+	            if ( sid->cycles > 4 )
+	            {
+	                /* Short delay */
+	                udelay(sid->cycles);
+			sid->shortDelay++;
+			sid->shortDelays += sid->cycles;
+	    }
+
 }
 
 void setThreshold(int value) {
