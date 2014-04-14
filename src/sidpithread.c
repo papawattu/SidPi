@@ -2,6 +2,7 @@
 #include <linux/delay.h>
 #include <linux/time.h>
 #include <linux/sched.h>
+#include <linux/poll.h>
 #include <linux/module.h>    // included for all kernel modules
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
