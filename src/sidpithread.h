@@ -42,7 +42,7 @@ void closeSid(void);
 void *cmdThread(void);
 int sidThread(void);
 void stopSidThread(void);
-void delay(long cycles);
+void delay(unsigned int cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);
 void mmapRPIDevices(void);

@@ -131,11 +131,11 @@ int sidThread(void) {
 
 				delay(cycles);
 				writeSid(reg, val);
-		//		printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
+				printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
 
 			} else {
 				delay(cycles);
-		//		printk(KERN_INFO "Delay %2x\n", cycles);
+				printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 
 		} else {
@@ -175,8 +175,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
 	return 0;
 }
-void delay(long howLong) {
-
+void delay(unsigned int howLong) {
 
 	udelay(howLong);
 }
