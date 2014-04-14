@@ -122,7 +122,7 @@ int sidThread(void) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
-			cycles = dequeue(&buffer) << 8 | dequeue(&buffer);
+			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
 			currentClock += cycles;
 			targetCycles += cycles;
@@ -162,7 +162,7 @@ int sidDelay(unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
+	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
 	return 0;
 
 }
@@ -171,7 +171,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
-	if(enqueue(&buffer, (unsigned char) cycles >> 8) != 0) return -1;
+	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
 	return 0;
 }
 void delay(unsigned int howLong) {
