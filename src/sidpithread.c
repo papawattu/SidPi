@@ -123,7 +123,7 @@ int sidThread(void) {
 			val = dequeue(&buffer);
 
 			cycles = (unsigned int) dequeue(&buffer);
-			cycles |= (unsigned int) dequeue(&buffer) << 8;
+			cycles |= (unsigned char) dequeue(&buffer) << 8;
 
 			currentClock += cycles;
 			targetCycles += cycles;
@@ -131,7 +131,7 @@ int sidThread(void) {
 
 				delay(cycles);
 				writeSid(reg, val);
-				printk(KERN_INFO "Write val %x reg %x delay %4x\n",val,reg,cycles);
+				printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
 
 			} else {
 				delay(cycles);
