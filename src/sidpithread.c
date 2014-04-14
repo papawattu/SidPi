@@ -111,7 +111,7 @@ int sidThread(void) {
 	unsigned char reg, val;
 	int cycles;
 	long startClock;
-	daemonize();
+	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	init_queue(&buffer);
@@ -178,7 +178,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 void delay(long howLong) {
 
 
-	udelay(howlong);
+	udelay(howLong);
 }
 
 void setThreshold(int value) {
