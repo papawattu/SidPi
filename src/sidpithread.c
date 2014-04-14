@@ -8,6 +8,7 @@
 #include <linux/io.h>
 #include <linux/ioport.h>
 #include <linux/types.h>
+#include <linux/spinlock.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
