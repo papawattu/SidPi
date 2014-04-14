@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/spinlock.h>
 #include <mach/platform.h>
+#include "sidpithread.h"
 
 static struct task_struct *thread;
 
