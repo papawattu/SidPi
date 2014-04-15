@@ -66,10 +66,7 @@ static int sid_proc_open(struct inode *inode, struct  file *file) {
 static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
   .open = sid_proc_open,
-  .read = seq_read,
-  .llseek = seq_lseek,
-  .release = single_release,
-};
+ };
 
 
 /*
@@ -99,9 +96,10 @@ static void __exit _sid_cleanup_module(void)
 	/* 
 	 * Unregister the device 
 	 */
+	closeSid();
 	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
 	remove_proc_entry(PROC_FS_NAME, NULL);
-	closeSid();
+
 }
 static int device_open(struct inode *inode, struct file *file) {
 	/*
