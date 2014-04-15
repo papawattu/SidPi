@@ -225,9 +225,9 @@ void setMultiplier(int value) {
 long getSidClock(void) {
 	return currentClock;
 }
-long getRealSidClock(void) {
-	long long int * clock = (long long int *) ((char *) ioread32(gpio_timer +TIMER_OFFSET) |
-			(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32);
+unsigned long long int getRealSidClock(void) {
+	unsigned long long int * clock = (unsigned long long int *) (ioread32(gpio_timer +TIMER_OFFSET) |
+			(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32));
 	return *clock;
 }
 void writeSid(int reg, int val) {
