@@ -55,7 +55,7 @@ unsigned long dataPins[256];
 unsigned long addrPins[32];
 static void __iomem * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
-long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
+unsigned long long int lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
 
@@ -85,6 +85,10 @@ void setupSid(void) {
 	sema_init(&todoSem, 0);
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
+
+	realClock = getRealSidClock();
+	
+	currentClock = realClock;	
 
 	startSidThread();
 
@@ -190,38 +194,24 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 void delay(unsigned int howLong) {
 
-	unsigned long cycles = howLong,clocks;
-/*	do_gettimeofday(&tv);
-	clocks = (tv.tv_sec - sid->tv.tv_sec) * 1000000
-	                + ( tv.tv_usec - sid->tv.tv_usec);
-
-	memcpy(&sid->tv, &tv, sizeof(tv));
+	unsigned long long int clocks,now;
+	unsigned int cycles = howLong;
+	
+	now = getRealSidClock();
+	clocks = now - lastClock;
 
 	cycles -= clocks;
 	while (cycles > 1000000 / HZ ) {
 
-		current->state = TASK_INTERRUPTIBLE;
-	    schedule_timeout(howLong / 1000000);
-	    do_gettimeofday(&tv);
+	    current->state = TASK_INTERRUPTIBLE;
+	    schedule_timeout(cycles / 1000000);
+	    cycles -= getRealSidClock() - lastClock;
+	
+	 }
 
-			/* Update cycle status */
-	    /* clocks = (tv.tv_sec - sid->tv.tv_sec) * 1000000
-	                    + ( tv.tv_usec - sid->tv.tv_usec);
-
-	                memcpy(&sid->tv, &tv, sizeof(tv));
-			sid->longDelay++;
-			sid->longDelays += sid->cycles;
-	                sid->cycles -= clocks;
-			delayed = 1;
-	            }
-
-	            if ( sid->cycles > 4 )
-	            {
-	                udelay(sid->cycles);
-			sid->shortDelay++;
-			sid->shortDelays += sid->cycles;
-	    } */
-	udelay(howLong);
+	 if (cycles > 4 ) {
+	 	delay(cycles);
+	 }
 }
 
 void setThreshold(int value) {
@@ -236,8 +226,8 @@ long getSidClock(void) {
 	return currentClock;
 }
 long getRealSidClock(void) {
-	long long int * clock = (long long int *) ((char *) ioread32(GPIO)
-			+ TIMER_OFFSET);
+	long long int * clock = (long long int *) ((char *) ioread32(gpio_timer +TIMER_OFFSET) |
+			(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32);
 	return *clock;
 }
 void writeSid(int reg, int val) {
