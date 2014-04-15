@@ -56,7 +56,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   sprintf(m, "Buffer full : %d\n",getBufferFull());
   sprintf(m, "Real clock : %d\n",getRealSidClock());
 
-  return 0;
+  return count;
 }
 
 static const struct file_operations sid_proc_fops = {
