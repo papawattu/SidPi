@@ -144,12 +144,13 @@ int sidThread(void) {
 
 				delay(cycles);
 				writeSid(reg, val);
-				printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
+				//printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
 
 			} else {
 				delay(cycles);
 				printk(KERN_INFO "Delay %2x\n", cycles);
 			}
+			lastClock = getRealSidClock();
 
 		} else {
 			msleep(500);
@@ -195,23 +196,24 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 void delay(unsigned int howLong) {
 
 	unsigned long long int clocks,now;
-	unsigned int cycles = howLong;
 	
-	now = getRealSidClock();
-	clocks = now - lastClock;
+	currentClock += howLong;
 
-	cycles -= clocks;
-	while (cycles > 1000000 / HZ ) {
+	clocks = getRealSidClock() - lastClock;
+	currentClock -= clocks;
+
+	while (currentClock > 1000000 / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
-	    schedule_timeout(cycles / 1000000);
-	    cycles -= getRealSidClock() - lastClock;
+	    schedule_timeout(currentClock / 1000000);
+	    currentClock -= getRealSidClock() - lastClock;
 	
 	 }
 
-	 if (cycles > 4 ) {
-	 	delay(cycles);
+	 if (currentClock > 4 ) {
+	 	udelay(currentClock);
 	 }
+
 }
 
 void setThreshold(int value) {
