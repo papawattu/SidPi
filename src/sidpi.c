@@ -48,14 +48,14 @@ static struct file_operations fops = { .read = device_read, .write =
 		device_write, .open = device_open, .release = device_release };
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-/*  sprintf(m, "SIDPi version 0.1\n");
+  sprintf(m, "SIDPi version 0.1\n");
   sprintf(m, "Buffer size : %d\n",getBufferMax());
   sprintf(m, "Buffer count : %d\n",getBufferCount());
   sprintf(m, "Buffer first pointer : %d\n",getBufferFirst());
   sprintf(m, "Buffer last pointer : %d\n",getBufferLast());
   sprintf(m, "Buffer full : %d\n",getBufferFull());
-  sprintf(m, "Real clock : %d\n",getRealSidClock());
-*/
+//  sprintf(m, "Real clock : %d\n",getRealSidClock());
+
   return count;
 }
 
