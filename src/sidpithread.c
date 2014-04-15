@@ -55,7 +55,7 @@ unsigned long dataPins[256];
 unsigned long addrPins[32];
 static void __iomem * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
-unsigned long long int lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
+unsigned long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
 
@@ -195,7 +195,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 void delay(unsigned int howLong) {
 
-	unsigned long long int clocks,now;
+	unsigned long clocks,now;
 	
 	currentClock += howLong;
 
@@ -227,9 +227,8 @@ void setMultiplier(int value) {
 long getSidClock(void) {
 	return currentClock;
 }
-unsigned long long int getRealSidClock(void) {
-	unsigned long long int clock = ioread32(gpio_timer +TIMER_OFFSET) |
-			(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32);
+unsigned long getRealSidClock(void) {
+	unsigned long long int clock = ioread32(gpio_timer +TIMER_OFFSET);
 	return clock;
 }
 void writeSid(int reg, int val) {
