@@ -47,23 +47,27 @@ static char *msg_Ptr;
 static struct file_operations fops = { .read = device_read, .write =
 		device_write, .open = device_open, .release = device_release };
 
+static int sid_proc_open(struct inode *inode, struct  file *file) {
+  return single_open(file, sid_proc_show, NULL);
+}
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-  sprintf(m, "SIDPi version 0.1\n");
-  sprintf(m, "Buffer size : %d\n",getBufferMax());
-  sprintf(m, "Buffer count : %d\n",getBufferCount());
-  sprintf(m, "Buffer first pointer : %d\n",getBufferFirst());
-  sprintf(m, "Buffer last pointer : %d\n",getBufferLast());
-  sprintf(m, "Buffer full : %d\n",getBufferFull());
+  seq_printf(m, "SIDPi version 0.1\n");
+  seq_printf(m, "Buffer size : %d\n",getBufferMax());
+  seq_printf(m, "Buffer count : %d\n",getBufferCount());
+  seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
+  seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
+  seq_printf(m, "Buffer full : %d\n",getBufferFull());
 //  sprintf(m, "Real clock : %d\n",getRealSidClock());
 
   return count;
 }
-
-static const struct file_operations sid_proc_fops = {
-  read: sid_proc_show,
+static const struct file_operations hello_proc_fops = {
+  .owner = THIS_MODULE,
+  .open = sid_proc_open,
+  .read = seq_read,
+  .llseek = seq_lseek,
+  .release = single_release,
 };
-
-
 /*
  * This function is called when the module is loaded
  */
