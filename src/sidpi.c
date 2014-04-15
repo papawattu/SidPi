@@ -55,7 +55,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
   seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
   seq_printf(m, "Buffer full : %d\n",getBufferFull());
-//  sprintf(m, "Real clock : %d\n",getRealSidClock());
+  seq_printf(m, "Real clock : %d\n",getRealSidClock());
 
   return count;
 }
@@ -82,7 +82,7 @@ static int __init _sid_init_module(void)
 	}
 
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
-	//setupSid();
+	setupSid();
 
 	return SUCCESS;
 }
@@ -95,7 +95,7 @@ static void __exit _sid_cleanup_module(void)
 	/* 
 	 * Unregister the device 
 	 */
-	//closeSid();
+	closeSid();
 	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
 	remove_proc_entry(PROC_FS_NAME, NULL);
 

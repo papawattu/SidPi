@@ -97,6 +97,7 @@ void setupSid(void) {
 }
 
 void closeSid(void) {
+	up(&todoSem);
 	stopSidThread();
 	unmapGPIO();
 }
@@ -130,7 +131,12 @@ int sidThread(void) {
 	init_queue(&buffer);
 	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
+		if (signal_pending(current))
+		     break;
 		down_interruptible(&todoSem);
+
+		if (signal_pending(current))
+			break;
 		if (buffer.count > 3) {
 			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
