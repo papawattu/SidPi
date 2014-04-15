@@ -47,9 +47,7 @@ static char *msg_Ptr;
 static struct file_operations fops = { .read = device_read, .write =
 		device_write, .open = device_open, .release = device_release };
 
-static int sid_proc_open(struct inode *inode, struct  file *file) {
-  return single_open(file, sid_proc_show, NULL);
-}
+
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "SIDPi version 0.1\n");
   seq_printf(m, "Buffer size : %d\n",getBufferMax());
@@ -60,6 +58,9 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
 //  sprintf(m, "Real clock : %d\n",getRealSidClock());
 
   return count;
+}
+static int sid_proc_open(struct inode *inode, struct  file *file) {
+  return single_open(file, sid_proc_show, NULL);
 }
 static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
