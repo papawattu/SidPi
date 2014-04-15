@@ -61,7 +61,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
 
   return count;
 }
-static const struct file_operations hello_proc_fops = {
+static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
   .open = sid_proc_open,
   .read = seq_read,
