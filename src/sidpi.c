@@ -54,7 +54,7 @@ static int sid_proc_show(struct seq_file *m, void *v) {
   seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
   seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
   seq_printf(m, "Buffer full : %d\n",getBufferFull());
-  seq_printf(m, "Read Clock : &d\n",getRealSidClock())
+  seq_printf(m, "Read Clock : &d\n",getRealSidClock());
 
   return 0;
 }
