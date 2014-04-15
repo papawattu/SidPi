@@ -226,9 +226,9 @@ long getSidClock(void) {
 	return currentClock;
 }
 unsigned long long int getRealSidClock(void) {
-	unsigned long long int * clock = (unsigned long long int *) (ioread32(gpio_timer +TIMER_OFFSET) |
-			(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32));
-	return *clock;
+	//unsigned long long int * clock = (unsigned long long int *) (ioread32(gpio_timer +TIMER_OFFSET) |
+	//		(ioread32(gpio_timer + TIMER_OFFSET + 4) << 32));
+	return 0;*clock;
 }
 void writeSid(int reg, int val) {
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
