@@ -262,7 +262,7 @@ void startSidClk(int freq) {
 
 	divi = 19200000 / freq;
 	divr = 19200000 % freq;
-	divf = (int) (divr * 4096.0 / 19200000.0);
+	divf = (int) (divr * 4096 / 19200000);
 
 	if (divi > 4095)
 		divi = 4095;
