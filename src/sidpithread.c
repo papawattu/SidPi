@@ -58,6 +58,7 @@ int isPlaybackReady = 0;
 unsigned long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
+int timeValid = 0;
 
 struct semaphore     bufferSem;
 struct semaphore     todoSem;
@@ -157,7 +158,7 @@ int sidThread(void) {
 				printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 			lastClock = getRealSidClock();
-
+			timeValid = 1;
 		} else {
 			msleep(500);
 		//	printk(KERN_INFO "Sleep\n");
@@ -202,7 +203,10 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 void delay(unsigned int howLong) {
 
 	unsigned long clocks,now;
-	
+
+	if(!timeValid) {
+		return;
+	}
 	currentClock += howLong;
 
 	clocks = getRealSidClock() - lastClock;
