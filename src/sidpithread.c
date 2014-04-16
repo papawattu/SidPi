@@ -215,7 +215,7 @@ void delay(unsigned int howLong) {
 	while (currentClock > 1000000L / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
-	    //schedule_timeout(currentClock / 1000000L);
+	    schedule_timeout(currentClock / 1000000L);
 	    currentClock -= getRealSidClock() - lastClock;
 	
 	 }
