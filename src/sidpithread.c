@@ -55,7 +55,7 @@ unsigned long dataPins[256];
 unsigned long addrPins[32];
 static void __iomem * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
-unsigned long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
+long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
 int timeValid = 0;
@@ -124,7 +124,7 @@ void stopSidThread(void) {
 
 int sidThread(void) {
 	unsigned char reg, val;
-	unsigned int cycles;
+	long cycles;
 	long startClock;
 	//daemonize();
 	current->policy=SCHED_FIFO;
@@ -215,7 +215,7 @@ void delay(unsigned int howLong) {
 	while (currentClock > 1000000L / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
-	    schedule_timeout(currentClock / 1000000L);
+	    //schedule_timeout(currentClock / 1000000L);
 	    currentClock -= getRealSidClock() - lastClock;
 	
 	 }
@@ -223,6 +223,8 @@ void delay(unsigned int howLong) {
 	 if (currentClock > 4 ) {
 	 	udelay(currentClock);
 	 }
+
+	 if(currentClock <0 ) currentClock =0;
 
 }
 
@@ -254,9 +256,13 @@ void writeSid(int reg, int val) {
 void startSidClk(int freq) {
 	int divi, divr, divf;
 
-	divi = 19;
+//	divi = 19;
+//	divr = 19200000 % freq;
+//	divf = 42;
+
+	divi = 19200000 / freq;
 	divr = 19200000 % freq;
-	divf = 42;
+	divf = (int) (divr * 4096.0 / 19200000.0);
 
 	if (divi > 4095)
 		divi = 4095;
