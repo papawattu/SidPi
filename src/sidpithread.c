@@ -238,7 +238,7 @@ void setMultiplier(int value) {
 	multiplier = value;
 }
 
-long getSidClock(void) {
+unsigned long getSidClock(void) {
 	return currentClock;
 }
 unsigned long getRealSidClock(void) {

@@ -57,6 +57,7 @@ int getBufferCount(void);
 int getBufferFull(void);
 int getBufferMax(void);
 unsigned long getRealSidClock(void);
+unsigned long getSidClock(void);
 void setThreshold(int value);
 void setMultiplier(int value);
 void startSidThread(void);
