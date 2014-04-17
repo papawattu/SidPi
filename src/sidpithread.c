@@ -120,13 +120,12 @@ void stopSidThread(void) {
 
 int sidThread(void) {
 	unsigned char reg, val;
-	long cycles;
+	unsigned long cycles;
 	long startClock;
 	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	init_queue(&buffer);
-	startClock = getRealSidClock();
 	while (!kthread_should_stop()) {
 		if (signal_pending(current))
 		     break;
@@ -150,8 +149,6 @@ int sidThread(void) {
 				delay(cycles);
 				printk(KERN_INFO "Delay %2x\n", cycles);
 			}
-			lastClock = getRealSidClock();
-			timeValid = 1;
 		} else {
 			msleep(500);
 		//	printk(KERN_INFO "Sleep\n");
@@ -224,6 +221,13 @@ void delay(unsigned int howLong) {
 	 if (currentClock > 4 ) {
 	 	udelay(currentClock);
 	 }
+	 clocks = getRealSidClock() - lastClock;
+	 if(currentClock - clocks < 0) {
+	 	currentClock=0;
+	 } else {
+	 	currentClock -= clocks;
+	 }
+	 timeValid = 1;
 }
 
 void setThreshold(int value) {
