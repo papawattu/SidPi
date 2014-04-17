@@ -210,22 +210,27 @@ void delay(unsigned int howLong) {
 	currentClock += howLong;
 
 	clocks = getRealSidClock() - lastClock;
-	currentClock -= clocks;
+	if(currentClock - clocks < 0) {
+		currentClock=0;
+	} else {
+		currentClock -= clocks;
+	}
 
 	while (currentClock > 1000000L / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
 	    schedule_timeout(currentClock / 1000000L);
-	    currentClock -= getRealSidClock() - lastClock;
-	
+	    clocks = getRealSidClock() - lastClock;
+	    if(currentClock - clocks < 0) {
+	    		currentClock=0;
+	    } else {
+	    		currentClock -= clocks;
+	    }
 	 }
 
 	 if (currentClock > 4 ) {
 	 	udelay(currentClock);
 	 }
-
-	 if(currentClock <0 ) currentClock =0;
-
 }
 
 void setThreshold(int value) {
