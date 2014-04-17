@@ -87,8 +87,6 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 	
-	currentClock = realClock;	
-
 	startSidThread();
 
 	sidSetup = 1;
