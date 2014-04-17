@@ -55,7 +55,7 @@ unsigned long dataPins[256];
 unsigned long addrPins[32];
 static void __iomem * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
-long lastClock = 0, currentClock = 0, realClock, realClockStart, targetCycles;
+unsigned long lastClock = 0, currentClock = 0;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
 int timeValid = 0;
