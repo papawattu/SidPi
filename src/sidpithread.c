@@ -86,8 +86,6 @@ void setupSid(void) {
 	sema_init(&todoSem, 0);
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
-
-	realClock = getRealSidClock();
 	
 	currentClock = realClock;	
 
