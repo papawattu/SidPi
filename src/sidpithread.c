@@ -139,14 +139,11 @@ int sidThread(void) {
 		if (signal_pending(current))
 			break;
 		if (buffer.count > 3) {
-			targetCycles = getRealSidClock();
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
 			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
-			currentClock += cycles;
-			targetCycles += cycles;
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
