@@ -55,7 +55,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
   seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
   seq_printf(m, "Buffer full : %d\n",getBufferFull());
-  seq_printf(m, "Real clock : %d\n",getRealSidClock());
+  seq_printf(m, "Real clock : %lu\n",getRealSidClock());
 
   return count;
 }
