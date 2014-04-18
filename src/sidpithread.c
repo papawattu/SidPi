@@ -203,18 +203,22 @@ void delay(unsigned int howLong) {
 	clocks = howLong;
 
 	clocks -= getRealSidClock() - lastClock;
-
+	printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %d\n",clocks,howLong,lastClock);
 	while (clocks > 1000000L / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
 	    schedule_timeout(clocks / 1000000L);
 	    clocks -= getRealSidClock() - lastClock;
+	    printk(KERN_INFO "2 Clocks %lu Delay %d Last Clock %d\n",clocks,howLong,lastClock);
+
 	 }
 
 	 if (clocks > 4 ) {
 	 	udelay(clocks);
 	 }
 	 lastClock = getRealSidClock();
+	 printk(KERN_INFO "3 Clocks %lu Delay %d Last Clock %d\n",clocks,howLong,lastClock);
+
 
 
 }
