@@ -154,6 +154,7 @@ int sidThread(void) {
 		//	printk(KERN_INFO "Sleep\n");
 		}
 		up(&bufferSem);
+		timeValid = 1;
 	}
 	return 0;
 }
@@ -218,7 +219,7 @@ void delay(unsigned int howLong) {
 	 }
 	 lastClock = getRealSidClock();
 
-	 timeValid = 1;
+
 }
 
 void setThreshold(int value) {
