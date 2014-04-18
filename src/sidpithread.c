@@ -200,12 +200,9 @@ void delay(unsigned int howLong) {
 	}
 	currentClock += howLong;
 
-	clocks = getRealSidClock() - lastClock;
-	if(currentClock - clocks < 0) {
-		currentClock=0;
-	} else {
-		currentClock -= clocks;
-	}
+	clocks = howLong;
+
+	clocks -= getRealSidClock() - lastClock;
 
 	while (clocks > 1000000L / HZ ) {
 
