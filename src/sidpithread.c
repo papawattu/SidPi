@@ -214,7 +214,7 @@ void delay(unsigned int howLong) {
 	 }
 
 	 if (clocks > 4 ) {
-	 	udelay(cycles);
+	 	udelay(clocks);
 	 }
 	 lastClock = getRealSidClock();
 
