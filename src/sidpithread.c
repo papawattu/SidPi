@@ -206,27 +206,18 @@ void delay(unsigned int howLong) {
 		currentClock -= clocks;
 	}
 
-	while (currentClock > 1000000L / HZ ) {
+	while (clocks > 1000000L / HZ ) {
 
 	    current->state = TASK_INTERRUPTIBLE;
-	    schedule_timeout(currentClock / 1000000L);
-	    clocks = getRealSidClock() - lastClock;
-	    if(currentClock - clocks < 0) {
-	    		currentClock=0;
-	    } else {
-	    		currentClock -= clocks;
-	    }
+	    schedule_timeout(clocks / 1000000L);
+	    clocks -= getRealSidClock() - lastClock;
 	 }
 
-	 if (currentClock > 4 ) {
-	 	udelay(currentClock);
+	 if (clocks > 4 ) {
+	 	udelay(cycles);
 	 }
-	 clocks = getRealSidClock() - lastClock;
-	 if(currentClock - clocks < 0) {
-	 	currentClock=0;
-	 } else {
-	 	currentClock -= clocks;
-	 }
+	 lastClock = getRealSidClock();
+
 	 timeValid = 1;
 }
 
