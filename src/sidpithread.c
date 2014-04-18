@@ -193,7 +193,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 void delay(unsigned int howLong) {
 
-	unsigned long clocks,now;
+	long clocks,now;
 
 	if(!timeValid || howLong ==0) {
 		return;
@@ -203,6 +203,8 @@ void delay(unsigned int howLong) {
 	clocks = howLong;
 
 	clocks -= getRealSidClock() - lastClock;
+
+	if(clocks <= 0) return;
 	printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %d\n",clocks,howLong,lastClock);
 	while (clocks > 1000000L / HZ ) {
 
