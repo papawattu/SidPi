@@ -217,7 +217,7 @@ void delay(unsigned int howLong) {
 			udelay(clocks);
 		}
 	} else {
-		timevalid=1;
+		timeValid=1;
 	}
 	lastClock = getRealSidClock();
 	printk(KERN_INFO "3 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
