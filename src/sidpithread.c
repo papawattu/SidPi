@@ -195,7 +195,7 @@ void delay(unsigned int howLong) {
 
 	long clocks,now;
 
-	if(timeValid || howLong > 0) {
+	if(timeValid && howLong > 0) {
 
 		currentClock += howLong;
 
