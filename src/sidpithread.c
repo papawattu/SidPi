@@ -201,7 +201,7 @@ void delay(unsigned int howLong) {
 
 		clocks = howLong;
 
-		clocks -= getRealSidClock() - lastClock;
+		//clocks -= getRealSidClock() - lastClock;
 
 		if(clocks <= 0) return;
 		printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
