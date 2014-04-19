@@ -163,7 +163,7 @@ static ssize_t device_write(struct file *file,
 
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
 	sidWrite(reg, val,cycles);
-
+	udelay(10);
 	return length;
 }
 module_init( _sid_init_module);
