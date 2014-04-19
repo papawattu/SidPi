@@ -136,7 +136,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (buffer.count > 3) {
+		if (buffer.count > 4096) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
@@ -225,7 +225,7 @@ void delay(unsigned int howLong) {
 		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 1000001110 / HZ ) {
+		while (cycles > 1000000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(cycles / 1000000);
@@ -269,9 +269,9 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(4);
+	udelay(100);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
-	udelay(4);
+	udelay(100);
 
 }
 void startSidClk(int freq) {
