@@ -224,7 +224,7 @@ void delay(unsigned int howLong) {
 
 		cycles -= clocks;
 
-		printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
+		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
 		while (cycles > 1000001110 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
