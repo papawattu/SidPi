@@ -195,31 +195,32 @@ void delay(unsigned int howLong) {
 
 	long clocks,now;
 
-	if(!timeValid || howLong ==0) {
-		return;
+	if(timeValid || howLong > 0) {
+
+		currentClock += howLong;
+
+		clocks = howLong;
+
+		clocks -= getRealSidClock() - lastClock;
+
+		if(clocks <= 0) return;
+		printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
+		while (clocks > 1000000L / HZ ) {
+
+			current->state = TASK_INTERRUPTIBLE;
+			schedule_timeout(clocks / 1000000L);
+			clocks -= getRealSidClock() - lastClock;
+			printk(KERN_INFO "2 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
+		}
+
+		if (clocks > 4 ) {
+			udelay(clocks);
+		}
+	} else {
+		timevalid=1;
 	}
-	currentClock += howLong;
-
-	clocks = howLong;
-
-	clocks -= getRealSidClock() - lastClock;
-
-	if(clocks <= 0) return;
-	printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-	while (clocks > 1000000L / HZ ) {
-
-	    current->state = TASK_INTERRUPTIBLE;
-	    schedule_timeout(clocks / 1000000L);
-	    clocks -= getRealSidClock() - lastClock;
-	    printk(KERN_INFO "2 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
-
-	 }
-
-	 if (clocks > 4 ) {
-	 	udelay(clocks);
-	 }
-	 lastClock = getRealSidClock();
-	 printk(KERN_INFO "3 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
+	lastClock = getRealSidClock();
+	printk(KERN_INFO "3 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
 
 
 
