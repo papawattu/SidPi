@@ -120,8 +120,9 @@ void stopSidThread(void) {
 
 int sidThread(void) {
 	unsigned char reg, val;
-	unsigned long cycles;
+	int cycles;
 	long startClock;
+	struct timeval tv,lasttv;
 	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
@@ -153,8 +154,20 @@ int sidThread(void) {
 			msleep(500);
 		//	printk(KERN_INFO "Sleep\n");
 		}
+
+		do_gettimeofday(&tv);
+
+			/* Update cycle status */
+		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
+			    + ( tv.tv_usec - lasttv.tv_usec);
+
+		memcpy(&lasttv, &tv, sizeof(tv));
+		cycles -= clocks;
+
+		if ( cycles < 0 )
+			cycles = 0;
 		up(&bufferSem);
-		timeValid = 1;
+
 	}
 	return 0;
 }
@@ -193,37 +206,44 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 void delay(unsigned int howLong) {
 
-	long clocks,now;
+	int clocks,now;
+	struct timeval tv;
 
-	if(timeValid && howLong > 0) {
+	cycles+= howLong;
 
-		currentClock += howLong;
+	if(timeValid) {
 
-		clocks = howLong;
+		do_gettimeofday(&tv);
 
-		//clocks -= getRealSidClock() - lastClock;
+		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
+		                + ( tv.tv_usec - lasttv.tv_usec);
 
-		if(clocks <= 0) return;
+		memcpy(&lasttvtv, &tv, sizeof(tv));
+
+		cycles -= clocks;
+
 		printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-//		while (clocks > 1000000L / HZ ) {
+		while (cycles > 1000000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(clocks);
-			clocks -= getRealSidClock() - lastClock;
-			printk(KERN_INFO "2 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
-//		}
+			schedule_timeout(cycles / 1000000);
+			do_gettimeofday(&tv);
 
-		if (clocks > 4 ) {
+					/* Update cycle status */
+			clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
+			           + ( tv.tv_usec - lasttv.tv_usec);
+
+			memcpy(&lasttv, &tv, sizeof(tv));
+			cycles -= clocks;
+		}
+
+		if (cycles > 4 ) {
 			udelay(clocks);
 		}
 	} else {
+		do_gettimeofday(&lasttv);
 		timeValid=1;
 	}
-	lastClock = getRealSidClock();
-	printk(KERN_INFO "3 Clocks %lu Delay %d Last Clock %lu\n",clocks,howLong,lastClock);
-
-
-
 }
 
 void setThreshold(int value) {
