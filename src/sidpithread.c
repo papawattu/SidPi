@@ -58,7 +58,9 @@ int isPlaybackReady = 0;
 unsigned long lastClock = 0, currentClock = 0;
 int threshold = 10, multiplier = 1000;
 int sidSetup = 0;
-int timeValid = 0;
+int timeValid = 0,cycles=0;
+struct timeval lasttv;
+
 
 struct semaphore     bufferSem;
 struct semaphore     todoSem;
@@ -120,7 +122,7 @@ void stopSidThread(void) {
 
 int sidThread(void) {
 	unsigned char reg, val;
-	int cycles;
+	int cycles,clocks;
 	long startClock;
 	struct timeval tv,lasttv;
 	//daemonize();
@@ -218,12 +220,12 @@ void delay(unsigned int howLong) {
 		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
 		                + ( tv.tv_usec - lasttv.tv_usec);
 
-		memcpy(&lasttvtv, &tv, sizeof(tv));
+		memcpy(&lasttv, &tv, sizeof(tv));
 
 		cycles -= clocks;
 
 		printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 1000000 / HZ ) {
+		while (cycles > 1000001110 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
 			schedule_timeout(cycles / 1000000);
