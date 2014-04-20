@@ -22,7 +22,7 @@
  *
  */
 struct proc_dir_entry *Our_Proc_File;
-struct cdev sid_cdev;
+struct cdev sid_dev;
 /*  
  *  Prototypes - this would normally go in a .h file
  */
