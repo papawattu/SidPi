@@ -22,7 +22,7 @@
  *
  */
 struct proc_dir_entry *Our_Proc_File;
-struct cdev * sid_dev = cdev_alloc();
+struct cdev * sid_dev;
 /*  
  *  Prototypes - this would normally go in a .h file
  */
@@ -82,7 +82,7 @@ static int __init _sid_init_module(void)
 {
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
-
+	sid_dev = cdev_alloc();
 	cdev_init(sid_dev, &fops);
 	dev_handle = cdev_add(sid_dev, dev_no, 1);
 
