@@ -197,7 +197,7 @@ static int sid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
         }
         case SID_IOCTL_NOFILTER:
         {
-        	printk(KERN_INFO "No filter"\n");
+        	printk(KERN_INFO "No filter\n");
         	break;
         }
         case SID_IOCTL_FLUSH:
