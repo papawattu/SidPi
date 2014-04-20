@@ -136,7 +136,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (1) {
+		if (getBufferFull()) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
