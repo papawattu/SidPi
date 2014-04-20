@@ -85,7 +85,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, SID_BUFFER_SIZE / 4;
+	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
 
 	sema_init(&todoSem, 0);
 
