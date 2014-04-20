@@ -162,7 +162,7 @@ static ssize_t device_write(struct file *file,
 
 	sidWrite(reg, val,cycles);
 
-	return -1;
+	return -EFAULT;
 }
 
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
