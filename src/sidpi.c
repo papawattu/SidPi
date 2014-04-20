@@ -164,8 +164,7 @@ static ssize_t device_write(struct file *file,
 	return length;
 }
 
-static int sid_ioctl(struct file *file, unsigned int cmd,
-		     unsigned long arg)
+static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	printk(KERN_INFO "sidpi: Called ioctl %x\n", cmd);
     switch(cmd)
