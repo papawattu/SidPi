@@ -141,7 +141,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (atomic_read( (atomic_t *) &bufferSem.count) > (SID_BUFFER_SIZE /2)) {
+		if (atomic_read( (atomic_t *) &bufferSem.count) > 4096) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
