@@ -48,8 +48,13 @@ static int Device_Open = 0; /* Is device open?
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
 
-static struct file_operations fops = { .read = device_read, .write =
-		device_write, .open = device_open, .release = device_release };
+static struct file_operations fops = {
+		.read = device_read,
+		.write = device_write,
+		.open = device_open,
+		.release = device_release
+		.ioctl = sid_ioctl;
+};
 
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
@@ -156,24 +161,29 @@ static ssize_t device_write(struct file *file,
 	return length;
 }
 
-static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+static int sid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 		     unsigned long arg)
 {
 
     switch(cmd)
     {
         case SID_IOCTL_RESET:
-            //cycles = 0;
+        {
+        	printk(KERN_INFO "Reset request\n");
         	sidReset();
         break;
-
+        }
         case SID_IOCTL_FIFOSIZE:
+        {
+        	printk(KERN_INFO "FIFO size request\n");
             return put_user(SID_BUFFER_SIZE, (int*)arg);
-
+        }
         case SID_IOCTL_FIFOFREE:
+        {
             //int t = atomic_read(&bufferSem.count);
-            return put_user(getBufferCount(), (int*)arg);
-
+        	printk(KERN_INFO "FIFO free request\n");
+        	return put_user(getBufferCount(), (int*)arg);
+        }
         case SID_IOCTL_SIDTYPE:
             return 0;
 
@@ -181,22 +191,30 @@ static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
             return 0;
 
         case SID_IOCTL_MUTE:
-            printk(KERN_INFO "Mute request\n");
+        {
+        	printk(KERN_INFO "Mute request\n");
         	break;
-
+        }
         case SID_IOCTL_NOFILTER:
-            break;
-
+        {
+        	printk(KERN_INFO "No filter"\n");
+        	break;
+        }
         case SID_IOCTL_FLUSH:
+        {
+        	printk(KERN_INFO "Flush request\n");
             /* Wait until all writes are done */
             flush();
             break;
-
+        }
         case SID_IOCTL_DELAY:
+        {
+        	printk(KERN_INFO "Delay request\n");
             break;
-
+        }
         case SID_IOCTL_READ:
         {
+        	printk(KERN_INFO "Read request\n");
             return 0;
         }
         default:
