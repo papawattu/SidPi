@@ -228,10 +228,10 @@ void delay(unsigned int howLong) {
 		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 250000 / HZ ) {
+		while (cycles > 500000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(cycles / 250000);
+			schedule_timeout(cycles / 500000);
 			do_gettimeofday(&tv);
 
 			clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
