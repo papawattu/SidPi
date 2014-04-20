@@ -41,7 +41,8 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
  */
 
 static int Major; /* Major number assigned to our device driver */
-int dev_handle;
+int dev_no;
+dev_t dev_handle;
 static int Device_Open = 0; /* Is device open?
  * Used to prevent multiple access to device */
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
@@ -79,7 +80,7 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
-	devno = MKDEV(0,0);
+	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&devno,0,1,DEVICE_NAME);
 	//cdev_init(&sid_dev, &fops);
 	dev_handle = cdev_add(&sid_dev, devno, 1);
