@@ -30,7 +30,7 @@ static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
 static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
-static int sid_ioctl(struct inode *, struct file *, unsigned int ,unsigned long );
+static int sid_ioctl(struct file *, unsigned int ,unsigned long );
 
 
 #define SUCCESS 0
@@ -164,7 +164,7 @@ static ssize_t device_write(struct file *file,
 	return length;
 }
 
-static int sid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+static int sid_ioctl(struct file *file, unsigned int cmd,
 		     unsigned long arg)
 {
 	printk(KERN_INFO "sidpi: Called ioctl %x %d\n", cmd, SID_IOCTL_RESET);
