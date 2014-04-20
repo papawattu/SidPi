@@ -12,7 +12,7 @@
 #include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
 #include <linux/seq_file.h>
 #include <linux/sched.h>
-#include <linux/devfs_fs_kernel.h>
+#include <linux/cdev.h>
 #include "sidpithread.h"
 
 #define PROC_FS_NAME "sidpi"
@@ -22,6 +22,7 @@
  *
  */
 struct proc_dir_entry *Our_Proc_File;
+struct cdev sid_cdev;
 /*  
  *  Prototypes - this would normally go in a .h file
  */
@@ -31,7 +32,7 @@ static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
 
 #define SUCCESS 0
-#define DEVICE_NAME "sid0"	/* Dev name as it appears in /proc/devices   */
+#define DEVICE_NAME "sid"	/* Dev name as it appears in /proc/devices   */
 #define BUF_LEN 80		/* Max length of the message from the device */
 #define MAJOR_NUM 60
 
@@ -40,7 +41,7 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
  */
 
 static int Major; /* Major number assigned to our device driver */
-static devfs_handle_t devfs_handle;
+int dev_handle;
 static int Device_Open = 0; /* Is device open?
  * Used to prevent multiple access to device */
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
@@ -78,23 +79,13 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
-	Major = register_chrdev(MAJOR_NUM, DEVICE_NAME, &fops);
+	cdev_init(&sid_dev, &fops);
+	dev_handle = cdev_add(&sid_dev, 0, 1);
 
-	if (Major < 0) {
+	if (dev < 0) {
 		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
 		return Major;
 	}
-	if (devfs_register_chrdev(major, DEVICE_NAME, &hsid_fops)) {
-		printk(KERN_ERR "sidpi: could not register major number %d.\n",
-	               major);
-	    unregister_chrdev(major, DEVICE_NAME);
-	    return -EIO;
-	}
-
-	devfd_handle = devfs_register(NULL, device_name, DEVFS_FL_DEFAULT,
-	                                         major, o,
-	                                         S_IFCHR | S_IRUGO | S_IWUGO,
-	                                         &fops, NULL);
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	setupSid();
 
@@ -110,7 +101,7 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device 
 	 */
 	closeSid();
-	unregister_chrdev(MAJOR_NUM, DEVICE_NAME);
+	cdev_del(&sid_dev);
 	remove_proc_entry(PROC_FS_NAME, NULL);
 
 }
