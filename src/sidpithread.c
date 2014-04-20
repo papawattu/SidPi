@@ -339,6 +339,13 @@ void setPinsToOutput(void) {
 					| (4 << shift),(u32 *) gpio + fSel);
 }
 
+void sidReset() {
+	do_gettimeofday(&lasttv);
+
+	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
+	sema_init(&todoSem, 0);
+
+}
 void generatePinTables(void) {
 	int i;
 

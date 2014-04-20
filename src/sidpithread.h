@@ -75,5 +75,6 @@ void startSidThread(void);
 void stopSidThread(void);
 int mapGPIO(void);
 void unmapGPIO(void);
+void sidReset(void);
 
 #endif /* __SIDRUNNERTHREAD_H_ */

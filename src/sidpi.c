@@ -163,13 +163,8 @@ static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
     switch(cmd)
     {
         case SID_IOCTL_RESET:
-            cycles = 0;
-            do_gettimeofday(&lasttv);
-
-            sema_init(&bufferSem, HSID_BUFFER_SIZE / 4);
-            sema_init(&todoSem, 0);
-
-//            sidReset();
+            //cycles = 0;
+        	sidReset();
         break;
 
         case SID_IOCTL_FIFOSIZE:
