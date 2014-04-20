@@ -161,8 +161,9 @@ static ssize_t device_write(struct file *file,
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
 
 	sidWrite(reg, val,cycles);
-
-	return -EFAULT;
+	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
+	mark_inode_dirty(file->f_dentry->d_inode);
+	return (ssize_t) 0;
 }
 
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
