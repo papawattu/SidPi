@@ -341,10 +341,12 @@ void setPinsToOutput(void) {
 
 void sidReset() {
 	do_gettimeofday(&lasttv);
-
-	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
-	sema_init(&todoSem, 0);
-
+	timeValid =0;
+	flush();
+	for(i=0;i<32;i++) {
+		writeSid(i,0);
+	}
+	writeSid(24,15);
 }
 void generatePinTables(void) {
 	int i;
