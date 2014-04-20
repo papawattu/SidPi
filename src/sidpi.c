@@ -162,9 +162,7 @@ static ssize_t device_write(struct file *file,
 
 	sidWrite(reg, val,cycles);
 
-	if(getBufferCount > (SID_BUFFER_SIZE /2)) {
-		msleep(500);
-	}
+
 	return length;
 }
 
