@@ -30,9 +30,8 @@ static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
 static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
-static int sid_ioctl(struct inode *, struct file *, unsigned int ,
-		     unsigned long );
-{
+static int sid_ioctl(struct inode *, struct file *, unsigned int ,unsigned long );
+
 
 #define SUCCESS 0
 #define DEVICE_NAME "sid"	/* Dev name as it appears in /proc/devices   */
