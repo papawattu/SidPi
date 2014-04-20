@@ -77,13 +77,15 @@ void setupSid(void) {
 
 	if(sidSetup) return;
 
+	timeValid = 0;
+
 	if(mapGPIO() != 0) return;
 
 	generatePinTables();
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, SID_BUFFER_SIZE);
+	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
 
 	sema_init(&todoSem, 0);
 
@@ -117,6 +119,7 @@ void startSidThread(void) {
 void stopSidThread(void) {
 	int ret;
 	ret = kthread_stop(thread);
+	thread = NULL;
 	printk("Sid Thread Stopped...\n");
 }
 
