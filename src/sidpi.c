@@ -8,7 +8,7 @@
 #include <linux/fs.h>
 #include <linux/init.h> 
 #include <linux/delay.h>
-//#include <asm/uaccess.h>	/* for put_user */
+#include <asm/uaccess.h>	/* for put_user */
 #include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
 #include <linux/seq_file.h>
 #include <linux/sched.h>
