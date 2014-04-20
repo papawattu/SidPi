@@ -81,7 +81,7 @@ static const struct file_operations sid_proc_fops = {
 static int __init _sid_init_module(void)
 {
 	dev_no = MKDEV(0,0);
-	alloc_chrdev_region(&devno,0,1,DEVICE_NAME);
+	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
 	//cdev_init(&sid_dev, &fops);
 	dev_handle = cdev_add(&sid_dev, dev_no, 1);
 
