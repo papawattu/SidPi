@@ -141,7 +141,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (buffer.count > (SID_MAX_BUFFER /2)) {
+		if (buffer.count > (SID_BUFFER_SIZE /2)) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
