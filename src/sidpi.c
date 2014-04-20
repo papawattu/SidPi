@@ -160,12 +160,11 @@ static ssize_t device_write(struct file *file,
 
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
 
-	while(getBufferCount() > (SID_BUFFER_SIZE / 2)) {
-		current->state = TASK_INTERRUPTIBLE;
-		schedule_timeout(1);
-	}
 	sidWrite(reg, val,cycles);
 
+	if(getBufferCount > (SID_BUFFER_SIZE /2)) {
+		msleep(500);
+	}
 	return length;
 }
 

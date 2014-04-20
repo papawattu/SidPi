@@ -39,7 +39,7 @@
 #define RES 0
 #define CLK 4
 
-#define SID_BUFFER_SIZE (16384)
+#define SID_BUFFER_SIZE (16384 * 4)
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 #define THREAD_NAME "sidpithread"
