@@ -129,7 +129,7 @@ int sidThread(void) {
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	set_user_nice(current, -5);
-	current->need_resched = 1;
+	//current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
 		if (signal_pending(current))
