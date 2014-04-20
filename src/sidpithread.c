@@ -130,7 +130,7 @@ int sidThread(void) {
 	struct timeval tv,lasttv;
 	//daemonize();
 	current->policy=SCHED_FIFO;
-	current->rt_priority=0;
+	current->rt_priority=1;
 	set_user_nice(current, -20);
 	//current->need_resched = 1;
 	init_queue(&buffer);
@@ -140,7 +140,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (buffer.count > (4096)) {
+		if (buffer.count > (SID_BUFFER_SIZE / 2)) {
 			down_interruptible(&todoSem);
 
 			reg = dequeue(&buffer);
@@ -248,6 +248,7 @@ void delay(unsigned int howLong) {
 	} else {
 		do_gettimeofday(&lasttv);
 		timeValid=1;
+		udelay(4);
 	}
 }
 
@@ -272,7 +273,7 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(100);
+	udelay(4);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
 
 	//udelay(15);
