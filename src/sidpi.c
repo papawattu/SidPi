@@ -213,8 +213,8 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_DELAY:
         {
-        	printk(KERN_INFO "Delay request %x\n",(int*) arg);
-        	sidDelay((int*) arg);
+        	printk(KERN_INFO "Delay request %x\n",(int) arg);
+        	sidDelay((int) arg);
             break;
         }
         case SID_IOCTL_READ:
