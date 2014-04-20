@@ -79,8 +79,9 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
-	int devno = MKDEV(scull_major, scull_minor + index);
-	cdev_init(&sid_dev, &fops);
+	devno = MKDEV(0,0);
+	alloc_chrdev_region(&devno,0,1,DEVICE_NAME);
+	//cdev_init(&sid_dev, &fops);
 	dev_handle = cdev_add(&sid_dev, devno, 1);
 
 	if (dev_handle < 0) {
