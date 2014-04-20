@@ -271,8 +271,10 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	mdelay(1);
+	udelay(1000);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
+	udelay(1000);
+
 	//udelay(15);
 
 }
