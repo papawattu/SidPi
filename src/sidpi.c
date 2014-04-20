@@ -171,8 +171,8 @@ static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
             return put_user(SID_BUFFER_SIZE, (int*)arg);
 
         case SID_IOCTL_FIFOFREE:
-            t = atomic_read(&bufferSem.count);
-            return put_user(t, (int*)arg);
+            //int t = atomic_read(&bufferSem.count);
+            return put_user(getBufferCount(), (int*)arg);
 
         case SID_IOCTL_SIDTYPE:
             return 0;
@@ -189,11 +189,7 @@ static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 
         case SID_IOCTL_FLUSH:
             /* Wait until all writes are done */
-            while ( atomic_read(&todoSem.count) > 0 )
-            {
-                current->state = TASK_INTERRUPTIBLE;
-                schedule_timeout(1);
-            }
+            flush();
             break;
 
         case SID_IOCTL_DELAY:
