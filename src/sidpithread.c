@@ -438,7 +438,7 @@ int getBufferMax(void) {
 	return SID_BUFFER_SIZE;
 }
 void flush(void) {
-	while ( atomic_read(&todoSem.count) > 0 ) {
+	while ( atomic_read( (atomic_t *) &todoSem.count) > 0 ) {
 	  current->state = TASK_INTERRUPTIBLE;
 	  schedule_timeout(1);
 	}
