@@ -137,11 +137,12 @@ int sidThread(void) {
 	while (!kthread_should_stop()) {
 		if (signal_pending(current))
 		     break;
-		down_interruptible(&todoSem);
 
 		if (signal_pending(current))
 			break;
-		if (1) {
+		if (buffer.count > (4096)) {
+			down_interruptible(&todoSem);
+
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
