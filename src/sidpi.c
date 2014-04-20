@@ -82,7 +82,7 @@ static int __init _sid_init_module(void)
 	cdev_init(&sid_dev, &fops);
 	dev_handle = cdev_add(&sid_dev, 0, 1);
 
-	if (dev < 0) {
+	if (dev_handle < 0) {
 		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
 		return Major;
 	}
