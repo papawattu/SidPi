@@ -225,7 +225,7 @@ void delay(unsigned int howLong) {
 
 		memcpy(&lasttv, &tv, sizeof(tv));
 
-		//cycles -= clocks;
+		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
 		while (cycles > 250000 / HZ ) {
@@ -238,7 +238,7 @@ void delay(unsigned int howLong) {
 			           + ( tv.tv_usec - lasttv.tv_usec);
 
 			memcpy(&lasttv, &tv, sizeof(tv));
-			//cycles -= clocks;
+			cycles -= clocks;
 		}
 
 		if (cycles > 4 ) {
