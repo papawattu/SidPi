@@ -161,10 +161,8 @@ static ssize_t device_write(struct file *file,
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
 
 	sidWrite(reg, val,cycles);
-	udelay(100);
 
-
-	return length;
+	return -1;
 }
 
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
