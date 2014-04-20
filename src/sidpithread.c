@@ -85,7 +85,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
+	sema_init(&bufferSem, (SID_BUFFER_SIZE / 4)+4096);
 
 	sema_init(&todoSem, 0);
 
@@ -141,7 +141,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (atomic_read( (atomic_t *) &todoSem.count) > 4096) {
+		if (1) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
