@@ -54,7 +54,7 @@ static struct file_operations fops = {
 		.owner   = THIS_MODULE,
 		.read = device_read,
 		.write = device_write,
-		.ioctl = sid_ioctl,
+		.unlocked_ioctl = sid_ioctl,
 		.open = device_open,
 		.release = device_release,
 };
