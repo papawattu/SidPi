@@ -199,6 +199,10 @@ int sidDelay(unsigned int cycles) {
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
 	down(&bufferSem);
+	down(&bufferSem);
+	down(&bufferSem);
+	down(&bufferSem);
+
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
@@ -271,7 +275,6 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
 	udelay(4);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
-	udelay(4);
 
 }
 void startSidClk(int freq) {
