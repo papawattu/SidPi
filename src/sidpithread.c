@@ -141,7 +141,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (1) {
+		if (atomic_read( (atomic_t *) &bufferSem.count) > (SID_BUFFER_SIZE /2)) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
@@ -275,8 +275,9 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(100);
+	udelay(15);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
+	udelay(15);
 
 }
 void startSidClk(int freq) {
