@@ -128,6 +128,8 @@ int sidThread(void) {
 	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
+	set_user_nice(current, -5);
+	current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
 		if (signal_pending(current))
@@ -198,9 +200,6 @@ int sidDelay(unsigned int cycles) {
 
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
-	down(&bufferSem);
-	down(&bufferSem);
-	down(&bufferSem);
 	down(&bufferSem);
 
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
