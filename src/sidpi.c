@@ -83,7 +83,7 @@ static int __init _sid_init_module(void)
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&devno,0,1,DEVICE_NAME);
 	//cdev_init(&sid_dev, &fops);
-	dev_handle = cdev_add(&sid_dev, devno, 1);
+	dev_handle = cdev_add(&sid_dev, dev_no, 1);
 
 	if (dev_handle < 0) {
 		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
