@@ -154,7 +154,7 @@ static ssize_t device_write(struct file *file,
 
 	if(length <= 0) return -1;
 
-	if(length > 4) printk(KERN_INFO "Length is %d buffer size is %d\n", length,sizeof(buf));
+	if(length > 4) printk(KERN_INFO "Length is %d buffer size is %d\n", length,sizeof(buffer));
 
 	cycles = (buffer[3] << 8 | buffer[2]) & 0xffff;
 	reg = buffer[1];
