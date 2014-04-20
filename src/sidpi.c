@@ -53,7 +53,7 @@ static struct file_operations fops = {
 		.write = device_write,
 		.open = device_open,
 		.release = device_release,
-		.ioctl = sid_ioctl
+		.ioctl = sid_ioctl,
 };
 
 
