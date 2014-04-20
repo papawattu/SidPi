@@ -20,6 +20,17 @@
 #define TIMER_IRQ_RAW			(0x410 >> 2)
 #define TIMER_PRE_DIV			(0x41C >> 2)
 
+#define SID_IOCTL_RESET     _IO ('S', 0)
+#define SID_IOCTL_FIFOSIZE  _IOR('S', 1, int)
+#define SID_IOCTL_FIFOFREE  _IOR('S', 2, int)
+#define SID_IOCTL_SIDTYPE   _IOR('S', 3, int)
+#define SID_IOCTL_CARDTYPE  _IOR('S', 4, int)
+#define SID_IOCTL_MUTE      _IOW('S', 5, int)
+#define SID_IOCTL_NOFILTER  _IOW('S', 6, int)
+#define SID_IOCTL_FLUSH     _IO ('S', 7)
+#define SID_IOCTL_DELAY     _IOW('S', 8, int)
+#define SID_IOCTL_READ      _IOWR('S', 9, int*)
+
 
 #define CS 	7
 #define RW 	0
