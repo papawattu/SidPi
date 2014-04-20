@@ -22,7 +22,7 @@
  *
  */
 struct proc_dir_entry *Our_Proc_File;
-struct cdev sid_dev;
+struct cdev * sid_dev = cdev_alloc();
 /*  
  *  Prototypes - this would normally go in a .h file
  */
@@ -82,8 +82,9 @@ static int __init _sid_init_module(void)
 {
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
-	//cdev_init(&sid_dev, &fops);
-	dev_handle = cdev_add(&sid_dev, dev_no, 1);
+
+	cdev_init(sid_dev, &fops);
+	dev_handle = cdev_add(sid_dev, dev_no, 1);
 
 	if (dev_handle < 0) {
 		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
@@ -104,7 +105,8 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device 
 	 */
 	closeSid();
-	cdev_del(&sid_dev);
+	cdev_del(sid_dev);
+
 	remove_proc_entry(PROC_FS_NAME, NULL);
 
 }
@@ -112,25 +114,11 @@ static int device_open(struct inode *inode, struct file *file) {
 	/*
 	 * We don't want to talk to two processes at the same time
 	 */
-	if (Device_Open)
-		return -EBUSY;
 
-	Device_Open++;
-
-	try_module_get(THIS_MODULE);
 	return SUCCESS;
 }
 static int device_release(struct inode *inode, struct file *file) {
-#ifdef DEBUG
-	printk(KERN_INFO "device_release(%p,%p)\n", inode, file);
-#endif
 
-	/*
-	 * We're now ready for our next caller
-	 */
-	Device_Open--;
-
-	module_put(THIS_MODULE);
 	return SUCCESS;
 }
 
@@ -155,13 +143,8 @@ static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
 	unsigned int cycles,reg,val;
-	struct timeval ts,now;
-	//printk(KERN_INFO "%x %x %x %x length %d\n", buffer[0],buffer[1],buffer[2],buffer[3],length);
 
-	/*while(getBufferFull()) {
-		mdelay(100);
-	} */
-
+	if(length <= 0) return -1;
 
 	cycles = (buffer[3] << 8 | buffer[2]) & 0xffff;
 	reg = buffer[1];
