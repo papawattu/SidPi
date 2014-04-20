@@ -228,10 +228,10 @@ void delay(unsigned int howLong) {
 		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 100000 / HZ ) {
+		while (cycles > 10000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(cycles / 100000);
+			schedule_timeout(cycles / 10000);
 			do_gettimeofday(&tv);
 
 					/* Update cycle status */
