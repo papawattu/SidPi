@@ -340,6 +340,7 @@ void setPinsToOutput(void) {
 }
 
 void sidReset() {
+	int i;
 	do_gettimeofday(&lasttv);
 	timeValid =0;
 	flush();
