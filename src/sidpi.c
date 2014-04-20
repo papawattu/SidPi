@@ -155,6 +155,65 @@ static ssize_t device_write(struct file *file,
 	udelay(10);
 	return length;
 }
+
+static int hsid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
+		     unsigned long arg)
+{
+
+    switch(cmd)
+    {
+        case SID_IOCTL_RESET:
+            cycles = 0;
+            do_gettimeofday(&lasttv);
+
+            sema_init(&bufferSem, HSID_BUFFER_SIZE / 4);
+            sema_init(&todoSem, 0);
+
+//            sidReset();
+        break;
+
+        case SID_IOCTL_FIFOSIZE:
+            return put_user(SID_BUFFER_SIZE, (int*)arg);
+
+        case SID_IOCTL_FIFOFREE:
+            t = atomic_read(&bufferSem.count);
+            return put_user(t, (int*)arg);
+
+        case SID_IOCTL_SIDTYPE:
+            return 0;
+
+        case SID_IOCTL_CARDTYPE:
+            return 0;
+
+        case SID_IOCTL_MUTE:
+            printk(KERN_INFO "Mute request\n");
+        	break;
+
+        case SID_IOCTL_NOFILTER:
+            break;
+
+        case SID_IOCTL_FLUSH:
+            /* Wait until all writes are done */
+            while ( atomic_read(&todoSem.count) > 0 )
+            {
+                current->state = TASK_INTERRUPTIBLE;
+                schedule_timeout(1);
+            }
+            break;
+
+        case SID_IOCTL_DELAY:
+            break;
+
+        case SID_IOCTL_READ:
+        {
+            return 0;
+        }
+        default:
+            printk(KERN_ERR "sidpi: unknown ioctl %x\n", cmd);
+            break;
+    }
+    return 0;
+}
 module_init( _sid_init_module);
 module_exit( _sid_cleanup_module);
 MODULE_LICENSE("GPL");

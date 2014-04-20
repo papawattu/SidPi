@@ -155,7 +155,7 @@ int sidThread(void) {
 
 			} else {
 				delay(cycles);
-				printk(KERN_INFO "Delay %2x\n", cycles);
+				//printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 		} else {
 			msleep(500);
