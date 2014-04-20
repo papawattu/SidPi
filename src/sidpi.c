@@ -174,7 +174,7 @@ static int sid_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
         {
         	printk(KERN_INFO "Reset request\n");
         	sidReset();
-        break;
+        	break;
         }
         case SID_IOCTL_FIFOSIZE:
         {

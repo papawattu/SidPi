@@ -20,7 +20,7 @@
 #define TIMER_IRQ_RAW			(0x410 >> 2)
 #define TIMER_PRE_DIV			(0x41C >> 2)
 
-#define SID_IOCTL_RESET     _IO ('S', 0)
+#define SID_IOCTL_RESET     _IOW('S', 0, int)
 #define SID_IOCTL_FIFOSIZE  _IOR('S', 1, int)
 #define SID_IOCTL_FIFOFREE  _IOR('S', 2, int)
 #define SID_IOCTL_SIDTYPE   _IOR('S', 3, int)
