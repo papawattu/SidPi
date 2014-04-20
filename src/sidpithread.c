@@ -85,7 +85,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, (SID_BUFFER_SIZE / 4)+4096);
+	sema_init(&bufferSem, SID_BUFFER_SIZE / 4;
 
 	sema_init(&todoSem, 0);
 
@@ -141,7 +141,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (1) {
+		if (buffer.count > (SID_MAX_BUFFER /2)) {
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
 
@@ -157,11 +157,8 @@ int sidThread(void) {
 				delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 			}
-		} else {
-			msleep(500);
-		//	printk(KERN_INFO "Sleep\n");
+			up(&bufferSem);
 		}
-
 		do_gettimeofday(&tv);
 
 			/* Update cycle status */
@@ -173,7 +170,6 @@ int sidThread(void) {
 
 		if ( cycles < 0 )
 			cycles = 0;
-		up(&bufferSem);
 
 	}
 	return 0;
