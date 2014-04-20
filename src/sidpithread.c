@@ -343,9 +343,9 @@ void sidReset() {
 	int i;
 	do_gettimeofday(&lasttv);
 	timeValid =0;
-	flush();
+	//flush();
 	for(i=0;i<32;i++) {
-		writeSid(i,0);
+	//	writeSid(i,0);
 	}
 	writeSid(24,15);
 }
