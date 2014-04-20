@@ -8,6 +8,8 @@
 #ifndef __SIDRUNNERTHREAD_H_
 #define __SIDRUNNERTHREAD_H_
 
+#include <linux/ioctl.h>
+
 #define BCM2708_PERI_BASE       0x20000000
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
 #define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
