@@ -12,6 +12,7 @@
 #include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
 #include <linux/seq_file.h>
 #include <linux/sched.h>
+#include <linux/devfs_fs_kernel.h>
 #include "sidpithread.h"
 
 #define PROC_FS_NAME "sidpi"
@@ -32,13 +33,14 @@ static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
 #define SUCCESS 0
 #define DEVICE_NAME "sid0"	/* Dev name as it appears in /proc/devices   */
 #define BUF_LEN 80		/* Max length of the message from the device */
-#define MAJOR_NUM 164
+#define MAJOR_NUM 60
 
 /* 
  * Global variables are declared as static, so are global within the file. 
  */
 
 static int Major; /* Major number assigned to our device driver */
+static devfs_handle_t devfs_handle;
 static int Device_Open = 0; /* Is device open?
  * Used to prevent multiple access to device */
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
@@ -82,7 +84,17 @@ static int __init _sid_init_module(void)
 		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
 		return Major;
 	}
+	if (devfs_register_chrdev(major, DEVICE_NAME, &hsid_fops)) {
+		printk(KERN_ERR "sidpi: could not register major number %d.\n",
+	               major);
+	    unregister_chrdev(major, DEVICE_NAME);
+	    return -EIO;
+	}
 
+	devfd_handle = devfs_register(NULL, device_name, DEVFS_FL_DEFAULT,
+	                                         major, o,
+	                                         S_IFCHR | S_IRUGO | S_IWUGO,
+	                                         &fops, NULL);
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	setupSid();
 
