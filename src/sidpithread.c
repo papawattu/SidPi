@@ -269,11 +269,13 @@ unsigned long getRealSidClock(void) {
 void writeSid(int reg, int val) {
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
 	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);
+	udelay(100);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(4);
+	udelay(100);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
+	udelay(100);
 
 	//udelay(15);
 
