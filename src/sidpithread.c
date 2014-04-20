@@ -129,7 +129,7 @@ int sidThread(void) {
 	long startClock;
 	struct timeval tv,lasttv;
 	//daemonize();
-	current->policy=SCHED_FIFO;
+	//current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	set_user_nice(current, -20);
 	//current->need_resched = 1;
