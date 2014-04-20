@@ -171,7 +171,7 @@ static ssize_t device_write(struct file *file,
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 
-	printk(KERN_INFO "sidpi: Called ioctl %x\n", cmd);
+	//printk(KERN_INFO "sidpi: Called ioctl %x\n", cmd);
     switch(cmd)
     {
         case SID_IOCTL_RESET:
@@ -216,13 +216,13 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_DELAY:
         {
-        	printk(KERN_INFO "Delay request %x\n",(int) arg);
+      //  	printk(KERN_INFO "Delay request %x\n",(int) arg);
         	sidDelay((int) arg);
             break;
         }
         case SID_IOCTL_READ:
         {
-        	printk(KERN_INFO "Read request\n");
+        //	printk(KERN_INFO "Read request\n");
             return 0;
         }
         default:
