@@ -161,6 +161,7 @@ static ssize_t device_write(struct file *file,
 	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
 
 	sidWrite(reg, val,cycles);
+	usleep(10);
 
 
 	return length;
@@ -214,7 +215,8 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_DELAY:
         {
-        	printk(KERN_INFO "Delay request\n");
+        	printk(KERN_INFO "Delay request %x\n",(int*) arg);
+        	sidDelay((int*) arg);
             break;
         }
         case SID_IOCTL_READ:
