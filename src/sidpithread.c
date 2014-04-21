@@ -86,7 +86,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, SID_BUFFER_SIZE);
+	sema_init(&bufferSem, SID_BUFFER_SIZE /4);
 
 	sema_init(&todoSem, 0);
 
@@ -133,7 +133,7 @@ int sidThread(void) {
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	//current->prio = 5;
-	set_user_nice(current, -10);
+	//set_user_nice(current, -5);
 	//current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
