@@ -10,6 +10,7 @@
 #include <linux/ioport.h>
 #include <linux/types.h>
 #include <linux/spinlock.h>
+#include <linux/resource.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
@@ -131,6 +132,7 @@ int sidThread(void) {
 	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
+	current->prio = PRIO_MIN;
 	set_user_nice(current, -20);
 	//current->need_resched = 1;
 	init_queue(&buffer);
