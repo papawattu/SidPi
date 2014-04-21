@@ -133,7 +133,7 @@ int sidThread(void) {
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
 	current->prio = PRIO_MIN;
-	set_user_nice(current, -20);
+	set_user_nice(current, -10);
 	//current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
@@ -230,10 +230,10 @@ void delay(unsigned int howLong) {
 		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 500000 / HZ ) {
+		while (cycles > 1000000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(cycles / 500000);
+			schedule_timeout(cycles / 1000000);
 			do_gettimeofday(&tv);
 
 			clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
@@ -271,13 +271,13 @@ unsigned long getRealSidClock(void) {
 void writeSid(int reg, int val) {
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
 	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);
-	udelay(100);
+	//udelay(100);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(100);
+	udelay(1);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
-	udelay(100);
+	//udelay(100);
 
 	//udelay(15);
 
