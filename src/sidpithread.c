@@ -85,7 +85,7 @@ void setupSid(void) {
 
 	setPinsToOutput();
 
-	sema_init(&bufferSem, SID_BUFFER_SIZE / 4);
+	sema_init(&bufferSem, SID_BUFFER_SIZE);
 
 	sema_init(&todoSem, 0);
 
@@ -140,7 +140,7 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (buffer.count > (SID_BUFFER_SIZE / 2)) {
+		if (buffer.count > 3) {
 			down_interruptible(&todoSem);
 
 			reg = dequeue(&buffer);
