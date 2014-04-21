@@ -132,7 +132,7 @@ int sidThread(void) {
 	//daemonize();
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
-	current->prio = 5;
+	//current->prio = 5;
 	set_user_nice(current, -10);
 	//current->need_resched = 1;
 	init_queue(&buffer);
