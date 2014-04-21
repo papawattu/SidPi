@@ -161,6 +161,8 @@ int sidThread(void) {
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 			}
 			up(&bufferSem);
+		} else {
+			msleep(10);
 		}
 		do_gettimeofday(&tv);
 
