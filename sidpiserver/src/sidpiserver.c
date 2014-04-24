@@ -1,5 +1,5 @@
 /*
- ** server.c -- a stream socket server demo
+ ** SidPi Server
  */
 
 #include <stdio.h>
@@ -16,7 +16,7 @@
 #include <signal.h>
 #include <pthread.h>
 
-#include "SidPiServer.h"
+#include "sidpiserver.h"
 
 pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
