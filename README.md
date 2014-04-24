@@ -7,19 +7,10 @@ The GPIO connections and schematic can be found in the schematic folder which in
 
 Build instructions to follow as I'm trying to automate it all, however if you wish to know before that then feel free to contact me at jamie@wattu.com.
 
-module
-======
+1) module -Raspberry Pi Kernel Module
 
-Raspberry Pi Kernel Module
+2) sidpiserver - Network listener for ACID 64 - listens by default on port 6581
 
-sidpiserver
-===========
-
-Network listener for ACID 64 - listens by default on port 6581
-
-proxy
-=====
-
-Simple proxy server that sends ACID64 commands to a Pi running the sidpiserver.
+3) proxy -Simple proxy server that sends ACID64 commands to a Pi running the sidpiserver.
 
 More to come soon!
