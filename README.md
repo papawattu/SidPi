@@ -1,5 +1,5 @@
-SidPiController
-===============
+SidPi v0.1
+==========
 
 A Raspberry Pi driver for the MOS 6581 SID chip used in the Commodore 64.  There are three components to the driver, a kernel driver that uses the same protocol as the hardsid driver.  A network listener that implements the netsid protocol used by ACID64, and a simple proxy server that forwards requests from a PC running ACID64 to a Raspberry Pi where the listener is running.
 
