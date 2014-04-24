@@ -1,12 +1,11 @@
 /*
- *  chardev.c: Creates a read-only char device that says how many times
- *  you've read from the dev file
+ *  sidpi.c: MOS 6581 SID driver for Raspberry Pi
  */
 
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/fs.h>
-#include <linux/init.h> 
+#include <linux/init.h>
 #include <linux/delay.h>
 #include <asm/uaccess.h>	/* for put_user */
 #include <linux/proc_fs.h>	/* Necessary because we use the proc fs */
@@ -23,7 +22,7 @@
  */
 struct proc_dir_entry *Our_Proc_File;
 struct cdev * sid_dev;
-/*  
+/*
  *  Prototypes - this would normally go in a .h file
  */
 static int device_open(struct inode *, struct file *);
@@ -38,8 +37,8 @@ static int sid_ioctl(struct file *, unsigned int ,unsigned long );
 #define BUF_LEN 80		/* Max length of the message from the device */
 #define MAJOR_NUM 60
 
-/* 
- * Global variables are declared as static, so are global within the file. 
+/*
+ * Global variables are declared as static, so are global within the file.
  */
 
 static int Major; /* Major number assigned to our device driver */
@@ -61,7 +60,7 @@ static struct file_operations fops = {
 
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-  seq_printf(m, "SIDPi version 0.1\n");
+  seq_printf(m, "SIDPi version 0.1 by Jamie Nuttall\n");
   seq_printf(m, "Buffer size : %d\n",getBufferMax());
   seq_printf(m, "Buffer count : %d\n",getBufferCount());
   seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
@@ -95,7 +94,7 @@ static int __init _sid_init_module(void)
 	dev_handle = cdev_add(sid_dev, dev_no, 1);
 
 	if (dev_handle < 0) {
-		printk(KERN_ALERT "Registering char device failed with %d\n", Major);
+		printk(KERN_ALERT "sidpi: Registering char device failed with %d\n", Major);
 		return dev_handle;
 	}
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
@@ -109,8 +108,8 @@ static int __init _sid_init_module(void)
  */
 static void __exit _sid_cleanup_module(void)
 {
-	/* 
-	 * Unregister the device 
+	/*
+	 * Unregister the device
 	 */
 	closeSid();
 	cdev_del(sid_dev);
@@ -154,13 +153,11 @@ static ssize_t device_write(struct file *file,
 
 	if(length <= 0) return -1;
 
-	if(length > 4) printk(KERN_INFO "Length is %d buffer size is %d\n", length,sizeof(buffer));
+	if(length > 4) printk(KERN_INFO "sidpi: Length is %d buffer size is %d, expecting 4 bytes\n", length,sizeof(buffer));
 
 	cycles = (buffer[3] << 8 | buffer[2]) & 0xffff;
-	reg = buffer[1];
-	val = buffer[0];
-
-	//printk("Sid write - reg %x - val %x - delay %x\n",reg,val,cycles);
+	reg = buffer[1] & 0x1f;
+	val = buffer[0] & 0xff;
 
 	sidWrite(reg, val,cycles);
 	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
@@ -171,58 +168,56 @@ static ssize_t device_write(struct file *file,
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 
-	//printk(KERN_INFO "sidpi: Called ioctl %x\n", cmd);
-    switch(cmd)
+	switch(cmd)
     {
         case SID_IOCTL_RESET:
         {
-        	printk(KERN_INFO "Reset request\n");
+        	printk(KERN_INFO "sidpi: Reset request\n");
         	sidReset();
         	break;
         }
         case SID_IOCTL_FIFOSIZE:
         {
-        	printk(KERN_INFO "FIFO size request\n");
+        	printk(KERN_INFO "sidpi: FIFO size request\n");
             return put_user(SID_BUFFER_SIZE, (int*)arg);
         }
         case SID_IOCTL_FIFOFREE:
         {
-            //int t = atomic_read(&bufferSem.count);
-        	printk(KERN_INFO "FIFO free request\n");
+        	printk(KERN_INFO "sidpi: FIFO free request\n");
         	return put_user(getBufferCount(), (int*)arg);
         }
         case SID_IOCTL_SIDTYPE:
-            return 0;
+            return 0; // return 6581
 
         case SID_IOCTL_CARDTYPE:
             return 0;
 
         case SID_IOCTL_MUTE:
         {
-        	printk(KERN_INFO "Mute request\n");
+        	printk(KERN_INFO "sidpi: Mute request\n");
+        	writeSid(24,0); //mute
         	break;
         }
         case SID_IOCTL_NOFILTER:
         {
-        	printk(KERN_INFO "No filter\n");
+        	printk(KERN_INFO "sidpi: No filter not implemented\n");
         	break;
         }
         case SID_IOCTL_FLUSH:
         {
-        	printk(KERN_INFO "Flush request\n");
+        	printk(KERN_INFO "sidpi: Flush request\n");
             /* Wait until all writes are done */
             flush();
             break;
         }
         case SID_IOCTL_DELAY:
         {
-      //  	printk(KERN_INFO "Delay request %x\n",(int) arg);
         	sidDelay((int) arg);
             break;
         }
         case SID_IOCTL_READ:
         {
-        //	printk(KERN_INFO "Read request\n");
+        	printk(KERN_INFO "sidpi: Read request not implemented yet\n");
             return 0;
         }
         default:
@@ -234,5 +229,5 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 module_init( _sid_init_module);
 module_exit( _sid_cleanup_module);
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Lakshmanan");
-MODULE_DESCRIPTION("A Simple Hello World module");
+MODULE_AUTHOR("Jamie Nuttall");
+MODULE_DESCRIPTION("A MOS 6581 SID driver module using the hardsid protocol.");
