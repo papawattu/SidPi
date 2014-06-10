@@ -48,7 +48,7 @@ static unsigned char gpioToShift [] =
   0,3,6,9,12,15,18,21,24,27,
 } ;
 
-const int DATA[] = {11,9,10,22,21,17,3,2};
+const int DATA[] = {11,9,10,22,27,17,3,2};
 const int ADDR[] = {23,24,25,8,7};
 
 unsigned int bufReadPos, bufWritePos;
