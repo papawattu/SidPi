@@ -34,7 +34,7 @@
 #define SID_IOCTL_READ      _IOWR('S', 9, int*)
 
 
-#define CS 	7
+#define CS 	18
 #define RW 	0
 #define RES 0
 #define CLK 4
