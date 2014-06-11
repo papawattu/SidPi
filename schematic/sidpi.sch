@@ -9677,6 +9677,7 @@ Standard 0603 ceramic capacitor, and 0.1" leaded capacitor.</description>
 <text x="-243.84" y="167.64" size="1.778" layer="91">SidPi by Jamie Nuttall</text>
 <frame x1="-294.64" y1="124.46" x2="-12.7" y2="266.7" columns="8" rows="5" layer="91"/>
 <text x="-233.68" y="162.56" size="1.778" layer="91">Version 1.0</text>
+<text x="-228.6" y="157.48" size="1.778" layer="91">Rev b</text>
 </plain>
 <instances>
 <instance part="U$1" gate="G$1" x="-114.3" y="208.28">
