@@ -247,9 +247,11 @@ void delay(unsigned int howLong) {
 		}
 */
 		if (howLong > 1000 ) {
-			msleep(howLong/1000);
+			msleep(howLong/800);
 		} else {
-			udelay(howLong);
+			if(howLong > 10) {
+				udelay(howLong);
+			}
 		}
 
 	} else {
