@@ -247,7 +247,7 @@ void delay(unsigned int howLong) {
 		}
 */
 		if (cycles > 10 ) {
-			usleep(howLong);
+			msleep(howLong);
 		}
 	} else {
 
