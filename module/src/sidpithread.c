@@ -245,7 +245,7 @@ void delay(unsigned int howLong) {
 			cycles -= clocks;
 		}
 
-		if (cycles > 10 ) {
+		if (cycles > 100 ) {
 			udelay(clocks);
 		}
 	} else {
