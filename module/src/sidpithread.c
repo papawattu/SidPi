@@ -217,7 +217,7 @@ void delay(unsigned int howLong) {
 
 	int clocks,now;
 	struct timeval tv;
-
+/*
 	cycles+= howLong;
 
 	if(timeValid) {
@@ -244,9 +244,9 @@ void delay(unsigned int howLong) {
 			memcpy(&lasttv, &tv, sizeof(tv));
 			cycles -= clocks;
 		}
-
-		if (cycles > 100 ) {
-			udelay(clocks);
+*/
+		if (cycles > 10 ) {
+			usleep(howLong);
 		}
 	} else {
 
