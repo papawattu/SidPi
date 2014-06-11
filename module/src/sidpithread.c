@@ -11,6 +11,7 @@
 #include <linux/types.h>
 #include <linux/spinlock.h>
 #include <linux/resource.h>
+#include <asm/delay.h>
 #include <mach/platform.h>
 #include "sidpithread.h"
 
