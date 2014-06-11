@@ -247,7 +247,7 @@ void delay(unsigned int howLong) {
 		}
 */
 		if (howLong > 1000 ) {
-			msleep(howLong/600);
+			msleep(howLong / 1200);
 		} else {
 			if(howLong > 10) {
 				udelay(howLong);
