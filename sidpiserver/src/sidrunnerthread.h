@@ -17,8 +17,8 @@
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 
-const int DATA[]	= {2,3,17,27,22,10,9,11};
-const int ADDR[]	= {8,25,24,23,18};
+const int DATA[] = {11,9,10,22,27,17,3,2};
+const int ADDR[] = {23,24,25,8,7};
 
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
