@@ -232,13 +232,13 @@ void delay(unsigned int howLong) {
 		cycles -= clocks;
 
 		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
-		while (cycles > 10000000 / HZ ) {
+		while (cycles > 1000000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(cycles / 10000000);
+			schedule_timeout(cycles / 1000000);
 			do_gettimeofday(&tv);
 
-			clocks = (tv.tv_sec - lasttv.tv_sec) * 10000000
+			clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
 			           + ( tv.tv_usec - lasttv.tv_usec);
 
 			memcpy(&lasttv, &tv, sizeof(tv));
