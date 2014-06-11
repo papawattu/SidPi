@@ -8,7 +8,7 @@
 #ifndef SIDRUNNERTHREAD_H_
 #define SIDRUNNERTHREAD_H_
 
-#define CS 	7
+#define CS 	18
 #define RW 	0
 #define RES 0
 #define CLK 4
