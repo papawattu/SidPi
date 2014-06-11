@@ -222,7 +222,7 @@ void delay(unsigned int howLong) {
 	cycles+= howLong;
 
 	if(timeValid) {
-/*
+
 		do_gettimeofday(&tv);
 
 		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
@@ -245,13 +245,9 @@ void delay(unsigned int howLong) {
 			memcpy(&lasttv, &tv, sizeof(tv));
 			cycles -= clocks;
 		}
-*/
-		if (howLong > 1000 ) {
-			msleep(howLong / 2000);
-			howLong -= (howLong / 2);
-		}
-		if(howLong > 10) {
-			udelay(howLong);
+
+		if(cycles > 10) {
+			udelay(cycles);
 
 		}
 
