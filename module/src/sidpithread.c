@@ -247,11 +247,12 @@ void delay(unsigned int howLong) {
 		}
 */
 		if (howLong > 1000 ) {
-			msleep(howLong / 1200);
-		} else {
-			if(howLong > 10) {
-				udelay(howLong);
-			}
+			msleep(howLong / 2000);
+			howLong -= (howLong / 2);
+		}
+		if(howLong > 10) {
+			udelay(howLong);
+
 		}
 
 	} else {
@@ -282,7 +283,7 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(20);
+	udelay(100);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
 }
 void startSidClk(int freq) {
