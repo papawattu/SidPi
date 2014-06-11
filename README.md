@@ -25,4 +25,6 @@ The proxy is there to forward the ACID64 traffic to the RPi.  Its pretty noddy a
 
 Compile and run with your favourite Java IDE. 
 
+You can order the PCB from here https://oshpark.com/shared_projects/vRw7mWuD
+
 More to come soon!
