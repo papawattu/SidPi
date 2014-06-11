@@ -218,11 +218,11 @@ void delay(unsigned int howLong) {
 
 	int clocks,now;
 	struct timeval tv;
-/*
+
 	cycles+= howLong;
 
 	if(timeValid) {
-
+/*
 		do_gettimeofday(&tv);
 
 		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
