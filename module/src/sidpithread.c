@@ -246,9 +246,12 @@ void delay(unsigned int howLong) {
 			cycles -= clocks;
 		}
 */
-		if (cycles > 10 ) {
-			msleep(howLong);
+		if (howLong > 1000 ) {
+			msleep(howLong/1000);
+		} else {
+			udelay(howLong);
 		}
+
 	} else {
 
 		timeValid=1;
