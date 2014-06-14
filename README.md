@@ -17,13 +17,19 @@ Then just do an insmod sidpi.ko and a dmesg to see if the driver has loaded.  Yo
 
 2) sidpiserver - Network listener for ACID 64 - listens by default on port 6581
 
-To build the server just gcc -o sidpiserver sidpiserver.c rpi.c.
+To build the server in the sidpiserver directory
+
+gcc -pthread -o sidpiserver sidpiserver.c sidpithread.c rpi.c.
 
 3) proxy -Simple proxy server that sends ACID64 commands to a Pi running the sidpiserver.
 
 The proxy is there to forward the ACID64 traffic to the RPi.  Its pretty noddy at the moment and you'll need to change the IP address in the code to the IP of your RPi.  
 
 Compile and run with your favourite Java IDE. 
+
+Or use stone to proxy the traffic from your localhost to your Pi.
+
+http://www.gcd.org/sengoku/stone/
 
 You can order the PCB from here https://oshpark.com/shared_projects/vRw7mWuD
 
