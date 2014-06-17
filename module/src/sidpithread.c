@@ -148,7 +148,6 @@ int sidThread(void) {
 
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
-			up(&bufferSem);
 
 			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
@@ -162,6 +161,7 @@ int sidThread(void) {
 				delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 			}
+			up(&bufferSem);
 		} else {
 			msleep(10);
 		}
