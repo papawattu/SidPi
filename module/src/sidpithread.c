@@ -148,10 +148,10 @@ int sidThread(void) {
 
 			reg = dequeue(&buffer);
 			val = dequeue(&buffer);
+			up(&bufferSem);
 
 			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
-			down(&bufferSem);
 			if ((unsigned char) reg != 0xff) {
 
 				delay(cycles);
@@ -162,7 +162,6 @@ int sidThread(void) {
 				delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 			}
-			up(&bufferSem);
 		} else {
 			msleep(10);
 		}
@@ -196,7 +195,7 @@ void stopPlayback(void) {
 }
 int sidDelay(unsigned int cycles) {
 
-	//down(&bufferSem);
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
@@ -206,8 +205,8 @@ int sidDelay(unsigned int cycles) {
 
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
-	//down(&bufferSem);
 
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
