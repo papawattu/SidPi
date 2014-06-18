@@ -157,9 +157,7 @@ static ssize_t device_write(struct file *file,
 	val = buffer[0] & 0xff;
 
 	sidWrite(reg, val,cycles);
-	if(getBufferFull()) {
-		up(&todoSem);
-	}
+
 	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
 	mark_inode_dirty(file->f_dentry->d_inode);
 	msleep(1);

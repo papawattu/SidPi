@@ -196,7 +196,9 @@ int sidDelay(unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	//
+	if(getBufferFull()) {
+		up(&todoSem);
+	}
 	return 0;
 
 }
@@ -207,7 +209,9 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	//up(&todoSem);
+	if(getBufferFull()) {
+		up(&todoSem);
+	}
 	return 0;
 }
 void delay(unsigned int howLong) {
