@@ -60,15 +60,12 @@ static struct file_operations fops = {
 
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-  seq_printf(m, "SIDPi version 0.1 by Jamie Nuttall\n");
+  seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
   seq_printf(m, "Buffer size : %d\n",getBufferMax());
   seq_printf(m, "Buffer count : %d\n",getBufferCount());
   seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
   seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
   seq_printf(m, "Buffer full : %d\n",getBufferFull());
-  seq_printf(m, "Real clock : %lu\n",getRealSidClock());
-  seq_printf(m, "Sid clock : %lu\n",getSidClock());
-
 
   return count;
 }
