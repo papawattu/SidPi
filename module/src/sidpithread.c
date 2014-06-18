@@ -143,28 +143,24 @@ int sidThread(void) {
 
 		if (signal_pending(current))
 			break;
-		if (buffer.count > 3) {
-			down_interruptible(&todoSem);
 
-			reg = dequeue(&buffer);
-			val = dequeue(&buffer);
+		down_interruptible(&todo);
 
-			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
+		reg = dequeue(&buffer);
+		val = dequeue(&buffer);
 
-			if ((unsigned char) reg != 0xff) {
+		cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
-				delay(cycles);
-				writeSid(reg, val);
+		if ((unsigned char) reg != 0xff) {
+			delay(cycles);
+			writeSid(reg, val);
 				//printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
 
-			} else {
-				delay(cycles);
-				//printk(KERN_INFO "Delay %2x\n", cycles);
-			}
-			up(&bufferSem);
 		} else {
-			msleep(10);
+			delay(cycles);
+				//printk(KERN_INFO "Delay %2x\n", cycles);
 		}
+		up(&bufferSem);
 		do_gettimeofday(&tv);
 
 			/* Update cycle status */
@@ -195,23 +191,23 @@ void stopPlayback(void) {
 }
 int sidDelay(unsigned int cycles) {
 
-	//down(&bufferSem);
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	up(&todoSem);
+	//
 	return 0;
 
 }
 int sidWrite(int reg, int value, unsigned int cycles) {
 
-	//down(&bufferSem);
+	down(&bufferSem);
 	if(enqueue(&buffer, (unsigned char) reg & 0xff) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	up(&todoSem);
+	//up(&todoSem);
 	return 0;
 }
 void delay(unsigned int howLong) {
