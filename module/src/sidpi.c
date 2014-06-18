@@ -160,7 +160,7 @@ static ssize_t device_write(struct file *file,
 
 	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
 	mark_inode_dirty(file->f_dentry->d_inode);
-	msleep(1);
+	//msleep(1);
 	return (ssize_t) 0;
 }
 
