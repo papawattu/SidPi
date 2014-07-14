@@ -130,16 +130,13 @@ int sidThread(void) {
 	int cycles,clocks;
 	long startClock;
 	struct timeval tv,lasttv;
-	//daemonize();
-	//current->policy=SCHED_FIFO;
-	//current->rt_priority=1;
-	//current->prio = 5;
-	//set_user_nice(current, -20);
-	//current->need_resched = 1;
+	current->policy=SCHED_FIFO;
+	current->rt_priority=1;
+	current->prio = 5;
+	set_user_nice(current, -20);
+	current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
-		if (signal_pending(current))
-		     break;
 
 		if (signal_pending(current))
 			break;
@@ -196,9 +193,8 @@ int sidDelay(unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) 0) != 0) return -1;
 	if(enqueue(&buffer, (unsigned char) cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	if(getBufferFull()) {
-		up(&todoSem);
-	}
+	up(&todoSem);
+
 	return 0;
 
 }
@@ -209,9 +205,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, (unsigned char) value & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
-	if(getBufferFull()) {
-		up(&todoSem);
-	}
+	up(&todoSem);
 	return 0;
 }
 void delay(unsigned int howLong) {
