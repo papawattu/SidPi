@@ -134,7 +134,7 @@ int sidThread(void) {
 	current->rt_priority=1;
 	current->prio = 5;
 	set_user_nice(current, -20);
-	current->need_resched = 1;
+	//current->need_resched = 1;
 	init_queue(&buffer);
 	while (!kthread_should_stop()) {
 
