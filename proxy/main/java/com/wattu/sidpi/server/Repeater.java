@@ -82,7 +82,7 @@ public class Repeater implements Runnable {
         		PrintStream out = new PrintStream(clientSocket.getOutputStream());
         		BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 		
-        		sidSocket = new Socket("192.168.1.66", 6581);
+        		sidSocket = new Socket("192.168.1.108", 6581);
         		System.out.println("Opening forwaring client socket");
         
         		PrintStream sidOut = new PrintStream(sidSocket.getOutputStream());
