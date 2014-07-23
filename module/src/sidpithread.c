@@ -132,7 +132,7 @@ int sidThread(void) {
 	struct timeval tv,lasttv;
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
-	current->prio = 5;
+	current->prio = 40;
 	set_user_nice(current, -20);
 	//current->need_resched = 1;
 	init_queue(&buffer);
@@ -278,7 +278,7 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
-	udelay(500);
+	udelay(800);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
 
 }
