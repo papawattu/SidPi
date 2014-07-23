@@ -13,6 +13,7 @@
 #include <linux/resource.h>
 #include <asm/delay.h>
 #include <mach/platform.h>
+#include <linux/syscalls.h>
 #include "sidpithread.h"
 
 static struct task_struct *thread;
