@@ -141,12 +141,13 @@ int sidThread(void) {
 		if (signal_pending(current))
 			break;
 
-		down_interruptible(&todoSem);
+		if (buffer.count > 3) {
+			down_interruptible(&todoSem);
 
-		reg = dequeue(&buffer);
-		val = dequeue(&buffer);
+			reg = dequeue(&buffer);
+			val = dequeue(&buffer);
 
-		cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
+			cycles = dequeue(&buffer) | dequeue(&buffer) << 8;
 
 		if ((unsigned char) reg != 0xff) {
 			delay(cycles);
@@ -157,7 +158,10 @@ int sidThread(void) {
 			delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 		}
-		up(&bufferSem);
+			up(&bufferSem);
+		} else {
+			msleep(10);
+		}
 		do_gettimeofday(&tv);
 
 			/* Update cycle status */
