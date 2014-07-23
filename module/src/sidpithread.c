@@ -132,7 +132,7 @@ int sidThread(void) {
 	struct timeval tv,lasttv;
 	current->policy=SCHED_FIFO;
 	current->rt_priority=1;
-	current->prio = sched_get_priority_max(SCHED_FIFO);
+	current->prio = sys_sched_get_priority_max(SCHED_FIFO);
 	set_user_nice(current, -20);
 	//current->need_resched = 1;
 	init_queue(&buffer);
