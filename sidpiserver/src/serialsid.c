@@ -46,7 +46,7 @@ void setup_sid() {
 	set_output(CS);
 	set_output(CLK);
 
-	SET_GPIO_ALT(CLK,4);
+	SET_GPIO_ALT(CLK,0);
 
 	start_sid_clock(DEFAULT_SID_SPEED_HZ);
 
