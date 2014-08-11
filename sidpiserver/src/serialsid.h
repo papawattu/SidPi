@@ -8,8 +8,6 @@
 #ifndef SERIALSID_H_
 #define SERIALSID_H_
 
-void setup_io();
-
 void setup_sid();
 
 void write_bit(uint8_t);

@@ -19,24 +19,6 @@
 
 uint8_t reset = 1;
 
-void setup_io();
-
-void setup_sid();
-
-void write_bit(uint8_t);
-
-void write_sid(uint8_t,uint8_t);
-
-void reset_sid();
-
-void delay();
-
-void set_output(uint8_t);
-
-void start_sid_clock(int freq);
-
-void mmap_devices();
-
 void set_output(uint8_t pin) {
 	INP_GPIO(pin);
 	OUT_GPIO(pin);
