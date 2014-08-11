@@ -10,6 +10,6 @@ int main(int argc, char * argv[]) {
 	printf("Setting up SID ...\n");
 	printf("Reg %d value %d\n", atoi(argv[1]), atoi(argv[2]));
 	setup_sid();
-	write_sid(atoi(argv[1]),atoi(argv[2]))
+	write_sid(atoi(argv[1]),atoi(argv[2]));
 
 }
