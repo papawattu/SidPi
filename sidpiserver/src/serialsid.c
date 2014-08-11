@@ -6,6 +6,8 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sys/mman.h>
+
+#include "serialsid.h"
 #include "rpi.h"
 
 #define DEFAULT_SID_SPEED_HZ 1000000
