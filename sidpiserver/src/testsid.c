@@ -3,10 +3,10 @@
 
 int main(int argc, char * argv[]) {
 
-	if(argc != 3) return -1;
+	//if(argc != 3) return -1;
 
 	printf("Setting up SID ...\n");
-	printf("Params %0x %0x\n", *argv[0], *argv[1]);
+	printf("Params %d %d\n", *argv[0], *argv[1]);
 	//setup_sid();
 
 }
