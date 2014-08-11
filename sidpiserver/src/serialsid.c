@@ -31,9 +31,13 @@ void delay();
 
 void set_output(uint8_t);
 
+void start_sid_clock(int freq);
+
+void mmap_devices();
+
 void set_output(uint8_t pin) {
-	INP_GPIO(pin)
-	OUT_GPIO(pin)
+	INP_GPIO(pin);
+	OUT_GPIO(pin);
 } // set_output
 
 void write_bit(uint8_t bit) {
@@ -55,7 +59,7 @@ void setup_sid() {
 	set_output(SCLK);
 	set_output(CS);
 
-	start_sid_clock(DEFAULT_FREQ);
+	start_sid_clock(DEFAULT_SID_SPEED_HZ);
 
 	reset_sid();
 } // setup_sid
