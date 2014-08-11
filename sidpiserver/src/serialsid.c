@@ -23,7 +23,7 @@ uint8_t reset = 1;
 void set_output(uint8_t pin) {
 	INP_GPIO(pin);
 	OUT_GPIO(pin);
-	SET_GPIO_ALT(CLK,4);
+
 } // set_output
 
 void write_bit(uint8_t bit) {
@@ -44,6 +44,9 @@ void setup_sid() {
 	set_output(RCLK);
 	set_output(SCLK);
 	set_output(CS);
+	set_output(CLK);
+
+	SET_GPIO_ALT(CLK,4);
 
 	start_sid_clock(DEFAULT_SID_SPEED_HZ);
 
