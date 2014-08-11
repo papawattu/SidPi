@@ -16,12 +16,14 @@
 #define SCLK 	3
 #define RCLK 	17
 #define CS 		27
+#define CLK		4
 
 uint8_t reset = 1;
 
 void set_output(uint8_t pin) {
 	INP_GPIO(pin);
 	OUT_GPIO(pin);
+	SET_GPIO_ALT(CLK,4);
 } // set_output
 
 void write_bit(uint8_t bit) {
