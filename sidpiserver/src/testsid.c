@@ -31,5 +31,6 @@ int main(int argc, char * argv[]) {
 		GPIO_SET = 1 << 2;
 		GPIO_CLR = 1 << 2;
 
+		sleep(1);
 	}
 }
