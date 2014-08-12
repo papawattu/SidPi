@@ -20,7 +20,12 @@ int main(int argc, char * argv[]) {
 		sleep(1);
 		write_bit(0);
 		//GPIO_CLR = 1 << 3;
-
 		sleep(1);
+		if(i % 10 == 0) {
+			GPIO_SET = 1 << RCLK;
+			msleep(1);
+			GPIO_CLR = 1 << RCLK;
+
+		}
 	}
 }
