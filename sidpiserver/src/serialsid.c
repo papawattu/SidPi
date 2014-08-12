@@ -19,6 +19,7 @@
 #define CLK		4
 
 uint8_t reset = 1;
+unsigned int bit_counter = 0;
 
 void set_output(uint8_t pin) {
 	INP_GPIO(pin);
@@ -32,14 +33,18 @@ void write_bit(uint8_t bit) {
 	GPIO_CLR = 1 << RCLK;
 
 	if(bit == 1) {
+		printf("Setting bit true : bitcount %d : bit %d\n",bit_count,bit);
 		GPIO_SET = 1 << SER;
 	} else if(bit == 0) {
+		printf("Setting bit false : bitcount %d : bit %d\n",bit_count,bit);
 		GPIO_CLR = 1 << SER;
 	} else {
 		perror("can only pass 1 or 0 to write_bit.\n");
 	}
 	GPIO_SET = 1 << SCLK;
 	GPIO_CLR = 1 << SCLK;
+
+	bit_counter ++;
 } // write_bit
 
 void setup_sid() {
@@ -61,7 +66,7 @@ void setup_sid() {
 
 	start_sid_clock(DEFAULT_SID_SPEED_HZ);
 
-	reset_sid();
+	//reset_sid();
 } // setup_sid
 
 void reset_sid() {
@@ -75,6 +80,8 @@ void write_sid(uint8_t addr,uint8_t data) {
 	int i;
 	data %= 0xff;
 	addr %= 0x1f;
+
+	printf("Addr %d Data %d\n",addr,data);
 
 	for(i = 7;i >= 0;i--) {
 		write_bit((data >> i) & 1);
@@ -94,7 +101,7 @@ void write_sid(uint8_t addr,uint8_t data) {
 	GPIO_CLR = 1 << CS;
 	delay();
 	GPIO_SET = 1 << CS;
-
+	printf("Bit counter is %d\n",bit_counter);
 
 } // write_sid
 
