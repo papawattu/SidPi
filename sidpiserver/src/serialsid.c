@@ -75,7 +75,7 @@ void write_sid(uint8_t addr,uint8_t data) {
 	addr %= 0x1f;
 
 	for(i = 7;i >= 0;i--) {
-		write_bit(data >> i);
+		write_bit((data >> i) & 1);
 	}
 
 	write_bit(0); // NC
@@ -84,7 +84,7 @@ void write_sid(uint8_t addr,uint8_t data) {
 	write_bit(reset);
 
 	for(i = 4;i >= 0;i--) {
-		write_bit(addr >> i);
+		write_bit((addr >> i) & 1);
 	}
 
 	GPIO_SET = 1 << RCLK;
