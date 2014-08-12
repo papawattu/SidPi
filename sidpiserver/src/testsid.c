@@ -20,7 +20,9 @@ int main(int argc, char * argv[]) {
 
 	for(i=0;i<100;i++) {
 
-		write_sid(i % 32,0);
+		write_sid(31,0);
+		sleep(1);
+		write_sid(0,0);
 		sleep(1);
 	}
 }
