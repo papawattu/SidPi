@@ -12,9 +12,9 @@
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 
-#define SER 	2
+#define SER 	17
 #define SCLK 	3
-#define RCLK 	17
+#define RCLK 	2
 #define CS 		27
 #define CLK		4
 
