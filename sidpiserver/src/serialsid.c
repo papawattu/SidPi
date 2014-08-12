@@ -33,10 +33,10 @@ void write_bit(uint8_t bit) {
 	GPIO_CLR = 1 << RCLK;
 
 	if(bit == 1) {
-		printf("Setting bit true : bitcount %d : bit %d\n",bit_count,bit);
+		printf("Setting bit true : bitcount %d : bit %d\n",bit_counter,bit);
 		GPIO_SET = 1 << SER;
 	} else if(bit == 0) {
-		printf("Setting bit false : bitcount %d : bit %d\n",bit_count,bit);
+		printf("Setting bit false : bitcount %d : bit %d\n",bit_counter,bit);
 		GPIO_CLR = 1 << SER;
 	} else {
 		perror("can only pass 1 or 0 to write_bit.\n");
