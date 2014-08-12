@@ -27,14 +27,15 @@ void set_output(uint8_t pin) {
 } // set_output
 
 void write_bit(uint8_t bit) {
+
+	GPIO_CLR = 1 << SCLK;
 	if(bit > 0) {
 		GPIO_SET = 1 << SER;
 	} else {
 		GPIO_CLR = 1 << SER;
 	}
 	GPIO_SET = 1 << SCLK;
-	delay();
-	GPIO_CLR = 1 << SCLK;
+
 } // write_bit
 
 void setup_sid() {
