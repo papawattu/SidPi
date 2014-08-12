@@ -8,21 +8,17 @@
 
 int main(int argc, char * argv[]) {
 
-	int i;
+	int i,j;
 	//if(argc != 3) return -1;
 
 	printf("Setting up SID ...\n");
 	//printf("Reg %d value %d\n", atoi(argv[1]), atoi(argv[2]));
 	setup_sid();
 
-	GPIO_CLR = 1 << 3;
-	GPIO_CLR = 1 << 2;
-
-	for(i=0;i<100;i++) {
-
-		write_sid(31,0);
-		sleep(1);
-		write_sid(0,0);
-		sleep(1);
+	for(i=0;i<32;i++) {
+		for(j=0;j<256;j++) {
+			write_sid(i,j);
+			sleep(1);
+		}
 	}
 }
