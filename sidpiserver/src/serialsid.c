@@ -29,13 +29,15 @@ void set_output(uint8_t pin) {
 void write_bit(uint8_t bit) {
 
 	GPIO_CLR = 1 << SCLK;
+	GPIO_CLR = 1 << RCLK;
+
 	if(bit > 0) {
 		GPIO_SET = 1 << SER;
 	} else {
 		GPIO_CLR = 1 << SER;
 	}
 	GPIO_SET = 1 << SCLK;
-
+	GPIO_CLR = 1 << SCLK;
 } // write_bit
 
 void setup_sid() {
@@ -72,8 +74,6 @@ void write_sid(uint8_t addr,uint8_t data) {
 	data %= 0xff;
 	addr %= 0x1f;
 
-	GPIO_CLR = 1 << RCLK;
-
 	for(i = 7;i >= 0;i--) {
 		write_bit(data >> i);
 	}
@@ -88,11 +88,10 @@ void write_sid(uint8_t addr,uint8_t data) {
 	}
 
 	GPIO_SET = 1 << RCLK;
-	delay();
+	GPIO_CLR = 1 << RCLK;
 	GPIO_CLR = 1 << CS;
 	delay();
 	GPIO_SET = 1 << CS;
-	GPIO_CLR = 1 << RCLK;
 
 
 } // write_sid
