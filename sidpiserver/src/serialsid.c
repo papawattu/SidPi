@@ -31,10 +31,12 @@ void write_bit(uint8_t bit) {
 	GPIO_CLR = 1 << SCLK;
 	GPIO_CLR = 1 << RCLK;
 
-	if(bit > 0) {
+	if(bit == 1) {
 		GPIO_SET = 1 << SER;
-	} else {
+	} else if(bit == 0) {
 		GPIO_CLR = 1 << SER;
+	} else {
+		perror("can only pass 1 or 0 to write_bit.\n");
 	}
 	GPIO_SET = 1 << SCLK;
 	GPIO_CLR = 1 << SCLK;
