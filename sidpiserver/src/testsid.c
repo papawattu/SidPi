@@ -15,18 +15,21 @@ int main(int argc, char * argv[]) {
 	//printf("Reg %d value %d\n", atoi(argv[1]), atoi(argv[2]));
 	setup_sid();
 
-	for(i=0;i<100;i++) {
-		write_bit(1);
-		//GPIO_SET = 1 << 3;
-		sleep(1);
-		write_bit(0);
-		//GPIO_CLR = 1 << 3;
-		sleep(1);
-		if(i % 10 == 0) {
-			GPIO_SET = 1 << 2;
-			delay(1);
-			GPIO_CLR = 1 << 2;
+	GPIO_CLR = 1 << 3;
+	GPIO_CLR = 1 << 2;
 
+	for(i=0;i<100;i++) {
+
+		if(i % ==0) {
+			GPIO_SET = 1 << 17;
+		} else {
+			GPIO_CLR = 1 << 17;
 		}
+		GPIO_SET = 1 << 3;
+		GPIO_CLR = 1 << 3;
+
+		GPIO_SET = 1 << 2;
+		GPIO_CLR = 1 << 2;
+
 	}
 }
