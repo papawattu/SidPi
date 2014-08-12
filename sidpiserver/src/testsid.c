@@ -20,7 +20,7 @@ int main(int argc, char * argv[]) {
 
 	for(i=0;i<100;i++) {
 
-		if(i % 1) {
+		if(i % 2) {
 			GPIO_SET = 1 << 17;
 		} else {
 			GPIO_CLR = 1 << 17;
