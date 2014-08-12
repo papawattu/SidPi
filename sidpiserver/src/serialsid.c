@@ -39,6 +39,9 @@ void write_bit(uint8_t bit) {
 } // write_bit
 
 void setup_sid() {
+
+	int i, fSel, shift;
+
 	mmap_devices();
 
 	set_output(SER);
@@ -47,7 +50,10 @@ void setup_sid() {
 	set_output(CS);
 	set_output(CLK);
 
-	SET_GPIO_ALT(CLK,0);
+	//SET_GPIO_ALT(CLK,0);
+	fSel = gpioToGPFSEL[CLK];
+	shift = gpioToShift[CLK];
+	*(gpio.addr + fSel) = (*(gpio.addr + fSel) & ~(7 << shift)) | (4 << shift);
 
 	start_sid_clock(DEFAULT_SID_SPEED_HZ);
 
