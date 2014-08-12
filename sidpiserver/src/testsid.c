@@ -20,14 +20,14 @@ int main(int argc, char * argv[]) {
 
 	for(i=0;i<100;i++) {
 
-		if(i % 2) {
+		if(i % 3) {
 			GPIO_SET = 1 << 17;
 		} else {
 			GPIO_CLR = 1 << 17;
 		}
 		GPIO_SET = 1 << 3;
 		GPIO_CLR = 1 << 3;
-		if(i % 9) {
+		if(i % 8) {
 			GPIO_SET = 1 << 2;
 			GPIO_CLR = 1 << 2;
 		}
