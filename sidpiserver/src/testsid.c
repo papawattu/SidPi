@@ -27,10 +27,10 @@ int main(int argc, char * argv[]) {
 		}
 		GPIO_SET = 1 << 3;
 		GPIO_CLR = 1 << 3;
-
-		GPIO_SET = 1 << 2;
-		GPIO_CLR = 1 << 2;
-
+		if(i % 9) {
+			GPIO_SET = 1 << 2;
+			GPIO_CLR = 1 << 2;
+		}
 		sleep(1);
 	}
 }
