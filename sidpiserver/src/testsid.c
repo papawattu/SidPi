@@ -22,9 +22,9 @@ int main(int argc, char * argv[]) {
 		//GPIO_CLR = 1 << 3;
 		sleep(1);
 		if(i % 10 == 0) {
-			GPIO_SET = 1 << RCLK;
+			GPIO_SET = 1 << 2;
 			msleep(1);
-			GPIO_CLR = 1 << RCLK;
+			GPIO_CLR = 1 << 2;
 
 		}
 	}
