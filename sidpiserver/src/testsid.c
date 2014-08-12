@@ -24,7 +24,7 @@ int main(int argc, char * argv[]) {
 		sleep(1);
 		if(i % 10 == 0) {
 			GPIO_SET = 1 << 2;
-			msleep(1);
+			delay(1);
 			GPIO_CLR = 1 << 2;
 
 		}
