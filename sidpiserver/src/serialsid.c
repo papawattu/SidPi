@@ -78,8 +78,8 @@ void reset_sid() {
 void write_sid(uint8_t addr,uint8_t data) {
 
 	int i;
-	data %= 0xff;
-	addr %= 0x1f;
+	data &= 0xff;
+	addr &= 0x1f;
 
 	printf("Addr %d Data %d\n",addr,data);
 
