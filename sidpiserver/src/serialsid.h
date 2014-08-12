@@ -8,20 +8,22 @@
 #ifndef SERIALSID_H_
 #define SERIALSID_H_
 
-void setup_sid();
+#include <stdint.h>
+
+void setup_sid(void);
 
 void write_bit(uint8_t);
 
 void write_sid(uint8_t,uint8_t);
 
-void reset_sid();
+void reset_sid(void);
 
-void delay();
+void delay(void);
 
 void set_output(uint8_t);
 
 void start_sid_clock(int freq);
 
-void mmap_devices();
+void mmap_devices(void);
 
 #endif
