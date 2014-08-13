@@ -15,7 +15,7 @@ int main(int argc, char * argv[]) {
 	//printf("Reg %d value %d\n", atoi(argv[1]), atoi(argv[2]));
 	setup_sid();
 
-	for(i=32;i>=0;i--) {
+	for(i=31;i>=0;i--) {
 		for(j=0;j<256;j++) {
 			write_sid(i,j);
 			sleep(1);
