@@ -41,9 +41,9 @@ void write_bit(uint8_t bit) {
 	} else {
 		perror("can only pass 1 or 0 to write_bit.\n");
 	}
-	GPIO_SET = 1 << SCLK;
+	GPIO_SET = 1 << RCLK;
 	delay();
-	GPIO_CLR = 1 << SCLK;
+	GPIO_CLR = 1 << RCLK;
 
 	bit_counter ++;
 } // write_bit
@@ -97,9 +97,9 @@ void write_sid(uint8_t addr,uint8_t data) {
 		write_bit((addr >> i) & 1);
 	}
 
-	GPIO_SET = 1 << RCLK;
+	GPIO_SET = 1 << SCLK;
 	delay();
-	GPIO_CLR = 1 << RCLK;
+	GPIO_CLR = 1 << SCLK;
 	GPIO_CLR = 1 << CS;
 	delay();
 	GPIO_SET = 1 << CS;
