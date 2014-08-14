@@ -16,6 +16,14 @@
 #include <linux/syscalls.h>
 #include "sidpithread.h"
 
+#define timer_t		struct timer_list
+
+struct
+{
+    timer_t  id;
+    atomic_t expired;
+} rt_timer;
+
 static struct task_struct *thread;
 
 typedef struct buffer {
@@ -65,14 +73,22 @@ int timeValid = 0,cycles=0;
 struct timeval lasttv;
 
 
-struct semaphore     bufferSem;
-struct semaphore     todoSem;
+static struct semaphore     bufferSem;
+static struct semaphore     todoSem;
+
+static struct semaphore     todo;
 
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
 unsigned char dequeue(Buffer *q);
 int empty(Buffer *q);
 void print_queue(Buffer *q);
+
+void rt_timer_func (unsigned long arg)
+{
+    atomic_set (&rt_timer.expired, 1);
+    up(&todo);
+}
 
 void setupSid(void) {
 
@@ -96,6 +112,12 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 	
+	init_timer (&rt_timer.id);
+	rt_timer.id.data = 0;
+	rt_timer.id.function = &rt_timer_func;
+
+	init_MUTEX(&todo);
+
 	startSidThread();
 
 	sidSetup = 1;
@@ -177,6 +199,7 @@ int sidThread(void) {
 
 		if ( cycles < 0 )
 			cycles = 0;
+		atomic_set(&(todo->count), 0);
 
 	}
 	return 0;
@@ -214,6 +237,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
 	up(&todoSem);
+	up(&todo);
 	return 0;
 }
 void delay(unsigned int howLong) {
@@ -258,6 +282,13 @@ void delay(unsigned int howLong) {
 		timeValid=1;
 		udelay(4);
 	}
+}
+
+static inline int_least64_t timer_get (void)
+{
+    struct timeval tv;
+    do_gettimeofday(&tv);
+    return (int_least64_t) tv.tv_sec * NSEC_PER_SEC + (tv.tv_usec * 1000);
 }
 
 void setThreshold(int value) {
