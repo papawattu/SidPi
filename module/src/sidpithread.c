@@ -4,7 +4,7 @@
 #include <linux/types.h>
 #include <linux/sched.h>
 #include <linux/poll.h>
-#include <linux/spinlock.h>
+#include <linux/semaphore.h>
 #include <linux/module.h>    // included for all kernel modules
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
