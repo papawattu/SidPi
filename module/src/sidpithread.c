@@ -80,6 +80,8 @@ void setupSid(void) {
 
 	if(sidSetup) return;
 
+	printk(KERN_INFO "sidpi: setting up sid\n");
+
 	timeValid = 0;
 
 	if(mapGPIO() != 0) return;
@@ -101,6 +103,7 @@ void setupSid(void) {
 }
 
 void closeSid(void) {
+	printk(KERN_INFO "sidpi: closing sid cleanup\n");
 	up(&todoSem);
 	stopSidThread();
 	unmapGPIO();
@@ -115,7 +118,7 @@ void startSidThread(void) {
 		err = PTR_ERR(thread);
 		thread = NULL;
 	}	else {
-		printk(KERN_INFO "Sid Thread Running...\n");
+		printk(KERN_INFO "sidpi: sid thread started\n");
 	}
 }
 
@@ -123,7 +126,7 @@ void stopSidThread(void) {
 	int ret;
 	ret = kthread_stop(thread);
 	thread = NULL;
-	printk("Sid Thread Stopped...\n");
+	printk(KERN_INFO "sidpi: sid thread stopped\n");
 }
 
 int sidThread(void) {
