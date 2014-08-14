@@ -108,7 +108,7 @@ static void __exit _sid_cleanup_module(void)
 	/*
 	 * Unregister the device
 	 */
-	closeSid();
+	//closeSid();
 	cdev_del(sid_dev);
 	unregister_chrdev_region(dev_no,1);
 	remove_proc_entry(PROC_FS_NAME, NULL);
