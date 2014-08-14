@@ -97,7 +97,7 @@ static int __init _sid_init_module(void)
 		return dev_handle;
 	}
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
-	//setupSid();
+	setupSid();
 
 	return SUCCESS;
 }
@@ -111,7 +111,7 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device
 	 */
 
-	//closeSid();
+	closeSid();
 	printk(KERN_INFO "sidpi: module cleanup\n");
 
 	cdev_del(sid_dev);
