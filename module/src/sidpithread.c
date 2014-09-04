@@ -1,10 +1,8 @@
 #include <linux/kthread.h>
 #include <linux/delay.h>
 #include <linux/time.h>
-#include <linux/types.h>
 #include <linux/sched.h>
 #include <linux/poll.h>
-#include <linux/semaphore.h>
 #include <linux/module.h>    // included for all kernel modules
 #include <linux/kernel.h>
 #include <linux/ioctl.h>
@@ -16,15 +14,8 @@
 #include <asm/delay.h>
 #include <mach/platform.h>
 #include <linux/syscalls.h>
+#include <linux/timer.h>
 #include "sidpithread.h"
-
-#define timer_t		struct timer_list
-
-struct
-{
-    timer_t  id;
-    atomic_t expired;
-} rt_timer;
 
 static struct task_struct *thread;
 
@@ -36,6 +27,12 @@ typedef struct buffer {
 } Buffer;
 
 Buffer buffer;
+
+struct
+{
+    struct timer_list id;
+    atomic_t expired;
+} sidTimer;
 
 static unsigned char gpioToGPFSEL [] =
 {
@@ -75,10 +72,8 @@ int timeValid = 0,cycles=0;
 struct timeval lasttv;
 
 
-static struct semaphore     bufferSem;
-static struct semaphore     todoSem;
-
-static struct semaphore     todo;
+struct semaphore     bufferSem;
+struct semaphore     todoSem;
 
 void init_queue(Buffer *q);
 int enqueue(Buffer *q, unsigned char x);
@@ -86,19 +81,25 @@ unsigned char dequeue(Buffer *q);
 int empty(Buffer *q);
 void print_queue(Buffer *q);
 
-void rt_timer_func (unsigned long arg)
+static inline __u64 timerGet (void)
 {
-    atomic_set (&rt_timer.expired, 1);
-    up(&todo);
+	struct timeval tv;
+	do_gettimeofday(&tv);
+	return (__u64) tv.tv_sec * NSEC_PER_SEC + (tv.tv_usec * 1000);
 }
+
+void sidTimerFunc (unsigned long arg)
+{
+    atomic_set (&sidTimer.expired, 1);
+    printk(KERN_INFO "NEW DELAY %llu\n",timerGet ());
+}
+
 
 void setupSid(void) {
 
 	int i, fSel, shift;
 
 	if(sidSetup) return;
-
-	printk(KERN_INFO "sidpi: setting up sid\n");
 
 	timeValid = 0;
 
@@ -114,11 +115,9 @@ void setupSid(void) {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 	
-	init_timer (&rt_timer.id);
-	rt_timer.id.data = 0;
-	rt_timer.id.function = &rt_timer_func;
-
-	init_MUTEX(&todo);
+	init_timer (&sidTimer.id);
+	sidTimer.id.data = 0;
+	sidTimer.id.function = &sidTimerFunc;
 
 	startSidThread();
 
@@ -127,7 +126,6 @@ void setupSid(void) {
 }
 
 void closeSid(void) {
-	printk(KERN_INFO "sidpi: closing sid cleanup\n");
 	up(&todoSem);
 	stopSidThread();
 	unmapGPIO();
@@ -142,7 +140,7 @@ void startSidThread(void) {
 		err = PTR_ERR(thread);
 		thread = NULL;
 	}	else {
-		printk(KERN_INFO "sidpi: sid thread started\n");
+		printk(KERN_INFO "Sid Thread Running...\n");
 	}
 }
 
@@ -150,7 +148,7 @@ void stopSidThread(void) {
 	int ret;
 	ret = kthread_stop(thread);
 	thread = NULL;
-	printk(KERN_INFO "sidpi: sid thread stopped\n");
+	printk(KERN_INFO "Sid Thread Stopped...\n");
 }
 
 int sidThread(void) {
@@ -186,6 +184,7 @@ int sidThread(void) {
 			delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
 		}
+		if (atomic_read(&sidTimer.expired))
 			up(&bufferSem);
 		} else {
 			msleep(10);
@@ -201,7 +200,6 @@ int sidThread(void) {
 
 		if ( cycles < 0 )
 			cycles = 0;
-		atomic_set(&(todo->count), 0);
 
 	}
 	return 0;
@@ -239,14 +237,21 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 	if(enqueue(&buffer, cycles & 0xff) != 0) return -1;
 	if(enqueue(&buffer, cycles >> 8) != 0) return -1;
 	up(&todoSem);
-	up(&todo);
 	return 0;
 }
+
+
 void delay(unsigned int howLong) {
 
-	int clocks,now;
+	int clocks;
 	struct timeval tv;
+	unsigned long jnow = jiffies, jdelta;
+	__u64 now    = timerGet ();
 
+	jdelta = howLong / (NSEC_PER_SEC / HZ);
+
+	mod_timer (&sidTimer.id, jiffies + jdelta);
+/*
 	cycles+= howLong;
 
 	if(timeValid) {
@@ -260,7 +265,6 @@ void delay(unsigned int howLong) {
 
 		cycles -= clocks;
 
-		//printk(KERN_INFO "1 Clocks %lu Delay %d Last Clock %lu Difference %lu\n",clocks,howLong,lastClock,getRealSidClock() - lastClock);
 		while (cycles > 1000000 / HZ ) {
 
 			current->state = TASK_INTERRUPTIBLE;
@@ -284,13 +288,8 @@ void delay(unsigned int howLong) {
 		timeValid=1;
 		udelay(4);
 	}
-}
-
-static inline int_least64_t timer_get (void)
-{
-    struct timeval tv;
-    do_gettimeofday(&tv);
-    return (int_least64_t) tv.tv_sec * NSEC_PER_SEC + (tv.tv_usec * 1000);
+	printk(KERN_INFO "OLD DELAY %llu\n",timerGet ());
+*/
 }
 
 void setThreshold(int value) {
@@ -309,6 +308,8 @@ unsigned long getRealSidClock(void) {
 	return clock;
 }
 void writeSid(int reg, int val) {
+
+	printk(KERN_INFO "sid chip %d reg %d value %d\n",0,reg,val);
 
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
 	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);

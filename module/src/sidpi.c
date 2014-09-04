@@ -84,8 +84,6 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
-	printk(KERN_INFO "sidpi: init module\n");
-
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
 	sid_dev = cdev_alloc();
@@ -110,10 +108,7 @@ static void __exit _sid_cleanup_module(void)
 	/*
 	 * Unregister the device
 	 */
-
 	closeSid();
-	printk(KERN_INFO "sidpi: module cleanup\n");
-
 	cdev_del(sid_dev);
 	unregister_chrdev_region(dev_no,1);
 	remove_proc_entry(PROC_FS_NAME, NULL);
@@ -123,12 +118,10 @@ static int device_open(struct inode *inode, struct file *file) {
 	/*
 	 * We don't want to talk to two processes at the same time
 	 */
-	printk(KERN_INFO "sidpi: device open\n");
+
 	return SUCCESS;
 }
 static int device_release(struct inode *inode, struct file *file) {
-
-	printk(KERN_INFO "sidpi: device close\n");
 
 	return SUCCESS;
 }
