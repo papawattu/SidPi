@@ -47,7 +47,7 @@ void setupSid() {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	startSidThread();
+	//startSidThread();
 
 	sidSetup = 1;
 

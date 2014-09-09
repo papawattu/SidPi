@@ -15,6 +15,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <pthread.h>
+#include <fcntl.h>
 
 #include "sidpiserver.h"
 
@@ -26,6 +27,8 @@ long inputClock = 0;
 int latency = DEFAULT_LATENCY;
 int delayMulti = DEFAULT_DELAY_MULTI;
 int delayThreshold = DEFAULT_THRESHOLD;
+int sidfd;
+
 
 int main(void) {
 	int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
@@ -39,6 +42,12 @@ int main(void) {
 	unsigned char buffer[1024];
 	int iret1;
 	int i,child = 0;
+
+	sidfd = open("/dev/sid", O_RDWR);
+	if (sidfd < 0) {
+	    perror("open /dev/sid failed : ");
+	    return -1;
+	}
 
 	signal(SIGINT, signal_callback_handler);
 
@@ -121,8 +130,9 @@ int main(void) {
 
 		if (1) { // this is the child process
 
-			setMultiplier(delayMulti);
-			setupSid();
+			//setMultiplier(delayMulti);
+			//setupSid();
+
 
 			close(sockfd); // child doesn't need the listener
 
@@ -181,7 +191,7 @@ void processReadBuffer(int len) {
 		if (dataLength != 0) {
 			invalidCommandException("FLUSH needs no data");
 		}
-		flush();
+		ioctl(sidfd, SID_IOCTL_FLUSH, NULL);
 		inputClock = 0;
 		dataWrite[dataWritePos++] = OK;
 		break;
@@ -207,8 +217,8 @@ void processReadBuffer(int len) {
 		if (dataLength != 1) {
 			invalidCommandException("RESET needs 1 byte (volume after reset)");
 		}
-		flush();
-		writeSid(0x18,dataRead[1] & 0xff);
+		ioctl(sidfd, SID_IOCTL_RESET, NULL);
+		//writeSid(0x18,dataRead[1] & 0xff);
 		dataWrite[dataWritePos++] = OK;
 		break;
 
@@ -220,14 +230,14 @@ void processReadBuffer(int len) {
 		}
 	//	printf("delay cmd\n");
 
-		if (isBufferHalfFull) {
-			startPlayback();
-		}
+	//	if (isBufferHalfFull) {
+	//		startPlayback();
+	//	}
 
-		if (isBufferFull) {
-			dataWrite[dataWritePos++] = BUSY;
-			break;
-		}
+//		if (isBufferFull) {
+//			dataWrite[dataWritePos++] = BUSY;
+//			break;
+//		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
 		handleDelayPacket(sidNumber, cycles);
@@ -242,14 +252,14 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		if(isBufferHalfFull) {
-			startPlayback();
-		}
+	//	if(isBufferHalfFull) {
+	//		startPlayback();
+	//	}
 
-		if (isBufferFull ) {
-			dataWrite[dataWritePos++] = BUSY;
-			break;
-		}
+//		if (isBufferFull ) {
+//			dataWrite[dataWritePos++] = BUSY;
+//			break;
+//		}
 
 		handleWritePacket(dataLength);
 		dataWrite[dataWritePos++] = OK;
@@ -352,6 +362,7 @@ void invalidCommandException(void *errMsg) {
 void handleWritePacket(int dataLength) {
 	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
+	unsigned char buf[4];
 
 	for (i = 0; i < dataLength; i += 4) {
 		writeCycles = (int) ((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i];
@@ -360,7 +371,12 @@ void handleWritePacket(int dataLength) {
 		reg &= 0x1f;
 		value = dataRead[4 + i + 3];
 		inputClock += writeCycles;
-		sidWrite(reg,value,(dataRead[4 + i] & 0xff),dataRead[5 + i]);
+		buf[0] = value;
+		buf[1] = reg;
+		buf[3] = dataRead[4 + i];
+		buf[4] = dataRead[5 + i];
+
+		write(sidfd,&buf,4);
 
 	}
 	return;

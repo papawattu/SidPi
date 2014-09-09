@@ -1,3 +1,5 @@
+#include <linux/ioctl.h>
+
 #define PORT "6581"  // the port users will be connecting to
 #define BACKLOG 10     // how many pending connections queue will hold
 #define DATA_READ_SIZE (65536 * 4 + 16384)
@@ -36,6 +38,17 @@
 #define	INFO				6
 
 #define SID_NETWORK_PROTOCOL_VERSION	2
+
+#define SID_IOCTL_RESET     _IOW('S', 0, int)
+#define SID_IOCTL_FIFOSIZE  _IOR('S', 1, int)
+#define SID_IOCTL_FIFOFREE  _IOR('S', 2, int)
+#define SID_IOCTL_SIDTYPE   _IOR('S', 3, int)
+#define SID_IOCTL_CARDTYPE  _IOR('S', 4, int)
+#define SID_IOCTL_MUTE      _IOW('S', 5, int)
+#define SID_IOCTL_NOFILTER  _IOW('S', 6, int)
+#define SID_IOCTL_FLUSH     _IO ('S', 7)
+#define SID_IOCTL_DELAY     _IOW('S', 8, int)
+#define SID_IOCTL_READ      _IOWR('S', 9, int*)
 
 void handleWritePacket(int dataLength);
 void handleDelayPacket(int sidNumber, int cycles);

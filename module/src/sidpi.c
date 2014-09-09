@@ -44,8 +44,7 @@ static int sid_ioctl(struct file *, unsigned int ,unsigned long );
 static int Major; /* Major number assigned to our device driver */
 int dev_no;
 dev_t dev_handle;
-static int Device_Open = 0; /* Is device open?
- * Used to prevent multiple access to device */
+
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
 
@@ -146,22 +145,19 @@ static ssize_t device_read(struct file *file, /* see include/linux/fs.h   */
 static ssize_t device_write(struct file *file,
 		const char __user * buffer, size_t length, loff_t * offset)
 {
-	unsigned int cycles,reg,val;
+	size_t      bytes;
+	__u8        buf[20];
+	const char *p = buffer;
+	size_t      c = length;
 
-	if(length <= 0) return -1;
+	bytes = copy_from_user(&buf, p, c);
 
-	if(length > 4) printk(KERN_INFO "sidpi: Length is %d buffer size is %d, expecting 4 bytes\n", length,sizeof(buffer));
-
-	cycles = (buffer[3] << 8 | buffer[2]) & 0xffff;
-	reg = buffer[1] & 0x1f;
-	val = buffer[0] & 0xff;
-
-	sidWrite(reg, val,cycles);
+	sidWrite(buf[1],buf[0],(buf[3] << 8 | buf[2]) & 0xffff);
 
 	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
 	mark_inode_dirty(file->f_dentry->d_inode);
-	//msleep(1);
-	return (ssize_t) 0;
+	return (ssize_t) bytes;
+
 }
 
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
@@ -206,7 +202,7 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         {
         	printk(KERN_INFO "sidpi: Flush request\n");
             /* Wait until all writes are done */
-            //flush();
+        	sidReset();
             break;
         }
         case SID_IOCTL_DELAY:

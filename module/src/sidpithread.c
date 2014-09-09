@@ -30,6 +30,8 @@ typedef struct Sid {
 	unsigned int currentCommand; /* position of last element */
 	atomic_t todoCount; /* number of queue elements */
 	__u64 targetTime;
+	atomic_t reset;
+
 } Sid;
 
 Sid * sid;
@@ -77,16 +79,10 @@ static volatile __u32 * gpio, * gpio_clock, * gpio_timer;
 int isPlaybackReady = 0;
 unsigned long lastClock = 0, currentClock = 0;
 int threshold = 10, multiplier = 1000;
-int sidSetup = 0;
 int timeValid = 0,cycles=0;
 struct timeval lasttv;
 __s32 busy = 	0;
-
-//void init_queue(Buffer *q);
-//int enqueue(Buffer *q, unsigned char x);
-//unsigned char dequeue(Buffer *q);
-//int empty(Buffer *q);
-//void print_queue(Buffer *q);
+int sidSetup = 0;
 
 static inline __u64 timerGet (void)
 {
@@ -113,6 +109,7 @@ void sidInit(Sid *sid) {
 	sid->lastCommand = 0;
 	sid->currentCommand = 0;
 	sid->targetTime = 0;
+	atomic_set(&sid->reset,0);
 	atomic_set(&sid->todoCount,0);
 
 }
@@ -186,38 +183,48 @@ int sidThread(void) {
 	set_user_nice(current, -5);
 	//schedule();
 	//init_queue(&buffer);
+
+	busy = -1;
+
 	while (!kthread_should_stop()) {
 
 		if (signal_pending(current))
 			break;
 
-		down(&sid->todoSem);
+		if(atomic_read(&sid->reset) == 0) {
 
-		reg = sid->buffer[sid->currentCommand];
-		val = sid->buffer[sid->currentCommand+1];
-		cycles = sid->buffer[sid->currentCommand+2] | sid->buffer[sid->currentCommand+3] << 8;
+			down(&sid->todoSem);
 
-		sid->currentCommand = (sid->currentCommand + 4) & (SID_BUFFER_SIZE -1);
+			reg = sid->buffer[sid->currentCommand];
+			val = sid->buffer[sid->currentCommand+1];
+			cycles = sid->buffer[sid->currentCommand+2] | sid->buffer[sid->currentCommand+3] << 8;
 
-		up(&sid->bufferSem);
+			sid->currentCommand = (sid->currentCommand + 4) & (SID_BUFFER_SIZE -1);
 
-		busy = ((__u32) cycles * SID_PAL);
+			up(&sid->bufferSem);
 
-		sid->targetTime += busy;
+			busy = ((__u32) cycles * SID_PAL);
 
-		if(busy > 60000) {
-			busy -= 65000;
-		}
+			sid->targetTime += busy;
 
-		if ((unsigned char) reg != 0xff) {
-			delay(cycles);
-			writeSid(reg, val);
+			if(busy > 60000) {
+				busy -= 55000;
+			}
+
+			if ((unsigned char) reg != 0xff) {
+				delay(cycles);
+				writeSid(reg, val);
 				//printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
 
-		} else {
-			delay(cycles);
+			} else {
+				delay(cycles);
 				//printk(KERN_INFO "Delay %2x\n", cycles);
+			}
+		} else {
+			printk(KERN_INFO "Resetting sid thread.\n");
+			atomic_set(&sid->reset,0);
 		}
+
 	}
 	return 0;
 }
@@ -287,57 +294,15 @@ void delay(unsigned int howLong) {
 
 		//while(atomic_read(&sidTimer.expired) == 0);
 		if(atomic_read(&sidTimer.expired) == 1) {
-	    for (;;)
-	    	{
-	    		__s32 delta = ((__s32) timerGet() & 0x7fffffffL) - busy;
+			for (;;)
+			{
+				__s32 delta = ((__s32) timerGet() & 0x7fffffffL) - busy;
 
-	    		if (delta >= 0)
-	    			break;
-	    	}
-	    } else {
-	    	printk(KERN_INFO "Timer expired early\n");
-	    }
-
-	}
-/*
-	cycles+= howLong;
-
-	if(timeValid) {
-
-		do_gettimeofday(&tv);
-
-		clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
-		                + ( tv.tv_usec - lasttv.tv_usec);
-
-		memcpy(&lasttv, &tv, sizeof(tv));
-
-		cycles -= clocks;
-
-		while (cycles > 1000000 / HZ ) {
-
-			current->state = TASK_INTERRUPTIBLE;
-			schedule_timeout(cycles / 1000000);
-			do_gettimeofday(&tv);
-
-			clocks = (tv.tv_sec - lasttv.tv_sec) * 1000000
-			           + ( tv.tv_usec - lasttv.tv_usec);
-
-			memcpy(&lasttv, &tv, sizeof(tv));
-			cycles -= clocks;
+				if (delta >= 0)
+					break;
+			}
 		}
-
-		if(cycles > 10) {
-			udelay(cycles);
-
-		}
-
-	} else {
-
-		timeValid=1;
-		udelay(4);
 	}
-	printk(KERN_INFO "OLD DELAY %llu\n",timerGet ());
-*/
 }
 
 void setThreshold(int value) {
@@ -356,13 +321,8 @@ unsigned long getRealSidClock(void) {
 	return clock;
 }
 
-void csdelay() {
-	udelay(80);
-	return;
-}
 void writeSid(int reg, int val) {
 
-//	printk(KERN_INFO "sid chip %d reg %d value %d\n",0,reg,val);
 
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
 	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);
@@ -371,7 +331,6 @@ void writeSid(int reg, int val) {
 	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
 	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
-	//udelay(10);
 	while((*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 1);
 	while((int) (*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 0);
 
@@ -382,10 +341,6 @@ void writeSid(int reg, int val) {
 
 void startSidClk(int freq) {
 	int divi, divr, divf;
-
-//	divi = 19;
-//	divr = 19200000 % freq;
-//	divf = 42;
 
 	divi = 19200000 / freq;
 	divr = 19200000 % freq;
@@ -442,15 +397,30 @@ void setPinsToOutput(void) {
 
 void sidReset() {
 	int i;
-	do_gettimeofday(&lasttv);
-	//sema_init(&bufferSem, SID_BUFFER_SIZE/4);
-	timeValid =0;
-	//flush();
+
+	return;
+//reset not working
+	if(!sidSetup) return;
+
+	//sidInit(sid);
+	atomic_set(&sid->reset,1);
+	//while(atomic_read(&sid->reset) == 1);
+	sid->currentCommand = 0;
+	sid->lastCommand = 0;
+	sema_init(&sid->bufferSem, (SID_BUFFER_SIZE >> 2)-4);
+	sema_init(&sid->todoSem,0);
+	atomic_set (&sidTimer.expired, 1);
+	mod_timer (&sidTimer.id, 0);
+	busy = 0;
+	//up(&sid->wait);
+	sema_init(&sid->wait,0);
 	for(i=0;i<32;i++) {
 		writeSid(i,0);
 	}
 	writeSid(24,15);
-	//init_queue(&buffer);
+	atomic_set(&sid->reset,1);
+
+	//sid->reset = 0;
 }
 void generatePinTables(void) {
 	int i;
@@ -476,85 +446,6 @@ void generatePinTables(void) {
 	}
 }
 
-/*
-void init_queue(Buffer *q) {
-	q->first = 0;
-	q->last = SID_BUFFER_SIZE - 1;
-	q->count = 0;
-}
-
-int enqueue(Buffer *q, unsigned char x) {
-	if (q->count >= SID_BUFFER_SIZE) {
-	//	printk(KERN_INFO "Warning: queue overflow enqueue x=%d\n", x);
-		return -1;
-	} else {
-		q->last = (q->last + 1) % SID_BUFFER_SIZE;
-		q->q[q->last] = x;
-		q->count = q->count + 1;
-	}
-	return 0;
-}
-
-unsigned char dequeue(Buffer *q) {
-	unsigned char x;
-
-	if (q->count <= 0)
-		printk(KERN_INFO "Warning: empty queue dequeue.\n");
-	else {
-		x = q->q[q->first];
-		q->first = (q->first + 1) % SID_BUFFER_SIZE;
-		q->count = q->count - 1;
-	}
-
-	return (x);
-}
-
-int empty(Buffer *q) {
-	if (q->count <= 0)
-		return (1);
-	else
-		return (0);
-}
-
-void print_queue(Buffer *q) {
-	int i, j;
-
-	i = q->first;
-
-	while (i != q->last) {
-		printk(KERN_INFO "%c ", q->q[i]);
-		i = (i + 1) % SID_BUFFER_SIZE;
-	}
-
-	printk(KERN_INFO "%2d ", q->q[i]);
-	printk(KERN_INFO "\n");
-}
-
-int getBufferFirst(void) {
-	return buffer.first;
-}
-int getBufferLast(void) {
-	return buffer.last;
-}
-int getBufferCount(void) {
-	return buffer.count;
-}
-int getBufferFull(void) {
-	return (buffer.count >= SID_BUFFER_SIZE - 4 ? 1 : 0);
-}
-int getBufferMax(void) {
-	return SID_BUFFER_SIZE;
-}
-void flush(void) {
-	//while ( atomic_read( (atomic_t *) &todoSem.count) > 0 ) {
-	//  current->state = TASK_INTERRUPTIBLE;
-	//  schedule_timeout(1);
-	//}
-	//init_queue(&buffer);
-	currentClock = 0;
-	stopPlayback();
-}
-*/
 int mapGPIO(void) {
 
 	   unsigned long mem;
