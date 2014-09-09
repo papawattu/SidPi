@@ -61,11 +61,11 @@ static struct file_operations fops = {
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
-  seq_printf(m, "Buffer size : %d\n",getBufferMax());
-  seq_printf(m, "Buffer count : %d\n",getBufferCount());
-  seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
-  seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
-  seq_printf(m, "Buffer full : %d\n",getBufferFull());
+  //seq_printf(m, "Buffer size : %d\n",getBufferMax());
+  //seq_printf(m, "Buffer count : %d\n",getBufferCount());
+  //seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
+  //seq_printf(m, "Buffer last pointer : %d\n",getBufferLast());
+  //seq_printf(m, "Buffer full : %d\n",getBufferFull());
 
   return count;
 }
@@ -183,14 +183,14 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         case SID_IOCTL_FIFOFREE:
         {
         	printk(KERN_INFO "sidpi: FIFO free request\n");
-        	return put_user(getBufferCount(), (int*)arg);
+        	return 0; //put_user(getBufferCount(), (int*)arg);
         }
         case SID_IOCTL_SIDTYPE:
             return 0; // return 6581
 
         case SID_IOCTL_CARDTYPE:
             return 0;
-
+//========================================================================================================================
         case SID_IOCTL_MUTE:
         {
         	printk(KERN_INFO "sidpi: Mute request\n");
@@ -206,7 +206,7 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         {
         	printk(KERN_INFO "sidpi: Flush request\n");
             /* Wait until all writes are done */
-            flush();
+            //flush();
             break;
         }
         case SID_IOCTL_DELAY:
