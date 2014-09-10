@@ -25,6 +25,7 @@ typedef struct Sid {
 	struct semaphore bufferSem;
 	struct semaphore todoSem;
 	struct semaphore wait;
+	struct semaphore todoReset;
 	unsigned char volatile buffer[SID_BUFFER_SIZE]; /* body of queue */
 	unsigned int lastCommand; /* position of first element */
 	unsigned int currentCommand; /* position of last element */
@@ -103,18 +104,36 @@ void sidTimerFunc (unsigned long arg)
 
 void sidInit(Sid *sid) {
 	sema_init(&sid->bufferSem, (SID_BUFFER_SIZE >> 2)-4);
+	sema_init(&sid->todoReset,0);
 	sema_init(&sid->todoSem,0);
 	sema_init(&sid->wait,0);
 
 	sid->lastCommand = 0;
 	sid->currentCommand = 0;
 	sid->targetTime = 0;
-	atomic_set(&sid->reset,0);
-	atomic_set(&sid->todoCount,0);
 
+	atomic_set(&sid->todoCount,0);
+	
+	atomic_set(&sid->reset,0);
 }
 
-void setupSid(void) {
+void sidReset(Sid *sid) {
+	sema_init(&sid->bufferSem, (SID_BUFFER_SIZE >> 2)-4);
+	sema_init(&sid->todoSem,0);
+	sema_init(&sid->wait,0);
+
+	sid->lastCommand = 0;
+	sid->currentCommand = 0;
+	sid->targetTime = 0;
+
+	atomic_set(&sid->todoCount,0);
+	
+	atomic_set(&sid->reset,0);
+	
+	up(sid->todoReset);
+}
+
+void setupSid(Sid *sid) {
 
 	int i, fSel, shift;
 
@@ -191,40 +210,33 @@ int sidThread(void) {
 		if (signal_pending(current))
 			break;
 
-		if(atomic_read(&sid->reset) == 0) {
-
-			down(&sid->todoSem);
-
-			reg = sid->buffer[sid->currentCommand];
-			val = sid->buffer[sid->currentCommand+1];
-			cycles = sid->buffer[sid->currentCommand+2] | sid->buffer[sid->currentCommand+3] << 8;
-
-			sid->currentCommand = (sid->currentCommand + 4) & (SID_BUFFER_SIZE -1);
-
-			up(&sid->bufferSem);
-
-			busy = ((__u32) cycles * SID_PAL);
-
-			sid->targetTime += busy;
-
-			if(busy > 60000) {
-				busy -= 55000;
-			}
-
-			if ((unsigned char) reg != 0xff) {
-				delay(cycles);
-				writeSid(reg, val);
-				//printk(KERN_INFO "Write val %x reg %x delay %04x\n",val,reg,cycles);
-
-			} else {
-				delay(cycles);
-				//printk(KERN_INFO "Delay %2x\n", cycles);
-			}
-		} else {
-			printk(KERN_INFO "Resetting sid thread.\n");
-			atomic_set(&sid->reset,0);
+		if(atomic_read(&sid->reset) == 1) {
+			sidReset(sid);
 		}
 
+		down(&sid->todoSem);
+		reg = sid->buffer[sid->currentCommand];
+		val = sid->buffer[sid->currentCommand+1];
+		cycles = sid->buffer[sid->currentCommand+2] | sid->buffer[sid->currentCommand+3] << 8;
+
+		sid->currentCommand = (sid->currentCommand + 4) & (SID_BUFFER_SIZE -1);
+
+		up(&sid->bufferSem);
+
+		busy = ((__u32) cycles * SID_PAL);
+
+		sid->targetTime += busy;
+
+		if(busy > 60000) {
+			busy -= 55000;
+		}
+
+		if ((unsigned char) reg != 0xff) {
+			delay(cycles);
+			writeSid(reg, val);
+		} else {
+			delay(cycles);
+		}
 	}
 	return 0;
 }
@@ -396,31 +408,12 @@ void setPinsToOutput(void) {
 }
 
 void sidReset() {
-	int i;
 
-	return;
-//reset not working
-	if(!sidSetup) return;
-
-	//sidInit(sid);
-	atomic_set(&sid->reset,1);
-	//while(atomic_read(&sid->reset) == 1);
-	sid->currentCommand = 0;
-	sid->lastCommand = 0;
-	sema_init(&sid->bufferSem, (SID_BUFFER_SIZE >> 2)-4);
-	sema_init(&sid->todoSem,0);
-	atomic_set (&sidTimer.expired, 1);
-	mod_timer (&sidTimer.id, 0);
-	busy = 0;
-	//up(&sid->wait);
-	sema_init(&sid->wait,0);
-	for(i=0;i<32;i++) {
-		writeSid(i,0);
+	if(sid) {
+		atomic_set(sid->reset,1);
+		down(sid->todoReset);
 	}
-	writeSid(24,15);
-	atomic_set(&sid->reset,1);
-
-	//sid->reset = 0;
+	
 }
 void generatePinTables(void) {
 	int i;
