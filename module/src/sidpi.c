@@ -69,7 +69,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   return count;
 }
 static int sid_proc_open(struct inode *inode, struct  file *file) {
-  return single_open(file, sid_proc_show, NULL);
+	return single_open(file, sid_proc_show, NULL);
 }
 static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
@@ -83,6 +83,7 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
+
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
 	sid_dev = cdev_alloc();
@@ -94,7 +95,6 @@ static int __init _sid_init_module(void)
 		return dev_handle;
 	}
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
-	setupSid();
 
 	return SUCCESS;
 }
@@ -107,7 +107,6 @@ static void __exit _sid_cleanup_module(void)
 	/*
 	 * Unregister the device
 	 */
-	closeSid();
 	cdev_del(sid_dev);
 	unregister_chrdev_region(dev_no,1);
 	remove_proc_entry(PROC_FS_NAME, NULL);
@@ -117,10 +116,19 @@ static int device_open(struct inode *inode, struct file *file) {
 	/*
 	 * We don't want to talk to two processes at the same time
 	 */
+	Sid *sid;
+
+	sid = setupSid();
+
+	file->private_data = sid;
 
 	return SUCCESS;
 }
 static int device_release(struct inode *inode, struct file *file) {
+
+	Sid *sid = file->private_data;
+
+	closeSid(sid);
 
 	return SUCCESS;
 }
@@ -149,10 +157,15 @@ static ssize_t device_write(struct file *file,
 	__u8        buf[20];
 	const char *p = buffer;
 	size_t      c = length;
+	Sid 		*sid = file->private_data;
+
+	if(!sid) {
+		return -EIO;
+	}
 
 	bytes = copy_from_user(&buf, p, c);
 
-	sidWrite(buf[1],buf[0],(buf[3] << 8 | buf[2]) & 0xffff);
+	sidWrite(sid,buf[1],buf[0],(buf[3] << 8 | buf[2]) & 0xffff);
 
 	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
 	mark_inode_dirty(file->f_dentry->d_inode);
@@ -163,12 +176,15 @@ static ssize_t device_write(struct file *file,
 static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 
+	Sid *sid = file->private_data;
+	if(!sid) return -EIO;
+
 	switch(cmd)
     {
         case SID_IOCTL_RESET:
         {
         	printk(KERN_INFO "sidpi: Reset request\n");
-        	sidReset();
+        	//reqSidReset(sid);
         	break;
         }
         case SID_IOCTL_FIFOSIZE:
@@ -190,7 +206,7 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         case SID_IOCTL_MUTE:
         {
         	printk(KERN_INFO "sidpi: Mute request\n");
-        	writeSid(24,0); //mute
+        	//writeSid(sid,24,0); //mute
         	break;
         }
         case SID_IOCTL_NOFILTER:
@@ -202,12 +218,12 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         {
         	printk(KERN_INFO "sidpi: Flush request\n");
             /* Wait until all writes are done */
-        	sidReset();
+        	reqSidReset(sid);
             break;
         }
         case SID_IOCTL_DELAY:
         {
-        	sidDelay((int) arg);
+        	//sidDelay(sid,(int) arg);
             break;
         }
         case SID_IOCTL_READ:

@@ -45,40 +45,41 @@
 #define DEFAULT_SID_SPEED_HZ 985248
 #define THREAD_NAME "sidpithread"
 
+typedef struct Sid {
+	struct semaphore bufferSem;
+	struct semaphore todoSem;
+	struct semaphore wait;
+	struct semaphore todoReset;
+	unsigned char volatile buffer[SID_BUFFER_SIZE]; /* body of queue */
+	unsigned int lastCommand; /* position of first element */
+	unsigned int currentCommand; /* position of last element */
+	atomic_t todoCount; /* number of queue elements */
+	__u64 targetTime;
+	atomic_t reset;
+
+} Sid;
 
 extern const int DATA[];
 extern const int ADDR[];
 
-int sidDelay(unsigned int cycles);
-int sidWrite(int reg,int value,unsigned int cycles);
-void setupSid(void);
-void closeSid(void);
-void *cmdThread(void);
-int sidThread(void);
-void stopSidThread(void);
-void delay(unsigned int cycles);
-void writeSid(int reg,int val);
+int sidDelay(Sid *,unsigned int cycles);
+int sidWrite(Sid *,int reg,int value,unsigned int cycles);
+Sid * setupSid();
+void closeSid(Sid *);
+int sidThread(Sid *);
+void stopSidThread(Sid *);
+void delay(Sid *,unsigned int cycles);
+void writeSid(Sid *,int reg,int val);
 void startSidClk(int freq);
 void mmapRPIDevices(void);
 void generatePinTables(void);
 void setPinsToOutput(void);
-int playbackReady(void);
-void startPlayback(void);
-void stopPlayback(void);
-int getBufferFirst(void);
-int getBufferLast(void);
-int getBufferCount(void);
-int getBufferFull(void);
-int getBufferMax(void);
-unsigned long getRealSidClock(void);
-unsigned long getSidClock(void);
-void setThreshold(int value);
-void setMultiplier(int value);
-void startSidThread(void);
-void stopSidThread(void);
+void startSidThread(Sid *);
+void stopSidThread(Sid *);
 int mapGPIO(void);
 void unmapGPIO(void);
-void sidReset(void);
-void flush(void);
+void sidReset(Sid *);
+void reqSidReset(Sid *);
+void flush(Sid *);
 
 #endif /* __SIDRUNNERTHREAD_H_ */

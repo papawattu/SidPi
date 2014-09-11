@@ -21,22 +21,6 @@
 
 static struct task_struct *thread;
 
-typedef struct Sid {
-	struct semaphore bufferSem;
-	struct semaphore todoSem;
-	struct semaphore wait;
-	struct semaphore todoReset;
-	unsigned char volatile buffer[SID_BUFFER_SIZE]; /* body of queue */
-	unsigned int lastCommand; /* position of first element */
-	unsigned int currentCommand; /* position of last element */
-	atomic_t todoCount; /* number of queue elements */
-	__u64 targetTime;
-	atomic_t reset;
-
-} Sid;
-
-Sid * sid;
-
 struct
 {
     struct timer_list id;
@@ -77,10 +61,6 @@ unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
 unsigned long addrPins[32];
 static volatile __u32 * gpio, * gpio_clock, * gpio_timer;
-int isPlaybackReady = 0;
-unsigned long lastClock = 0, currentClock = 0;
-int threshold = 10, multiplier = 1000;
-int timeValid = 0,cycles=0;
 struct timeval lasttv;
 __s32 busy = 	0;
 int sidSetup = 0;
@@ -92,9 +72,12 @@ static inline __u64 timerGet (void)
 	return (__u64) tv.tv_sec * NSEC_PER_SEC + (tv.tv_usec * 1000);
 }
 
-void sidTimerFunc (unsigned long arg)
+void sidTimerFunc (Sid * sid)
 {
-
+	if(!sid) {
+		printk(KERN_ERR "No Sid data passed to timer\n");
+		return;
+	}
     atomic_set (&sidTimer.expired, 1);
     up(&sid->wait);
 
@@ -130,20 +113,21 @@ void sidReset(Sid *sid) {
 	
 	atomic_set(&sid->reset,0);
 	
-	up(sid->todoReset);
+	up(&sid->todoReset);
 }
 
-void setupSid(Sid *sid) {
+Sid * setupSid() {
 
-	int i, fSel, shift;
-
-	if(sidSetup) return;
+	Sid * sid;
 
 	sid = kmalloc(sizeof(Sid), GFP_KERNEL);
 
-	sidInit(sid);
+	if(!sid) {
+		printk(KERN_ERR "Failed to allocate SID memory\n");
+		return;
+	}
 
-	timeValid = 0;
+	sidInit(sid);
 
 	if(mapGPIO() != 0) return;
 
@@ -154,43 +138,42 @@ void setupSid(Sid *sid) {
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 	
 	init_timer (&sidTimer.id);
-	sidTimer.id.data = 0;
-	sidTimer.id.function = &sidTimerFunc;
+	sidTimer.id.data = (unsigned long ) sid;
+	sidTimer.id.function = (void *) &sidTimerFunc;
 
-	startSidThread();
+	startSidThread(sid);
 
 	sidSetup = 1;
 
+	return sid;
 }
 
-void closeSid(void) {
+void closeSid(Sid *sid) {
 	up(&sid->todoSem);
-	stopSidThread();
+	stopSidThread(sid);
 	kfree(sid);
 	unmapGPIO();
 }
 
-void startSidThread(void) {
+void startSidThread(Sid *sid) {
 
 	int err;
 
-	thread = kthread_run(sidThread, &err, THREAD_NAME);
-	if (IS_ERR(thread)) {
-		err = PTR_ERR(thread);
-		thread = NULL;
-	}	else {
+	thread = kthread_create(sidThread, sid, THREAD_NAME);
+	if (thread) {
+		wake_up_process(thread);
 		printk(KERN_INFO "Sid Thread Running...\n");
 	}
 }
 
-void stopSidThread(void) {
+void stopSidThread(Sid * sid) {
 	int ret;
 	ret = kthread_stop(thread);
 	thread = NULL;
 	printk(KERN_INFO "Sid Thread Stopped...\n");
 }
 
-int sidThread(void) {
+int sidThread(Sid *sid) {
 	unsigned char reg, val;
 	int cycles,clocks;
 	long startClock;
@@ -232,28 +215,15 @@ int sidThread(void) {
 		}
 
 		if ((unsigned char) reg != 0xff) {
-			delay(cycles);
-			writeSid(reg, val);
+			delay(sid,cycles);
+			writeSid(sid,reg, val);
 		} else {
-			delay(cycles);
+			delay(sid,cycles);
 		}
 	}
 	return 0;
 }
-
-int playbackReady(void) {
-	return isPlaybackReady;
-}
-
-void startPlayback(void) {
-	isPlaybackReady = 1;
-}
-
-void stopPlayback(void) {
-	isPlaybackReady = 0;
-
-}
-int sidDelay(unsigned int cycles) {
+int sidDelay(Sid *sid,unsigned int cycles) {
 
 	sid->buffer[sid->lastCommand] = 0xff;
 	sid->buffer[sid->lastCommand + 1] = 0x00;
@@ -265,7 +235,7 @@ int sidDelay(unsigned int cycles) {
 	return 0;
 
 }
-int sidWrite(int reg, int value, unsigned int cycles) {
+int sidWrite(Sid *sid,int reg, int value, unsigned int cycles) {
 
 	sid->buffer[sid->lastCommand] = reg;
 	sid->buffer[sid->lastCommand + 1] = value;
@@ -278,7 +248,7 @@ int sidWrite(int reg, int value, unsigned int cycles) {
 }
 
 
-void delay(unsigned int howLong) {
+void delay(Sid *sid,unsigned int howLong) {
 
 	int clocks;
 	struct timeval tv;
@@ -317,23 +287,7 @@ void delay(unsigned int howLong) {
 	}
 }
 
-void setThreshold(int value) {
-	threshold = value;
-}
-
-void setMultiplier(int value) {
-	multiplier = value;
-}
-
-unsigned long getSidClock(void) {
-	return currentClock;
-}
-unsigned long getRealSidClock(void) {
-	unsigned long clock = ioread32(gpio_timer + TIMER_OFFSET);
-	return clock;
-}
-
-void writeSid(int reg, int val) {
+void writeSid(Sid * sid,int reg, int val) {
 
 
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
@@ -407,11 +361,16 @@ void setPinsToOutput(void) {
 					| (4 << shift),(u32 *) gpio + fSel);
 }
 
-void sidReset() {
+void reqSidReset(Sid * sid) {
+
+	int i;
 
 	if(sid) {
-		atomic_set(sid->reset,1);
-		down(sid->todoReset);
+		atomic_set(&sid->reset,1);
+		down(&sid->todoReset);
+		for(i=0;i<0x20;i++) {
+			writeSid(sid,i,0);
+		}
 	}
 	
 }
