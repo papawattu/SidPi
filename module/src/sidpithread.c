@@ -363,15 +363,8 @@ void setPinsToOutput(void) {
 
 void reqSidReset(Sid * sid) {
 
-	int i;
-
-	if(sid) {
-		atomic_set(&sid->reset,1);
-		down(&sid->todoReset);
-		for(i=0;i<0x20;i++) {
-			writeSid(sid,i,0);
-		}
-	}
+	closeSid(sid);
+	setupSid(sid);
 	
 }
 void generatePinTables(void) {
