@@ -184,7 +184,7 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         case SID_IOCTL_RESET:
         {
         	printk(KERN_INFO "sidpi: Reset request\n");
-        	//reqSidReset(sid);
+        	reqSidReset(sid);
         	break;
         }
         case SID_IOCTL_FIFOSIZE:
