@@ -15,6 +15,7 @@
 #include "sidpithread.h"
 
 #define PROC_FS_NAME "sidpi"
+#define SIDPI_VERSION 0.1
 
 /**
  * This structure hold information about the /proc file
@@ -47,6 +48,7 @@ dev_t dev_handle;
 
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
+static int sidPiInterfaceType = SIDPI_PARALLEL_INTERFACE;
 
 static struct file_operations fops = {
 		.owner   = THIS_MODULE,
@@ -60,6 +62,8 @@ static struct file_operations fops = {
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
+  seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Paralell":"Serial"));
+
   //seq_printf(m, "Buffer size : %d\n",getBufferMax());
   //seq_printf(m, "Buffer count : %d\n",getBufferCount());
   //seq_printf(m, "Buffer first pointer : %d\n",getBufferFirst());
@@ -83,7 +87,8 @@ static const struct file_operations sid_proc_fops = {
  */
 static int __init _sid_init_module(void)
 {
-
+	pr_debug("Init sidpi module\n");
+	printk(KERN_INFO SIDPILOG "Module version %d by Jamie Nuttall\n",SIDPI_VERSION);
 	dev_no = MKDEV(0,0);
 	alloc_chrdev_region(&dev_no,0,1,DEVICE_NAME);
 	sid_dev = cdev_alloc();
@@ -91,10 +96,11 @@ static int __init _sid_init_module(void)
 	dev_handle = cdev_add(sid_dev, dev_no, 1);
 
 	if (dev_handle < 0) {
-		printk(KERN_ALERT "sidpi: Registering char device failed with %d\n", Major);
+		printk(KERN_ALERT SIDPILOG "Registering char device failed with %d\n", Major);
 		return dev_handle;
 	}
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
+	printk(KERN_INFO SIDPILOG "sid device created Major %d Minor %d\n",MAJOR(dev_no),MINOR(dev_no));
 
 	return SUCCESS;
 }
@@ -107,6 +113,8 @@ static void __exit _sid_cleanup_module(void)
 	/*
 	 * Unregister the device
 	 */
+	pr_debug("Clean up sidpi module\n");
+
 	cdev_del(sid_dev);
 	unregister_chrdev_region(dev_no,1);
 	remove_proc_entry(PROC_FS_NAME, NULL);
@@ -118,7 +126,12 @@ static int device_open(struct inode *inode, struct file *file) {
 	 */
 	Sid *sid;
 
-	sid = setupSid();
+	pr_debug("Opening device\n");
+
+	sid = setupSid(sidPiInterfaceType);
+	if(!sid) return -EIO;
+
+	pr_debug("SID setup\n");
 
 	file->private_data = sid;
 
@@ -127,6 +140,8 @@ static int device_open(struct inode *inode, struct file *file) {
 static int device_release(struct inode *inode, struct file *file) {
 
 	Sid *sid = file->private_data;
+
+	pr_debug("Closing sid\n");
 
 	closeSid(sid);
 
@@ -183,18 +198,24 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
     {
         case SID_IOCTL_RESET:
         {
-        	printk(KERN_INFO "sidpi: Reset request\n");
-        	reqSidReset(sid);
+        	printk(KERN_INFO SIDPILOG "Reset or flush request %u\n",cmd);
+        	//sid = reqSidReset(sid);
+        	if(sid) {
+        		file->private_data = sid;
+        		return OK;
+        	}
+        	else
+        		return -EIO;
         	break;
         }
         case SID_IOCTL_FIFOSIZE:
         {
-        	printk(KERN_INFO "sidpi: FIFO size request\n");
+        	printk(KERN_INFO SIDPILOG "FIFO size request\n");
             return put_user(SID_BUFFER_SIZE, (int*)arg);
         }
         case SID_IOCTL_FIFOFREE:
         {
-        	printk(KERN_INFO "sidpi: FIFO free request\n");
+        	printk(KERN_INFO SIDPILOG "FIFO free request\n");
         	return 0; //put_user(getBufferCount(), (int*)arg);
         }
         case SID_IOCTL_SIDTYPE:
@@ -205,25 +226,27 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 //========================================================================================================================
         case SID_IOCTL_MUTE:
         {
-        	printk(KERN_INFO "sidpi: Mute request\n");
+        	printk(KERN_INFO SIDPILOG "Mute request\n");
         	//writeSid(sid,24,0); //mute
         	break;
         }
         case SID_IOCTL_NOFILTER:
         {
-        	printk(KERN_INFO "sidpi: No filter not implemented\n");
+        	printk(KERN_INFO SIDPILOG "No filter not implemented\n");
         	break;
         }
         case SID_IOCTL_FLUSH:
         {
-        	printk(KERN_INFO "sidpi: Flush request\n");
-            /* Wait until all writes are done */
-        	reqSidReset(sid);
-            break;
+        	return OK;
         }
         case SID_IOCTL_DELAY:
         {
         	//sidDelay(sid,(int) arg);
+        	if(arg) {
+        		printk(KERN_INFO SIDPILOG "Delay %d",arg);
+        	} else {
+        		printk(KERN_INFO SIDPILOG "Delay no arg");
+        	}
             break;
         }
         case SID_IOCTL_READ:
@@ -242,3 +265,5 @@ module_exit( _sid_cleanup_module);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jamie Nuttall");
 MODULE_DESCRIPTION("A MOS 6581 SID driver module using the hardsid protocol.");
+module_param(sidPiInterfaceType, int, (S_IRUSR | S_IRGRP | S_IROTH));
+MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial (1) or paralell (0)");

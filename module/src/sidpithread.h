@@ -45,17 +45,26 @@
 #define DEFAULT_SID_SPEED_HZ 985248
 #define THREAD_NAME "sidpithread"
 
+#define SIDPI_PARALLEL_INTERFACE 0
+#define SIDPI_SERIAL_INTERFACE   1
+#define SIDPILOG "SIDPi : "
+#define ERROR -1
+#define OK 1
+
 typedef struct Sid {
 	struct semaphore bufferSem;
 	struct semaphore todoSem;
 	struct semaphore wait;
 	struct semaphore todoReset;
+	unsigned int interfaceType;
 	unsigned char volatile buffer[SID_BUFFER_SIZE]; /* body of queue */
 	unsigned int lastCommand; /* position of first element */
 	unsigned int currentCommand; /* position of last element */
 	atomic_t todoCount; /* number of queue elements */
 	__u64 targetTime;
 	atomic_t reset;
+	void (*writeSid) (struct Sid *sid, unsigned char reg,
+	                                 unsigned char value);
 
 } Sid;
 
@@ -64,12 +73,13 @@ extern const int ADDR[];
 
 int sidDelay(Sid *,unsigned int cycles);
 int sidWrite(Sid *,int reg,int value,unsigned int cycles);
-Sid * setupSid();
+Sid * setupSid(unsigned int);
 void closeSid(Sid *);
 int sidThread(Sid *);
 void stopSidThread(Sid *);
 void delay(Sid *,unsigned int cycles);
-void writeSid(Sid *,int reg,int val);
+void writeSidSer(Sid *,int reg,int val);
+void writeSidPar(Sid *,int reg,int val);
 void startSidClk(int freq);
 void mmapRPIDevices(void);
 void generatePinTables(void);
@@ -79,7 +89,7 @@ void stopSidThread(Sid *);
 int mapGPIO(void);
 void unmapGPIO(void);
 void sidReset(Sid *);
-void reqSidReset(Sid *);
+Sid * reqSidReset(Sid *);
 void flush(Sid *);
 
 #endif /* __SIDRUNNERTHREAD_H_ */

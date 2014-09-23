@@ -78,14 +78,19 @@ void sidTimerFunc (Sid * sid)
 		printk(KERN_ERR "No Sid data passed to timer\n");
 		return;
 	}
-    atomic_set (&sidTimer.expired, 1);
+	//for(;;) {
+	//	if(sid->targetTime >= timerGet()) {
+	//		break;
+	//	}
+	//}
     up(&sid->wait);
 
   //  printk(KERN_INFO "NEW DELAY %llu\n",timerGet ());
 }
 
 
-void sidInit(Sid *sid) {
+int sidInit(unsigned int sidPiInterfaceType,Sid *sid) {
+	pr_debug("Entering sid init\n");
 	sema_init(&sid->bufferSem, (SID_BUFFER_SIZE >> 2)-4);
 	sema_init(&sid->todoReset,0);
 	sema_init(&sid->todoSem,0);
@@ -94,10 +99,30 @@ void sidInit(Sid *sid) {
 	sid->lastCommand = 0;
 	sid->currentCommand = 0;
 	sid->targetTime = 0;
+	sid->interfaceType = sidPiInterfaceType;
+
+	switch(sid->interfaceType) {
+	case SIDPI_PARALLEL_INTERFACE : {
+		sid->writeSid = writeSidPar;
+		break;
+	}
+	case SIDPI_SERIAL_INTERFACE : {
+		sid->writeSid = writeSidSer;
+		break;
+	}
+	default: {
+		printk(KERN_ERR SIDPILOG "Unknown Sid interface type %d\n",sidPiInterfaceType);
+		return ERROR;
+	}
+	}
 
 	atomic_set(&sid->todoCount,0);
 	
 	atomic_set(&sid->reset,0);
+
+	pr_debug("Leaving sid init OK\n");
+
+	return OK;
 }
 
 void sidReset(Sid *sid) {
@@ -116,32 +141,56 @@ void sidReset(Sid *sid) {
 	up(&sid->todoReset);
 }
 
-Sid * setupSid() {
+Sid * setupSid(unsigned int sidPiInterfaceType) {
 
 	Sid * sid;
+
+	pr_debug("Entering setupsid\n");
 
 	sid = kmalloc(sizeof(Sid), GFP_KERNEL);
 
 	if(!sid) {
-		printk(KERN_ERR "Failed to allocate SID memory\n");
-		return;
+		printk(KERN_ERR SIDPILOG "Failed to allocate SID memory\n");
+		return ERROR;
+	}
+	pr_debug("SID memory allocated\n");
+
+	if(!sidInit(sidPiInterfaceType,sid)) {
+		printk(KERN_ERR SIDPILOG "Sid init failed\n");
+		return ERROR;
 	}
 
-	sidInit(sid);
+	pr_debug("Sid intialised\n");
 
-	if(mapGPIO() != 0) return;
+
+	if(mapGPIO() != 0) return ERROR;
+
+	pr_debug("MMAP GPIO OK\n");
 
 	generatePinTables();
 
+	pr_debug("Generate Pin tables ok\n");
+
 	setPinsToOutput();
+
+	pr_debug("GPIO pins set to output\n");
+
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 	
+	pr_debug("SID clock started\n");
+
+
 	init_timer (&sidTimer.id);
 	sidTimer.id.data = (unsigned long ) sid;
 	sidTimer.id.function = (void *) &sidTimerFunc;
 
+	pr_debug("Delay timer init\n");
+
+
 	startSidThread(sid);
+
+	pr_debug("Sid thread started\n");
 
 	sidSetup = 1;
 
@@ -149,10 +198,20 @@ Sid * setupSid() {
 }
 
 void closeSid(Sid *sid) {
+
+	pr_debug("Entering closeSid\n");
+
+	if(!sid) {
+		pr_debug("Sid not initialsed \n");
+		return;
+	}
+
 	up(&sid->todoSem);
 	stopSidThread(sid);
+	del_timer(&sidTimer.id);
 	kfree(sid);
 	unmapGPIO();
+	pr_debug("Leaving closeSid\n");
 }
 
 void startSidThread(Sid *sid) {
@@ -162,7 +221,7 @@ void startSidThread(Sid *sid) {
 	thread = kthread_create(sidThread, sid, THREAD_NAME);
 	if (thread) {
 		wake_up_process(thread);
-		printk(KERN_INFO "Sid Thread Running...\n");
+		printk(KERN_INFO SIDPILOG "Sid Thread Running...\n");
 	}
 }
 
@@ -170,7 +229,7 @@ void stopSidThread(Sid * sid) {
 	int ret;
 	ret = kthread_stop(thread);
 	thread = NULL;
-	printk(KERN_INFO "Sid Thread Stopped...\n");
+	printk(KERN_INFO SIDPILOG "Sid Thread Stopped...\n");
 }
 
 int sidThread(Sid *sid) {
@@ -211,12 +270,13 @@ int sidThread(Sid *sid) {
 		sid->targetTime += busy;
 
 		if(busy > 60000) {
+			busy = ((__u32) cycles * SID_PAL);
 			busy -= 55000;
 		}
 
 		if ((unsigned char) reg != 0xff) {
 			delay(sid,cycles);
-			writeSid(sid,reg, val);
+			sid->writeSid(sid,reg, val);
 		} else {
 			delay(sid,cycles);
 		}
@@ -232,7 +292,7 @@ int sidDelay(Sid *sid,unsigned int cycles) {
 	sid->lastCommand = (sid->lastCommand + 4) & (SID_BUFFER_SIZE -1);
 	down(&sid->bufferSem);
 	up(&sid->todoSem);
-	return 0;
+	return OK;
 
 }
 int sidWrite(Sid *sid,int reg, int value, unsigned int cycles) {
@@ -244,7 +304,7 @@ int sidWrite(Sid *sid,int reg, int value, unsigned int cycles) {
 	sid->lastCommand = (sid->lastCommand + 4) & (SID_BUFFER_SIZE -1);
 	down(&sid->bufferSem);
 	up(&sid->todoSem);
-	return 0;
+	return OK;
 }
 
 
@@ -268,26 +328,13 @@ void delay(Sid *sid,unsigned int howLong) {
 	if(!jdelta) {
 		busy = sid->targetTime;
 	} else {
-		//if(atomic_read(&sidTimer.expired) == 0)
-		atomic_set (&sidTimer.expired, 0);
 		mod_timer (&sidTimer.id, jnow + jdelta);
 		if (down_interruptible(&sid->wait))
 			return;
-
-		//while(atomic_read(&sidTimer.expired) == 0);
-		if(atomic_read(&sidTimer.expired) == 1) {
-			for (;;)
-			{
-				__s32 delta = ((__s32) timerGet() & 0x7fffffffL) - busy;
-
-				if (delta >= 0)
-					break;
-			}
-		}
 	}
 }
 
-void writeSid(Sid * sid,int reg, int val) {
+void writeSidPar(Sid * sid,int reg, int val) {
 
 
 	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
@@ -303,7 +350,22 @@ void writeSid(Sid * sid,int reg, int val) {
 	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
 
 }
+void writeSidSer(Sid * sid,int reg, int val) {
 
+
+	iowrite32((unsigned long) addrPins[reg % 32],(u32 *) gpio + 7);
+	iowrite32((unsigned long) ~addrPins[reg % 32] & addrPins[31], (u32 *) gpio + 10);
+	while((int) (*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 1);
+	while((int) (*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 0);
+	iowrite32((unsigned long) dataPins[val % 256], (u32 *) gpio + 7);
+	iowrite32((unsigned long) ~dataPins[val % 256] & dataPins[255], (u32 *) gpio + 10);
+	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 10);
+	while((*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 1);
+	while((int) (*(gpio + gpioToGPLEV [4]) & (1 << (4 & 31))) == 0);
+
+	iowrite32((unsigned long) 1 << CS, (u32 *) gpio + 7);
+
+}
 
 void startSidClk(int freq) {
 	int divi, divr, divf;
@@ -361,10 +423,24 @@ void setPinsToOutput(void) {
 					| (4 << shift),(u32 *) gpio + fSel);
 }
 
-void reqSidReset(Sid * sid) {
+Sid * reqSidReset(Sid * sid) {
 
-	closeSid(sid);
-	setupSid(sid);
+	unsigned int interfaceType;
+
+	if(sid) {
+		interfaceType = sid->interfaceType;
+		closeSid(sid);
+		sid = setupSid(interfaceType);
+		if(!sid) {
+			printk(KERN_ERR SIDPILOG "Error resetting SIDpi\n");
+			return ERROR;
+		} else {
+			return sid;
+		}
+	} else {
+		printk(KERN_ERR SIDPILOG "SID not initialised\n");
+	}
+	return sid;
 	
 }
 void generatePinTables(void) {

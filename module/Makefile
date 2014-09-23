@@ -1,6 +1,8 @@
 # kbuild part of makefile
 obj-m  += sidpi.o 
 sidpi-objs := src/sidpi.o src/sidpithread.o 
+CFLAGS_sidpi.o := -DDEBUG
+CFLAGS_sidpithread.o := -DDEBUG
 EXTRA_CFLAGS = -O2
 
 all:
