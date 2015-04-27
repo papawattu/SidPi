@@ -49,6 +49,7 @@ dev_t dev_handle;
 static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
 static int sidPiInterfaceType = SIDPI_PARALLEL_INTERFACE;
+static int piType = 0; //default to Pi1
 
 static struct file_operations fops = {
 		.owner   = THIS_MODULE,
@@ -62,7 +63,8 @@ static struct file_operations fops = {
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
-  seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Paralell":"Serial"));
+  seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
+  seq_printf(m, "Pi Type is : %s\n",(piType==0?"Pi1":"Pi2"));
 
   //seq_printf(m, "Buffer size : %d\n",getBufferMax());
   //seq_printf(m, "Buffer count : %d\n",getBufferCount());
@@ -128,7 +130,7 @@ static int device_open(struct inode *inode, struct file *file) {
 
 	pr_debug("Opening device\n");
 
-	sid = setupSid(sidPiInterfaceType);
+	sid = setupSid(sidPiInterfaceType,piType);
 	if(!sid) return -EIO;
 
 	pr_debug("SID setup\n");
@@ -266,4 +268,6 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jamie Nuttall");
 MODULE_DESCRIPTION("A MOS 6581 SID driver module using the hardsid protocol.");
 module_param(sidPiInterfaceType, int, (S_IRUSR | S_IRGRP | S_IROTH));
-MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial (1) or paralell (0)");
+MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial (1) or parallel (0)");
+module_param(piType, int, (S_IRUSR | S_IRGRP | S_IROTH));
+MODULE_PARM_DESC(piType, "Pi version 0 for orginal A,B, B+ or 1 for Pi2");
