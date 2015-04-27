@@ -141,7 +141,7 @@ void sidReset(Sid *sid) {
 	up(&sid->todoReset);
 }
 
-Sid * setupSid(unsigned int sidPiInterfaceType,unsinged int piType) {
+Sid * setupSid(unsigned int sidPiInterfaceType,unsigned int piType) {
 
 	Sid * sid;
 
