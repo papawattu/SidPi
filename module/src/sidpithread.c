@@ -141,7 +141,7 @@ void sidReset(Sid *sid) {
 	up(&sid->todoReset);
 }
 
-Sid * setupSid(unsigned int sidPiInterfaceType) {
+Sid * setupSid(unsigned int sidPiInterfaceType,unsinged int piType) {
 
 	Sid * sid;
 
@@ -158,6 +158,10 @@ Sid * setupSid(unsigned int sidPiInterfaceType) {
 	if(!sidInit(sidPiInterfaceType,sid)) {
 		printk(KERN_ERR SIDPILOG "Sid init failed\n");
 		return ERROR;
+	}
+
+	if(piType == 1) {
+		BCM2708_PERI_BASE = 0x3F000000 ;
 	}
 
 	pr_debug("Sid intialised\n");
