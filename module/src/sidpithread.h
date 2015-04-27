@@ -75,7 +75,7 @@ extern const int ADDR[];
 
 int sidDelay(Sid *,unsigned int cycles);
 int sidWrite(Sid *,int reg,int value,unsigned int cycles);
-Sid * setupSid(unsigned int);
+Sid * setupSid(unsigned int,unsigned int);
 void closeSid(Sid *);
 int sidThread(Sid *);
 void stopSidThread(Sid *);
