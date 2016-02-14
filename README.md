@@ -32,7 +32,7 @@ You can order the PCB from here https://oshpark.com/shared_projects/vRw7mWuD
 
 More to come soon!
 
-UPDATE 14/2/15
+UPDATE 14/2/16
 
 Changes to support Pi2 and some timing fixes.
 
