@@ -76,7 +76,6 @@ void *sidThread() {
 	unsigned char reg, val;
 	int cycles;
 	long startClock;
-	init_queue(&buffer);
 	startClock = getRealSidClock();
     unsigned long int elaps;	
     struct timeval t1,t2;
@@ -99,8 +98,16 @@ void *sidThread() {
     
 			currentClock += cycles;
 			targetCycles += cycles;
-	        
-            delay(cycles);
+
+            gettimeofday(&t2, NULL);
+            if(t1.tv_sec == t2.tv_sec) elaps = t2.tv_usec - t1.tv_usec;
+		      else elaps = 1000000 - t1.tv_usec + t2.tv_usec;
+		//if(elaps < 20000) usleep(20000 - elaps); // 50Hz refresh rate
+            if(cycles > elaps) { 
+           // exit(1);
+                usleep(cycles-elaps);
+             }	        
+           // delay(cycles);
             writeSid(reg, val);
 		
 
@@ -122,13 +129,6 @@ void stopPlayback() {
 	isPlaybackReady = 0;
 }
 void sidDelay(int cycles) {
-
-    
-
-	enqueue(&buffer, (unsigned char) 0xff);
-	enqueue(&buffer, (unsigned char) 0);
-	enqueue(&buffer, (unsigned char) (cycles & 0xff00) >> 8);
-	enqueue(&buffer, (unsigned char) cycles & 0xff);
 
 }
 void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
@@ -288,37 +288,6 @@ void mmapRPIDevices() {
 		return;
 	}
 }
-void init_queue(Buffer *q) {
-	q->first = 0;
-	q->last = BUFFER_SIZE - 1;
-	q->count = 0;
-}
-
-int enqueue(Buffer *q, unsigned char x) {
-	if (q->count >= BUFFER_SIZE) {
-		printf("Warning: queue overflow enqueue x=%d\n", x);
-		return -1;
-	} else {
-		q->last = (q->last + 1) % BUFFER_SIZE;
-		q->q[q->last] = x;
-		q->count = q->count + 1;
-	}
-	return 0;
-}
-
-unsigned char dequeue(Buffer *q) {
-	unsigned char x;
-
-	if (q->count <= 0)
-		printf("Warning: empty queue dequeue.\n");
-	else {
-		x = q->q[q->first];
-		q->first = (q->first + 1) % BUFFER_SIZE;
-		q->count = q->count - 1;
-	}
-
-	return (x);
-}
 
 int empty(Buffer *q) {
 	if (q->count <= 0)
@@ -353,11 +322,14 @@ int getBufferCount() {
 int getBufferFull() {
 	return isFIFOFull(fifo);
 }
-int getBufferMax() {
-	return BUFFER_SIZE;
+int canBufferAccept(int bytes) {
+	return ((FIFOSize(fifo) - FIFOCount(fifo)) > bytes?1:0);
+}
+int isBufferHalfFull() {
+	return ((FIFOSize(fifo) /2) < FIFOCount(fifo)?1:0);
 }
 void flush() {
-	init_queue(&buffer);
+	resetFIFO(fifo);
 	currentClock = 0;
 	stopPlayback();
 }
