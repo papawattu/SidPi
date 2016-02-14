@@ -121,11 +121,11 @@ int main(void) {
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
 
-		if(child != 0) {
+/*		if(child != 0) {
 			kill(child,SIGTERM);
 		}
 		child = fork();
-
+*/
 		setpriority(PRIO_PROCESS,0,PRIO_MIN);
 
 		if (1) { // this is the child process
@@ -176,8 +176,8 @@ void processReadBuffer(int len) {
 	dataWritePos = 0;
 
 	long clientTimeDifference = inputClock - getSidClock();
-	int isBufferFull = (clientTimeDifference > latency?1:0);
-	int isBufferHalfFull = (clientTimeDifference > latency / 2?1:0);
+	//int isBufferFull = (clientTimeDifference > latency?1:0);
+	//int isBufferHalfFull = (clientTimeDifference > latency / 2?1:0);
 
 	//printf("input clock : %d\n",inputClock);
 	//printf("input sid clock : %d\n",getSidClock());
@@ -230,9 +230,9 @@ void processReadBuffer(int len) {
 		}
 	//	printf("delay cmd\n");
 
-		//if (isBufferHalfFull) {
+		if (isBufferHalfFull()) {
 			startPlayback();
-		//}
+		}
 
 		if (getBufferFull()) {
 			dataWrite[dataWritePos++] = BUSY;
@@ -242,7 +242,7 @@ void processReadBuffer(int len) {
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
 		handleDelayPacket(sidNumber, cycles);
 		dataWrite[dataWritePos++] = OK;
-
+        exit(1);
 		break;
 	}
 
@@ -252,11 +252,11 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-		//if(isBufferHalfFull) {
+		if(isBufferHalfFull()) {
 			startPlayback();
-		//}
+		}
 
-		if (getBufferFull() ) {
+		if (!canBufferAccept(dataLength) ) {
 			dataWrite[dataWritePos++] = BUSY;
 			break;
 		}
