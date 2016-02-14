@@ -9,6 +9,8 @@
 #include <sys/time.h>
 #include "sidrunnerthread.h"
 #include "rpi.h"
+#include "fifo.h"
+
 
 pthread_t sidThreadHandle;
 
@@ -20,6 +22,10 @@ typedef struct buffer {
 } Buffer;
 
 Buffer buffer;
+
+FIFO * fifo;
+
+pthread_mutex_t queue;
 
 unsigned int bufReadPos, bufWritePos;
 unsigned long dataPins[256];
@@ -38,6 +44,8 @@ void print_queue(Buffer *q);
 void setupSid() {
 
 	if(sidSetup) return;
+    
+    fifo = initFIFO(BUFFER_SIZE);
 
 	mmapRPIDevices();
 
@@ -47,7 +55,7 @@ void setupSid() {
 
 	startSidClk(DEFAULT_SID_SPEED_HZ);
 
-	//startSidThread();
+	startSidThread();
 
 	sidSetup = 1;
 
@@ -55,10 +63,13 @@ void setupSid() {
 
 void startSidThread() {
 
-	if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
-		perror("cannot create Sid thread");
-	printf("Sid Thread Running...\n");
-
+  	static int running = 0;
+      if(running) return; 
+      
+      if (pthread_create(&sidThreadHandle, NULL, sidThread, NULL) == -1)
+		  perror("cannot create Sid thread");
+	   printf("Sid Thread Running...\n");
+    running = 1;
 }
 
 void *sidThread() {
@@ -67,26 +78,31 @@ void *sidThread() {
 	long startClock;
 	init_queue(&buffer);
 	startClock = getRealSidClock();
-	while (1) {
+    unsigned long int elaps;	
+    struct timeval t1,t2;
 
-		if (buffer.count >= 3 && playbackReady()) {
-			targetCycles = getRealSidClock();
-			reg = dequeue(&buffer);
-			val = dequeue(&buffer);
+    while (1) {
 
-			cycles = (int) dequeue(&buffer) << 8;
-			cycles |= (int) dequeue(&buffer);
+		if (FIFOCount(fifo) > 3 && playbackReady()) {
+            gettimeofday(&t1, NULL);
 
+			//targetCycles = getRealSidClock();
+			
+            pthread_mutex_lock(&queue);
+    
+            reg = readFIFO(fifo);
+			val = readFIFO(fifo);
+
+			cycles = (int) readFIFO(fifo) << 8;
+			cycles |= (int) readFIFO(fifo);
+            pthread_mutex_unlock(&queue);
+    
 			currentClock += cycles;
 			targetCycles += cycles;
-			if ((unsigned char) reg != 0xff) {
-
-				delay(cycles);
-				writeSid(reg, val);
-
-			} else {
-				delay(cycles);
-			}
+	        
+            delay(cycles);
+            writeSid(reg, val);
+		
 
 		} else {
 			usleep(100);
@@ -107,6 +123,8 @@ void stopPlayback() {
 }
 void sidDelay(int cycles) {
 
+    
+
 	enqueue(&buffer, (unsigned char) 0xff);
 	enqueue(&buffer, (unsigned char) 0);
 	enqueue(&buffer, (unsigned char) (cycles & 0xff00) >> 8);
@@ -114,11 +132,12 @@ void sidDelay(int cycles) {
 
 }
 void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
-	enqueue(&buffer, (unsigned char) reg & 0xff);
-	enqueue(&buffer, (unsigned char) value & 0xff);
-	enqueue(&buffer, (unsigned char) cycleHigh & 0xff);
-	enqueue(&buffer, (unsigned char) cycleLow & 0xff);
-
+	pthread_mutex_lock(&queue);
+    writeFIFO(fifo,reg);
+    writeFIFO(fifo,value);
+    writeFIFO(fifo,cycleHigh);
+    writeFIFO(fifo,cycleLow);
+    pthread_mutex_unlock(&queue);
 }
 void delay(long howLong) {
 
@@ -126,8 +145,8 @@ void delay(long howLong) {
 	struct timeval tNow, tLong, tEnd;
 	if (howLong == 0)
 		return;
-
-	if (howLong < 100) {
+        
+   if (howLong < 100) {
 		gettimeofday(&tNow, NULL);
 		tLong.tv_sec = howLong / 1000000;
 		tLong.tv_usec = howLong % 1000000;
@@ -143,6 +162,7 @@ void delay(long howLong) {
 		gettimeofday(&tNow, NULL);
 	}
 
+//    usleep(howLong);
 }
 
 void setThreshold(int value) {
@@ -165,10 +185,10 @@ void writeSid(int reg, int val) {
 	int i;
 	*(gpio.addr + 7) = (unsigned long) addrPins[reg % 32];
 	*(gpio.addr + 10) = (unsigned long) ~addrPins[reg % 32] & addrPins[31];
-	*(gpio.addr + 10) = (unsigned long) 1 << CS;
 	*(gpio.addr + 7) = (unsigned long) dataPins[val % 256];
 	*(gpio.addr + 10) = (unsigned long) ~dataPins[val % 256] & dataPins[255];
-	delay(1);
+	*(gpio.addr + 10) = (unsigned long) 1 << CS;
+    usleep(1);
 	*(gpio.addr + 7) = (unsigned long) 1 << CS;
 }
 void startSidClk(int freq) {
@@ -331,7 +351,7 @@ int getBufferCount() {
 	return buffer.count;
 }
 int getBufferFull() {
-	return (buffer.count >= BUFFER_SIZE - 4 ? 1 : 0);
+	return isFIFOFull(fifo);
 }
 int getBufferMax() {
 	return BUFFER_SIZE;

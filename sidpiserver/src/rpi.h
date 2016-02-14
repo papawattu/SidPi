@@ -9,7 +9,7 @@
 #define RPI_H_
 
 
-#define BCM2708_PERI_BASE       0x20000000
+#define BCM2708_PERI_BASE        0x3F000000 
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
 #define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
 #define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x00101000)

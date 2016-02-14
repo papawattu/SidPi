@@ -1,4 +1,4 @@
-/*
+    /*
  ** SidPi Server
  */
 
@@ -46,7 +46,7 @@ int main(void) {
 	sidfd = open("/dev/sid", O_RDWR);
 	if (sidfd < 0) {
 	    perror("open /dev/sid failed : ");
-	    return -1;
+	   // return -1;
 	}
 
 	signal(SIGINT, signal_callback_handler);
@@ -108,7 +108,7 @@ int main(void) {
 	}
 
 	printf("server: waiting for connections...\n");
-
+    setupSid();
 	while (1) {  // main accept() loop
 		sin_size = sizeof their_addr;
 		new_fd = accept(sockfd, (struct sockaddr *) &their_addr, &sin_size);
@@ -121,17 +121,17 @@ int main(void) {
 				get_in_addr((struct sockaddr *) &their_addr), s, sizeof s);
 		printf("server: got connection from %s\n", s);
 
-		//if(child != 0) {
-		//	kill(child,SIGTERM);
-		//}
-		//child = fork();
+		if(child != 0) {
+			kill(child,SIGTERM);
+		}
+		child = fork();
 
 		setpriority(PRIO_PROCESS,0,PRIO_MIN);
 
 		if (1) { // this is the child process
 
 			//setMultiplier(delayMulti);
-			//setupSid();
+			
 
 
 			close(sockfd); // child doesn't need the listener
@@ -230,14 +230,14 @@ void processReadBuffer(int len) {
 		}
 	//	printf("delay cmd\n");
 
-	//	if (isBufferHalfFull) {
-	//		startPlayback();
-	//	}
+		//if (isBufferHalfFull) {
+			startPlayback();
+		//}
 
-//		if (isBufferFull) {
-//			dataWrite[dataWritePos++] = BUSY;
-//			break;
-//		}
+		if (getBufferFull()) {
+			dataWrite[dataWritePos++] = BUSY;
+			break;
+		}
 
 		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
 		handleDelayPacket(sidNumber, cycles);
@@ -252,14 +252,14 @@ void processReadBuffer(int len) {
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
 
-	//	if(isBufferHalfFull) {
-	//		startPlayback();
-	//	}
+		//if(isBufferHalfFull) {
+			startPlayback();
+		//}
 
-//		if (isBufferFull ) {
-//			dataWrite[dataWritePos++] = BUSY;
-//			break;
-//		}
+		if (getBufferFull() ) {
+			dataWrite[dataWritePos++] = BUSY;
+			break;
+		}
 
 		handleWritePacket(dataLength);
 		dataWrite[dataWritePos++] = OK;
@@ -376,7 +376,9 @@ void handleWritePacket(int dataLength) {
 		buf[3] = dataRead[4 + i];
 		buf[4] = dataRead[5 + i];
 
-		write(sidfd,&buf,4);
+        sidWrite(buf[1],buf[0],buf[3],buf[4]);
+        //usleep(cycles);
+		//write(sidfd,&buf,4);
 
 	}
 	return;

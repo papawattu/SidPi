@@ -11,7 +11,7 @@
 #include <linux/ioctl.h>
 
 // Fixed for PI2 as base address has changed
-static volatile unsigned int	 BCM2708_PERI_BASE = 0x20000000; //Pi 1 base address
+#define	 BCM2708_PERI_BASE      0x3F000000 //Pi 2 base address
 //#define BCM2708_PERI_BASE       0x20000000
 #define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
 #define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer

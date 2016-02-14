@@ -14,7 +14,7 @@
 #include <linux/resource.h>
 #include <asm/delay.h>
 #include <linux/wait.h>
-#include <mach/platform.h>
+//#include <mach/platform.h>
 #include <linux/syscalls.h>
 #include <linux/timer.h>
 #include "sidpithread.h"
@@ -160,9 +160,9 @@ Sid * setupSid(unsigned int sidPiInterfaceType,unsigned int piType) {
 		return ERROR;
 	}
 
-	if(piType == 1) {
-		BCM2708_PERI_BASE = 0x3F000000 ;
-	}
+	//if(piType == 1) {
+	//	BCM2708_PERI_BASE = 0x3F000000;
+	//}
 
 	pr_debug("Sid intialised\n");
 
@@ -434,7 +434,7 @@ Sid * reqSidReset(Sid * sid) {
 	if(sid) {
 		interfaceType = sid->interfaceType;
 		closeSid(sid);
-		sid = setupSid(interfaceType);
+		//sid = setupSid(interfaceType);
 		if(!sid) {
 			printk(KERN_ERR SIDPILOG "Error resetting SIDpi\n");
 			return ERROR;

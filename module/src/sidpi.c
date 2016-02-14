@@ -15,7 +15,7 @@
 #include "sidpithread.h"
 
 #define PROC_FS_NAME "sidpi"
-#define SIDPI_VERSION 0.1
+#define SIDPI_VERSION 1
 
 /**
  * This structure hold information about the /proc file
@@ -103,7 +103,7 @@ static int __init _sid_init_module(void)
 	}
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	printk(KERN_INFO SIDPILOG "sid device created Major %d Minor %d\n",MAJOR(dev_no),MINOR(dev_no));
-
+    
 	return SUCCESS;
 }
 
@@ -181,11 +181,10 @@ static ssize_t device_write(struct file *file,
 	}
 
 	bytes = copy_from_user(&buf, p, c);
-
-	sidWrite(sid,buf[1],buf[0],(buf[3] << 8 | buf[2]) & 0xffff);
-
-	file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
-	mark_inode_dirty(file->f_dentry->d_inode);
+	//sidWrite(sid,buf[1],buf[0],(buf[3] << 8 | buf[2]) & 0xffff);
+    udelay((buf[3] << 8) | buf[2]);
+	//file->f_dentry->d_inode->i_mtime = CURRENT_TIME;
+	//mark_inode_dirty(file->f_dentry->d_inode);
 	return (ssize_t) bytes;
 
 }
