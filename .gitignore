@@ -5,6 +5,8 @@ module/.tmp_versions
 *.ko
 *.mod.*
 *.o
+module/.sidpi.ko.cmd
+module/.sidpi.o.cmd
 module/modules.order
 module/Module.symvers
 module/src/.sidpi.o.cmd
