@@ -11,11 +11,11 @@
 #include <linux/ioctl.h>
 
 // Fixed for PI2 as base address has changed
-#define	 BCM2708_PERI_BASE      0x3F000000 //Pi 2 base address
-//#define BCM2708_PERI_BASE       0x20000000
-#define GPIO_BASE               (BCM2708_PERI_BASE + 0x200000)	// GPIO controller
-#define GPIO_TIMER 				(BCM2708_PERI_BASE + 0x003000)  // Timer
-#define GPIO_CLOCK				(BCM2708_PERI_BASE + 0x00101000)
+#define	BCM2708_PERI_BASE_2     0x3F000000 //Pi 2 base address
+#define BCM2708_PERI_BASE_1     0x20000000 //Pi 1 base address
+#define GPIO_BASE               0x200000	// GPIO controller
+#define GPIO_TIMER 				0x003000  // Timer
+#define GPIO_CLOCK				0x00101000
 #define TIMER_OFFSET 			(4)
 #define GPIO_BLOCK_SIZE			(4*1024)
 #define BCM_PASSWORD			0x5A000000
@@ -72,26 +72,5 @@ typedef struct Sid {
 
 extern const int DATA[];
 extern const int ADDR[];
-
-int sidDelay(Sid *,unsigned int cycles);
-int sidWrite(Sid *,int reg,int value,unsigned int cycles);
-Sid * setupSid(unsigned int,unsigned int);
-void closeSid(Sid *);
-int sidThread(Sid *);
-void stopSidThread(Sid *);
-void delay(Sid *,unsigned int cycles);
-void writeSidSer(Sid *,int reg,int val);
-void writeSidPar(Sid *,int reg,int val);
-void startSidClk(int freq);
-void mmapRPIDevices(void);
-void generatePinTables(void);
-void setPinsToOutput(void);
-void startSidThread(Sid *);
-void stopSidThread(Sid *);
-int mapGPIO(void);
-void unmapGPIO(void);
-void sidReset(Sid *);
-Sid * reqSidReset(Sid *);
-void flush(Sid *);
 
 #endif /* __SIDRUNNERTHREAD_H_ */

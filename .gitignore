@@ -1,3 +1,15 @@
 /Debug
 /.project
 /.cproject
+module/.tmp_versions
+*.ko
+*.mod.*
+*.o
+module/modules.order
+module/Module.symvers
+module/src/.sidpi.o.cmd
+module/src/GPATH
+module/src/GRTAGS
+module/src/GTAGS
+module/src/GSYMS
+
