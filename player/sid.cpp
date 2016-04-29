@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     // Get the number of SIDs supported by the engine
     //unsigned int maxsids = (m_engine.info ()).maxsids();
     // Create SID emulators
-    rs->create(0);
+    rs->create(1);
     // Check if builder is ok
     if (!rs->getStatus())
     {
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         std::cerr << tune->statusString() << std::endl;
         return -1;
     }
-    // Select default song
+	// Select default song
     tune->selectSong(0);
     // Configure the engine
     SidConfig cfg;
@@ -100,33 +100,27 @@ int main(int argc, char* argv[])
     cfg.fastSampling = false;
     cfg.playback = SidConfig::MONO;
     cfg.sidEmulation = rs.get();
+
     if (!m_engine.config(cfg))
     {
         std::cerr <<  m_engine.error() << std::endl;
         return -1;
     }
     // Load tune into engine
+
     if (!m_engine.load(tune.get()))
     {
         std::cerr <<  m_engine.error() << std::endl;
         return -1;
     }
-    // Setup audio device
-    int handle=::open("/dev/dsp", O_WRONLY, 0);
-    int format=AFMT_S16_LE;
-    ioctl(handle, SNDCTL_DSP_SETFMT, &format);
-    int chn=1;
-    ioctl(handle, SNDCTL_DSP_CHANNELS, &chn);
-    int sampleRate=SAMPLERATE;
-    ioctl(handle, SNDCTL_DSP_SPEED, &sampleRate);
-    int bufferSize;
-    ioctl(handle, SNDCTL_DSP_GETBLKSIZE, &bufferSize);
+//exit(0);
+	int bufferSize = 1024;
     // Play
     std::vector<short> buffer(bufferSize);
     for (int i=0; i<1000; i++)
     {
         m_engine.play(&buffer.front(), bufferSize/sizeof(short));
-        ::write(handle, &buffer.front(), bufferSize);
+//        ::write(handle, &buffer.front(), bufferSize);
     }
-    ::close(handle);
+//    ::close(handle);
 }
