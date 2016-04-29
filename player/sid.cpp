@@ -120,6 +120,8 @@ int main(int argc, char* argv[])
     for (int i=0; i<1000; i++)
     {
         m_engine.play(&buffer.front(), bufferSize/sizeof(short));
+//	m_engine.play(NULL,NULL);
+
 //        ::write(handle, &buffer.front(), bufferSize);
     }
 //    ::close(handle);

@@ -303,7 +303,7 @@ static int sidThread2(void* pData)
   
   if (pDev != NULL)
   {
-    printk(KERN_WARNING "mo 0-2: Thread started...\n");
+    printk(KERN_INFO "Thread started...\n");
 
     set_current_state(TASK_INTERRUPTIBLE);
     while(!kthread_should_stop())
@@ -328,7 +328,7 @@ static int sidThread2(void* pData)
             usleep_range(cycles,cycles);    
         //}
         
-        writeSidPar(acBuffer[1],acBuffer[0]);
+        if(acBuffer[1] < 32) writeSidPar(acBuffer[1],acBuffer[0]);
         //up(&pDev->lockMutex);
 
         //4. wake up all writers
@@ -339,7 +339,7 @@ static int sidThread2(void* pData)
       } //(down_interruptible(&pDev->lockMutex) == 0)
     }
     __set_current_state(TASK_RUNNING);
-    printk(KERN_WARNING "mo 0-2: Thread ended.\n");
+    printk(KERN_INFO "Thread ended.\n");
   } //(pDev != NULL)
 
   return 0;
@@ -425,7 +425,7 @@ static int __init _sid_init_module(void)
       g_sidDevice.pThread = kthread_run(sidThread2, &g_sidDevice, "sid_thread");
       if (IS_ERR(g_sidDevice.pThread))
       {
-        printk(KERN_WARNING "mo 0-2: Error creating the morse_thread_xx\n");
+        printk(KERN_WARNING "Error creating the sidthread\n");
         return -EAGAIN;
       }
       
@@ -449,14 +449,10 @@ static void __exit _sid_cleanup_module(void)
 	 * Unregister the device
 	 */
 	pr_debug("Clean up sidpi module\n");
-  //  unmapGPIO();
     kthread_stop(g_sidDevice.pThread);
   	iounmap(gpio);
 	iounmap(gpio_clock);
 	iounmap(gpio_timer);
-	//release_mem_region(GPIO_BASE, 4096);
-	//release_mem_region(GPIO_CLOCK, 32);
-	//release_mem_region(GPIO_TIMER, 256);
 
     device_destroy(sid_class, MKDEV(sid_major, 0));
 	class_destroy(sid_class);
@@ -470,7 +466,7 @@ static int device_open(struct inode *inode, struct file *file) {
 	 */
 	struct SidDevice* pDevice;
 
-    printk(KERN_NOTICE "mo 0-2: open() - device opened\n");
+    printk(KERN_NOTICE "open() - device opened\n");
     pDevice             = container_of(inode->i_cdev, struct SidDevice, cdev);
     file->private_data = pDevice;
     return 0;
@@ -511,7 +507,7 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
   if (pDevice == NULL)
   {
     iRetval = -EPIPE;
-    printk(KERN_NOTICE "mo 0-2: write() - No device found\n");
+    printk(KERN_NOTICE "write() - No device found\n");
   }
   else if (iSize > 0)
   { 
@@ -540,14 +536,14 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
           //Could not aquire the write lock (interrupted)
           // -> decrement the unprocessed data size
           atomic_sub(iSize, &g_atomUnprocessedData);
-          printk(KERN_NOTICE "mo 0-2: write() - Proceeding interrupted (1)\n");
+          printk(KERN_NOTICE "write() - Proceeding interrupted (1)\n");
         } 
         //////////////////////////////////////////////////////// 
 
       } //(copy_from_user(pcBuffer, pcUserData, iSize) == 0)
       else
       {
-        printk(KERN_NOTICE "mo 0-2: write() - Could not copy from user\n");
+        printk(KERN_NOTICE "write() - Could not copy from user\n");
         iRetval = -EFAULT;
       }
       kfree(pcBuffer);
@@ -559,7 +555,7 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
   }
   else 
   {
-    printk(KERN_NOTICE "mo 0-2: write() - Empty string passed\n");
+    printk(KERN_NOTICE "write() - Empty string passed\n");
   }
   return iRetval;
 
@@ -622,7 +618,13 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         {
         	//sidDelay(sid,(int) arg);
         	if(arg) {
-        		printk(KERN_INFO SIDPILOG "Delay %d",arg);
+        		//printk(KERN_INFO SIDPILOG "Delay %x %x %x %x",arg[0],arg[1],arg[2],arg[3]);
+			unsigned char buf[4];
+			buf[0] = 0;
+			buf[1] = 255;
+			buf[2] = arg & 0xff;
+			buf[3] = ((arg & 0xff00) >> 8);
+			writeData(&g_sidDevice, &buf, 4);
         	} else {
         		printk(KERN_INFO SIDPILOG "Delay no arg");
         	}
