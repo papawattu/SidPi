@@ -132,7 +132,7 @@ static char msg[BUF_LEN]; /* The msg the device will give when asked */
 static char *msg_Ptr;
 static int sidPiInterfaceType = SIDPI_PARALLEL_INTERFACE;
 static int piType = 0; //default to Pi1
-
+static int speedfix = 0;
 static struct file_operations fops = {
 		.owner   = THIS_MODULE,
 		.read = device_read,
@@ -192,7 +192,7 @@ static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
   seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
   seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
   seq_printf(m, "Pi Type is : %s\n", (piVersion==1?"Pi2":"Pi1"));
-
+  seq_printf(m, "Speed fix is %s\n", (speedfix==1?"On":"Off"));
   return count;
 }
 static int sid_proc_open(struct inode *inode, struct  file *file) {
@@ -325,8 +325,11 @@ static int sidThread2(void* pData)
         //if(cycles < 1000) {
         //    udelay(cycles);
         //} else {
-            usleep_range(cycles,cycles);    
-        //}
+	if(speedfix == 1) {
+	    cycles += (cycles * 17) / 100;
+        }
+	usleep_range(cycles,cycles);    
+        
         
         if(acBuffer[1] < 32) writeSidPar(acBuffer[1],acBuffer[0]);
         //up(&pDev->lockMutex);
@@ -632,8 +635,15 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_READ:
         {
-        	printk(KERN_INFO "sidpi: Read request not implemented yet\n");
-            return 0;
+            printk(KERN_INFO "sidpi: Read request not implemented yet\n");
+            unsigned char buf[4];
+	    buf[0] = arg & 0xff;
+	    buf[1] = (arg >> 8) & 0xff;
+	    buf[2] = (arg >> 16) & 0xff; 
+	    buf[3] = (arg >> 24) & 0xff;
+	    printk(KERN_INFO "0 %d 1 %d 2 %d 3 %d\n"
+		,buf[0],buf[1],buf[2],buf[3]);
+	    return 0;
         }
         default:
             printk(KERN_ERR "sidpi: unknown ioctl %x\n", cmd);
@@ -650,3 +660,6 @@ module_param(sidPiInterfaceType, int, (S_IRUSR | S_IRGRP | S_IROTH));
 MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial (1) or parallel (0)");
 module_param(piType, int, (S_IRUSR | S_IRGRP | S_IROTH));
 MODULE_PARM_DESC(piType, "Pi version 0 for orginal A,B, B+ or 1 for Pi2");
+module_param(speedfix, int, (S_IRUSR | S_IRGRP | S_IROTH));
+MODULE_PARM_DESC(speedfix, "Set to 1 to slow down by NTSC / PAL difference (about 17%)");
+
