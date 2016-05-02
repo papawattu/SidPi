@@ -178,7 +178,7 @@ static void writeData(struct SidDevice* pDevice, char* pcBuffer, int iSize)
       atomic_sub(iSize -i, &g_atomUnprocessedData);
 
       i = iSize;
-      printk(KERN_NOTICE "Proceeding interrupted (2)\n");
+      printk(KERN_NOTICE SIDPILOG "Proceeding interrupted (2)\n");
     }
   }
 }
@@ -299,7 +299,7 @@ static int sidThread2(void* pData)
   
   if (pDev != NULL)
   {
-    printk(KERN_INFO "Thread started...\n");
+    printk(KERN_INFO SIDPILOG "Thread started...\n");
 
     set_current_state(TASK_INTERRUPTIBLE);
     while(!kthread_should_stop())
@@ -338,7 +338,7 @@ static int sidThread2(void* pData)
       } //(down_interruptible(&pDev->lockMutex) == 0)
     }
     __set_current_state(TASK_RUNNING);
-    printk(KERN_INFO "Thread ended.\n");
+    printk(KERN_INFO SIDPILOG "Thread ended.\n");
   } //(pDev != NULL)
 
   return 0;
@@ -351,15 +351,14 @@ static int __init _sid_init_module(void)
 {
     int retval;
     unsigned long mem,peri_base;
-	pr_debug("Init sidpi module\n");
 	printk(KERN_INFO SIDPILOG "Module version %d by Jamie Nuttall\n",SIDPI_VERSION);
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	
 	/* First, see if we can dynamically allocate a major for our device */
 	sid_major = register_chrdev(0, DEVICE_NAME, &fops);
 	if (sid_major < 0) {
-		pr_err("failed to register device: error %d\n", sid_major);
-		retval = sid_major;
+		printk(KERN_ERR SIDPILOG "Failed to register device\n");
+        retval = sid_major;
 		goto failed_chrdevreg;
 	}
 
@@ -367,21 +366,20 @@ static int __init _sid_init_module(void)
 	 * or use a "virtual" device class. For this example, we choose the latter */
 	sid_class = class_create(THIS_MODULE, CLASS_NAME);
 	if (IS_ERR(sid_class)) {
-		pr_err("failed to register device class '%s'\n", CLASS_NAME);
-		retval = PTR_ERR(sid_class);
+		printk(KERN_ERR SIDPILOG "Failed to create class\n");
+        retval = PTR_ERR(sid_class);
 		goto failed_classreg;
 	}
 
 	/* With a class, the easiest way to instantiate a device is to call device_create() */
 	sid_device = device_create(sid_class, NULL, MKDEV(sid_major, 0), NULL, DEVICE_NAME);
 	if (IS_ERR(sid_device)) {
-		pr_err("failed to create device '%s_%s'\n", CLASS_NAME, DEVICE_NAME);
-		retval = PTR_ERR(sid_device);
+		printk(KERN_ERR SIDPILOG "Failed to create device\n");
+
+        retval = PTR_ERR(sid_device);
 		goto failed_devreg;
 	}
 
-    printk(KERN_INFO SIDPILOG "sid device created Major %d Minor %d\n",MAJOR(dev_no),MINOR(dev_no));
-    
 	mutex_init(&sid_device_mutex);
 	/* This device uses a Kernel FIFO for its read operation */
 	  atomic_set(&g_atomUnprocessedData, 0);
@@ -424,7 +422,7 @@ static int __init _sid_init_module(void)
       g_sidDevice.pThread = kthread_run(sidThread2, &g_sidDevice, "sid_thread");
       if (IS_ERR(g_sidDevice.pThread))
       {
-        printk(KERN_WARNING "Error creating the sidthread\n");
+        printk(KERN_WARNING SIDPILOG "Error creating the sidthread\n");
         return -EAGAIN;
       }
       
@@ -447,7 +445,7 @@ static void __exit _sid_cleanup_module(void)
 	/*
 	 * Unregister the device
 	 */
-	pr_debug("Clean up sidpi module\n");
+    
     kthread_stop(g_sidDevice.pThread);
   	iounmap(gpio);
 	iounmap(gpio_clock);
@@ -457,6 +455,7 @@ static void __exit _sid_cleanup_module(void)
 	class_destroy(sid_class);
 	unregister_chrdev(sid_major, DEVICE_NAME);
     remove_proc_entry(PROC_FS_NAME, NULL);
+    printk(KERN_NOTICE SIDPILOG "SID module unloaded\n");
 
 }
 static int device_open(struct inode *inode, struct file *file) {
@@ -465,18 +464,15 @@ static int device_open(struct inode *inode, struct file *file) {
 	 */
 	struct SidDevice* pDevice;
 
-    printk(KERN_NOTICE "open() - device opened\n");
+    printk(KERN_NOTICE SIDPILOG "SID device opened\n");
     pDevice             = container_of(inode->i_cdev, struct SidDevice, cdev);
     file->private_data = pDevice;
     return 0;
 }
 static int device_release(struct inode *inode, struct file *file) {
 
-	//Sid *sid = file->private_data;
+	printk(KERN_NOTICE SIDPILOG "SID device closed\n");
 
-	pr_debug("Closing sid\n");
-
-	//closeSid(sid);
     mutex_unlock(&sid_device_mutex);
 	return SUCCESS;
 }
@@ -506,7 +502,7 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
   if (pDevice == NULL)
   {
     iRetval = -EPIPE;
-    printk(KERN_NOTICE "write() - No device found\n");
+    printk(KERN_NOTICE SIDPILOG "write() - No device found\n");
   }
   else if (iSize > 0)
   { 
@@ -535,14 +531,14 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
           //Could not aquire the write lock (interrupted)
           // -> decrement the unprocessed data size
           atomic_sub(iSize, &g_atomUnprocessedData);
-          printk(KERN_NOTICE "write() - Proceeding interrupted (1)\n");
+          printk(KERN_NOTICE SIDPILOG "write() - Proceeding interrupted (1)\n");
         } 
         //////////////////////////////////////////////////////// 
 
       } //(copy_from_user(pcBuffer, pcUserData, iSize) == 0)
       else
       {
-        printk(KERN_NOTICE "write() - Could not copy from user\n");
+        printk(KERN_NOTICE SIDPILOG "write() - Could not copy from user\n");
         iRetval = -EFAULT;
       }
       kfree(pcBuffer);
@@ -554,7 +550,7 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
   }
   else 
   {
-    printk(KERN_NOTICE "write() - Empty string passed\n");
+    printk(KERN_NOTICE SIDPILOG "write() - Empty string passed\n");
   }
   return iRetval;
 
@@ -631,20 +627,20 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_READ:
         {
-            printk(KERN_INFO "sidpi: Read request not implemented yet\n");
+         /*   printk(KERN_INFO "sidpi: Read request not implemented yet\n");
             buf[0] = arg & 0xff;
 	        buf[1] = (arg >> 8) & 0xff;
 	        buf[2] = (arg >> 16) & 0xff; 
 	        buf[3] = (arg >> 24) & 0xff;
 	        printk(KERN_INFO "0 %d 1 %d 2 %d 3 %d\n"
-		        ,buf[0],buf[1],buf[2],buf[3]);
-	    return 0;
+		        ,buf[0],buf[1],buf[2],buf[3]); */
+	        return OK;
         }
         default:
             printk(KERN_ERR "sidpi: unknown ioctl %x\n", cmd);
             break;
     }
-    return 0;
+    return OK;
 }
 module_init( _sid_init_module);
 module_exit( _sid_cleanup_module);
@@ -652,7 +648,7 @@ MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Jamie Nuttall");
 MODULE_DESCRIPTION("A MOS 6581 SID driver module using the hardsid protocol.");
 module_param(sidPiInterfaceType, int, (S_IRUSR | S_IRGRP | S_IROTH));
-MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial (1) or parallel (0)");
+MODULE_PARM_DESC(sidPiInterfaceType, "Sid Interface type, can be serial**Deprecated** (1) or parallel (0) default");
 module_param(piType, int, (S_IRUSR | S_IRGRP | S_IROTH));
 MODULE_PARM_DESC(piType, "Pi version 0 for orginal A,B, B+ or 1 for Pi2");
 module_param(speedfix, int, (S_IRUSR | S_IRGRP | S_IROTH));
