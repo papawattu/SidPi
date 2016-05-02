@@ -95,11 +95,12 @@ int main(int argc, char* argv[])
     tune->selectSong(0);
     // Configure the engine
     SidConfig cfg;
-    cfg.frequency = SAMPLERATE;
-    cfg.samplingMethod = SidConfig::INTERPOLATE;
-    cfg.fastSampling = false;
-    cfg.playback = SidConfig::MONO;
-    cfg.sidEmulation = rs.get();
+//    cfg.frequency = SAMPLERATE;
+//    cfg.samplingMethod = SidConfig::INTERPOLATE;
+//    cfg.fastSampling = false;
+//    cfg.playback = SidConfig::MONO;
+      cfg.sidEmulation = rs.get();
+//    cfg.defaultC64Model = SidConfig::NTSC;
 
     if (!m_engine.config(cfg))
     {
@@ -113,16 +114,12 @@ int main(int argc, char* argv[])
         std::cerr <<  m_engine.error() << std::endl;
         return -1;
     }
-//exit(0);
-	int bufferSize = 1024;
-    // Play
-    std::vector<short> buffer(bufferSize);
-    for (int i=0; i<1000; i++)
-    {
-        m_engine.play(&buffer.front(), bufferSize/sizeof(short));
-//	m_engine.play(NULL,NULL);
 
-//        ::write(handle, &buffer.front(), bufferSize);
+    short *buffer = NULL;
+    const uint_least32_t length = 0;
+    uint_least32_t ret  =0;  
+    while (1) {
+    	uint_least32_t ret = m_engine.play(buffer,length);
     }
-//    ::close(handle);
-}
+//    std::cerr << ret << std::endl;
+}          
