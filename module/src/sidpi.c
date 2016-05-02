@@ -242,31 +242,31 @@ void setPinsToOutput2(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+		iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 				| (1 << shift)),(u32 *)gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+		iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 						| (1 << shift)),(u32 *) gpio + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 					| (1 << shift)),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 					| (1 << shift)),(u32 *) gpio + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 					| (1 << shift)),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
 					| (4 << shift)),(u32 *) gpio + fSel);
 }
 
