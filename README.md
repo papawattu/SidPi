@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-SidPi
-=====
-
-SIDPi
-=======
 SidPi v1
 ==========
 
@@ -45,10 +39,3 @@ Changes to support Pi2 and some timing fixes.
 UPDATE 27/4/15
 
 The driver does not work with RP2 - Looking into this now
-
- _____  _____  _____  _____  __  __  _____  ____  ____  __ __ 
-/  _  \/  _  \/  _  \/  _  \/   /  \/  _  \/    \/    \/  |  \
-|   __/|  _  ||   __/|  _  ||  /\  ||  _  |\-  -/\-  -/|  |  |
-\__/   \__|__/\__/   \__|__/\__/\__/\__|__/ |__|  |__| \_____/
-                                                              
->>>>>>> 4cdb38eb5f8660313f5d5e098e72a357308f19b2
