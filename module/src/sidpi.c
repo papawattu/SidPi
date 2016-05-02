@@ -19,7 +19,6 @@
 #include <linux/kfifo.h>
 #include <linux/wait.h>
 #include <linux/slab.h>
-//#include <arch/arm64/kernel/cpuinfo.h>
 
 #include <asm/uaccess.h>   //used for copy_from_user
 #include <asm/atomic.h>    //used for atomic operations
@@ -50,11 +49,11 @@ static unsigned char gpioToGPFSEL [] =
   5,5,5,5,5,5,5,5,5,5,
 } ;
 
-static unsigned char gpioToGPLEV [] =
+/*static unsigned char gpioToGPLEV [] =
 {
   13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,13,
   14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,14,
-} ;
+} ; */
 // gpioToShift
 //        Define the shift up for the 3 bits per pin in each GPFSEL port
 
@@ -124,12 +123,9 @@ static DECLARE_KFIFO(sid_msg_fifo, unsigned char, SID_FIFO_SIZE);
  * Global variables are declared as static, so are global within the file.
  */
 
-static int Major; /* Major number assigned to our device driver */
 int dev_no;
 dev_t dev_handle;
 
-static char msg[BUF_LEN]; /* The msg the device will give when asked */
-static char *msg_Ptr;
 static int sidPiInterfaceType = SIDPI_PARALLEL_INTERFACE;
 static int piType = 0; //default to Pi1
 static int speedfix = 0;
@@ -137,7 +133,7 @@ static struct file_operations fops = {
 		.owner   = THIS_MODULE,
 		.read = device_read,
 		.write = device_write,
-		.unlocked_ioctl = sid_ioctl,
+		.unlocked_ioctl = (void *) sid_ioctl,
 		.open = device_open,
 		.release = device_release,
 };
@@ -189,14 +185,14 @@ static void writeData(struct SidDevice* pDevice, char* pcBuffer, int iSize)
 
 
 static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-  seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
-  seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
-  seq_printf(m, "Pi Type is : %s\n", (piVersion==1?"Pi2":"Pi1"));
-  seq_printf(m, "Speed fix is %s\n", (speedfix==1?"On":"Off"));
+  seq_printf((void *) m, "SIDPi module version 0.1 by Jamie Nuttall\n");
+  seq_printf((void *) m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
+  seq_printf((void *) m, "Pi Type is : %s\n", (piVersion==1?"Pi2":"Pi1"));
+  seq_printf((void *) m, "Speed fix is %s\n", (speedfix==1?"On":"Off"));
   return count;
 }
 static int sid_proc_open(struct inode *inode, struct  file *file) {
-	return single_open(file, sid_proc_show, NULL);
+	return single_open(file, (void *) sid_proc_show, NULL);
 }
 static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
@@ -246,32 +242,32 @@ void setPinsToOutput2(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-				| (1 << shift),(u32 *)gpio + fSel);
+		iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+				| (1 << shift)),(u32 *)gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-						| (1 << shift),(u32 *) gpio + fSel);
+		iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+						| (1 << shift)),(u32 *) gpio + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-					| (1 << shift),(u32 *) gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+					| (1 << shift)),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-					| (1 << shift),(u32 *) gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+					| (1 << shift)),(u32 *) gpio + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-					| (1 << shift),(u32 *) gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+					| (1 << shift)),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ~(7 << shift)
-					| (4 << shift),(u32 *) gpio + fSel);
+	iowrite32(ioread32((u32 *) gpio + fSel) & (~(7 << shift)
+					| (4 << shift)),(u32 *) gpio + fSel);
 }
 
 void startSidClk(int freq) {
@@ -318,10 +314,10 @@ static int sidThread2(void* pData)
       {
         //3. Read data and release the lock
         unsigned char acBuffer[4];
-        kfifo_out(&sid_msg_fifo, acBuffer, 4);
+        iRetval = kfifo_out(&sid_msg_fifo, acBuffer, 4); 
         //printk(KERN_NOTICE "R%02X V%02X CH%02X CL%02X\n",acBuffer[0],acBuffer[1],acBuffer[2],acBuffer[3]);
         //udelay(acBuffer[3] << 8 | acBuffer[2]);
-        cycles = acBuffer[3] << 8 | acBuffer[2],acBuffer[3] << 8 | acBuffer[2];
+        cycles = acBuffer[3] << 8 | acBuffer[2];
         //if(cycles < 1000) {
         //    udelay(cycles);
         //} else {
@@ -408,18 +404,18 @@ static int __init _sid_init_module(void)
           peri_base = BCM2708_PERI_BASE_2;
       }
       
-      printk(KERN_INFO "GPIO BASE %X", GPIO_BASE + peri_base);
-      mem = request_mem_region(GPIO_BASE + peri_base, 4096, "gpio");
+      //printk(KERN_INFO "GPIO BASE %X", GPIO_BASE + peri_base);
+      mem = (unsigned long) request_mem_region(GPIO_BASE + peri_base, 4096, "gpio");
 	  gpio = ioremap(GPIO_BASE + peri_base, 4096);
-      printk(KERN_INFO "GPIO MAPPPED OK %X\n",gpio);
+      //printk(KERN_INFO "GPIO MAPPPED OK %X\n",gpio);
       
-      mem = request_mem_region(GPIO_CLOCK + peri_base, 32, "gpioclk");
+      mem = (unsigned long) request_mem_region(GPIO_CLOCK + peri_base, 32, "gpioclk");
 	  gpio_clock = ioremap(GPIO_CLOCK + peri_base, 32);
-	  printk(KERN_INFO "CLOCK MAPPPED OK %X\n",gpio_clock);
+	  //printk(KERN_INFO "CLOCK MAPPPED OK %X\n",gpio_clock);
       
-      mem = request_mem_region(GPIO_TIMER + peri_base, 256, "gpiotimer");
+      mem = (unsigned long) request_mem_region(GPIO_TIMER + peri_base, 256, "gpiotimer");
 	  gpio_timer = ioremap(GPIO_TIMER + peri_base, 256); 
-      printk(KERN_INFO "TIMER MAPPPED OK %X\n",gpio_timer);
+      //printk(KERN_INFO "TIMER MAPPPED OK %X\n",gpio_timer);
       
       setPinsToOutput2();
       generatePinTables();
@@ -476,7 +472,7 @@ static int device_open(struct inode *inode, struct file *file) {
 }
 static int device_release(struct inode *inode, struct file *file) {
 
-	Sid *sid = file->private_data;
+	//Sid *sid = file->private_data;
 
 	pr_debug("Closing sid\n");
 
@@ -568,7 +564,9 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 
 	struct SidDevice *sid = file->private_data;
-	if(!sid) return -EIO;
+	unsigned char buf[4];
+	        
+    if(!sid) return -EIO;
 
 	switch(cmd)
     {
@@ -619,15 +617,13 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         }
         case SID_IOCTL_DELAY:
         {
-        	//sidDelay(sid,(int) arg);
         	if(arg) {
         		//printk(KERN_INFO SIDPILOG "Delay %x %x %x %x",arg[0],arg[1],arg[2],arg[3]);
-			unsigned char buf[4];
-			buf[0] = 0;
-			buf[1] = 255;
-			buf[2] = arg & 0xff;
-			buf[3] = ((arg & 0xff00) >> 8);
-			writeData(&g_sidDevice, &buf, 4);
+    			buf[0] = 0;
+		    	buf[1] = 255;
+		    	buf[2] = arg & 0xff;
+    			buf[3] = ((arg & 0xff00) >> 8);
+    			writeData(&g_sidDevice, (unsigned char *) &buf, 4);
         	} else {
         		printk(KERN_INFO SIDPILOG "Delay no arg");
         	}
@@ -636,13 +632,12 @@ static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
         case SID_IOCTL_READ:
         {
             printk(KERN_INFO "sidpi: Read request not implemented yet\n");
-            unsigned char buf[4];
-	    buf[0] = arg & 0xff;
-	    buf[1] = (arg >> 8) & 0xff;
-	    buf[2] = (arg >> 16) & 0xff; 
-	    buf[3] = (arg >> 24) & 0xff;
-	    printk(KERN_INFO "0 %d 1 %d 2 %d 3 %d\n"
-		,buf[0],buf[1],buf[2],buf[3]);
+            buf[0] = arg & 0xff;
+	        buf[1] = (arg >> 8) & 0xff;
+	        buf[2] = (arg >> 16) & 0xff; 
+	        buf[3] = (arg >> 24) & 0xff;
+	        printk(KERN_INFO "0 %d 1 %d 2 %d 3 %d\n"
+		        ,buf[0],buf[1],buf[2],buf[3]);
 	    return 0;
         }
         default:
