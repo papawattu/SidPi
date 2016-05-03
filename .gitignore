@@ -1,2 +1,6 @@
 build
-
+.settings
+target
+.classpath
+.project
+Makefile
