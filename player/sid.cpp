@@ -28,6 +28,7 @@
 #include <vector>
 #include <iostream>
 #include <sidplayfp/sidplayfp.h>
+#include <sidplayfp/SidTuneInfo.h>
 #include <sidplayfp/SidTune.h>
 #include <sidplayfp/SidInfo.h>
 #include <hardsid.h>
@@ -38,6 +39,12 @@
 #define BASIC_PATH   ""
 #define CHARGEN_PATH ""
 #define SAMPLERATE 48000
+
+sidplayfp m_engine;
+std::auto_ptr<HardSIDBuilder> rs(new HardSIDBuilder("Demo"));
+SidConfig cfg;
+std::auto_ptr<SidTune> tune(new SidTune(0));
+        
 /*
  * Load ROM dump from file.
  * Allocate the buffer if file exists, otherwise return 0.
@@ -59,10 +66,7 @@ char* loadRom(const char* path, size_t romSize)
  * to play a SID tune from a file.
  * It uses OSS for audio output.
  */
-int main(int argc, char* argv[])
-{
-    sidplayfp m_engine;
-    { // Load ROM files
+int sidInit(void) {
     char *kernal = loadRom(KERNAL_PATH, 8192);
     char *basic = loadRom(BASIC_PATH, 8192);
     char *chargen = loadRom(CHARGEN_PATH, 4096);
@@ -70,37 +74,37 @@ int main(int argc, char* argv[])
     delete [] kernal;
     delete [] basic;
     delete [] chargen;
-    }
-    // Set up a SID builder
-    std::auto_ptr<HardSIDBuilder> rs(new HardSIDBuilder("Demo"));
-    // Get the number of SIDs supported by the engine
-    //unsigned int maxsids = (m_engine.info ()).maxsids();
-    // Create SID emulators
     rs->create(1);
-    // Check if builder is ok
     if (!rs->getStatus())
     {
         std::cerr << rs->error() << std::endl;
         return -1;
     }
+    
+    return 0;
+}
+
+int main(int argc, char* argv[])
+{
+
+    sidInit();
     // Load tune from file
-    std::auto_ptr<SidTune> tune(new SidTune(argv[1]));
+    
     // CHeck if the tune is valid
     if (!tune->getStatus())
     {
         std::cerr << tune->statusString() << std::endl;
         return -1;
     }
-	// Select default song
+	
+    tune->load(argv[1]);
+    //SidTuneInfo * info = tune->getInfo();
+    
+    std::cout << tune->getInfo().numberOfInfoStrings();
+    // Select default song
     tune->selectSong(0);
     // Configure the engine
-    SidConfig cfg;
-//    cfg.frequency = SAMPLERATE;
-//    cfg.samplingMethod = SidConfig::INTERPOLATE;
-//    cfg.fastSampling = false;
-//    cfg.playback = SidConfig::MONO;
-      cfg.sidEmulation = rs.get();
-//    cfg.defaultC64Model = SidConfig::NTSC;
+    cfg.sidEmulation = rs.get();
 
     if (!m_engine.config(cfg))
     {
@@ -121,5 +125,4 @@ int main(int argc, char* argv[])
     while (1) {
     	uint_least32_t ret = m_engine.play(buffer,length);
     }
-//    std::cerr << ret << std::endl;
 }          
