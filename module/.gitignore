@@ -1,0 +1,5 @@
+.tmp_versions
+.sidpi.*
+Module.symvers
+modules.order
+sidpi.*
