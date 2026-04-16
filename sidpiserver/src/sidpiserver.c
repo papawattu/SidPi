@@ -19,7 +19,7 @@
 
 #include "sidpiserver.h"
 
-pthread_mutex_t mutex1, mutex2 = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex1 = PTHREAD_MUTEX_INITIALIZER, mutex2 = PTHREAD_MUTEX_INITIALIZER;
 unsigned char *dataRead, *dataWrite;
 unsigned int dataWritePos = 0;
 unsigned int dataReadPos = 0;
@@ -53,6 +53,12 @@ int main(void) {
 
 	dataRead = malloc(DATA_READ_SIZE);
 	dataWrite = malloc(DATA_WRITE_SIZE);
+	if (dataRead == NULL || dataWrite == NULL) {
+		fprintf(stderr, "Failed to allocate buffers\n");
+		free(dataRead);
+		free(dataWrite);
+		return 1;
+	}
 
 	memset(&hints, 0, sizeof hints);
 	hints.ai_family = AF_UNSPEC;
@@ -128,31 +134,21 @@ int main(void) {
 */
 		setpriority(PRIO_PROCESS,0,PRIO_MIN);
 
-		if (1) { // this is the child process
+		rv = read(new_fd, dataRead, 16384);
 
-			//setMultiplier(delayMulti);
-			
+		while (rv > -1) {
+			if (rv > 0) {
 
+				processReadBuffer(rv);
 
-			close(sockfd); // child doesn't need the listener
-
-			rv = read(new_fd, dataRead, 16384);
-
-			while (rv > -1) {
-				if (rv > 0) {
-
-					processReadBuffer(rv);
-
-					if (send(new_fd, dataWrite, dataWritePos, 0) == -1)
-						perror("send failed");
-
-				}
-				rv = read(new_fd, dataRead, 16384);
+				if (send(new_fd, dataWrite, dataWritePos, 0) == -1)
+					perror("send failed");
 
 			}
-			exit(0);
+			rv = read(new_fd, dataRead, 16384);
+
 		}
-		close(new_fd);  // parent doesn't need this
+		close(new_fd);
 	}
 
 	return 0;
@@ -170,9 +166,15 @@ void signal_callback_handler(int signum) {
 void processReadBuffer(int len) {
 	int command, sidNumber, dataLength;
 
+	if (len < 4) {
+		invalidCommandException("Packet too short");
+	}
 	command = dataRead[dataReadPos];
 	sidNumber = dataRead[dataReadPos + 1];
 	dataLength = (dataRead[dataReadPos + 2] << 8) | dataRead[dataReadPos + 3];
+	if (dataLength + 4 > len) {
+		invalidCommandException("Packet dataLength exceeds received bytes");
+	}
 	dataWritePos = 0;
 
 	long clientTimeDifference = inputClock - getSidClock();
@@ -239,15 +241,14 @@ void processReadBuffer(int len) {
 			break;
 		}
 
-		int cycles = (int) ((dataRead[4] & 0xff) << 8) | dataRead[5];
+		int cycles = (int) (((dataRead[4] & 0xff) << 8) | dataRead[5]);
 		handleDelayPacket(sidNumber, cycles);
 		dataWrite[dataWritePos++] = OK;
-        exit(1);
 		break;
 	}
 
 	case TRY_WRITE: {
-		if (dataLength < 4 && (dataLength % 4) != 0) {
+		if (dataLength < 4 || (dataLength % 4) != 0) {
 			invalidCommandException(
 					"TRY_WRITE needs 4*n bytes, with n > 1 (hardsid protocol)");
 		}
@@ -362,10 +363,10 @@ void invalidCommandException(void *errMsg) {
 void handleWritePacket(int dataLength) {
 	unsigned int i,writeCycles;
 	unsigned char reg,sid,value;
-	unsigned char buf[4];
+	unsigned char buf[5];
 
 	for (i = 0; i < dataLength; i += 4) {
-		writeCycles = (int) ((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i];
+		writeCycles = (int) (((dataRead[4 + i] & 0xff) << 8) | dataRead[5 + i]);
 		reg = dataRead[4 + i + 2];
 		sid = ((reg & 0xe0) >> 5);
 		reg &= 0x1f;
@@ -399,5 +400,6 @@ void *get_in_addr(struct sockaddr *sa) {
 	if (sa->sa_family == AF_INET) {
 		return &(((struct sockaddr_in*) sa)->sin_addr);
 	}
+	return &(((struct sockaddr_in6*) sa)->sin6_addr);
 }
 

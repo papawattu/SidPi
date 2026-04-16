@@ -14,16 +14,22 @@ FIFO * initFIFO(const int size) {
     FIFO * _buf;
 
     if(size > FIFO_MAX || size <= 0) {
-        return (void *) -1;
+        return NULL;
+    }
+
+    /* Ensure size is a power of 2 (required for & wrap trick) */
+    if((size & (size - 1)) != 0) {
+        return NULL;
     }
 
     if((_buf = (FIFO *) malloc(sizeof(fifo_p))) ==NULL) {
-    	return (void *) -1;
+    	return NULL;
     }
 
     if((_buf->fifo_buf = (unsigned char *) malloc(size)) == NULL) {
-    // failed to allocate buffer, so return -1
-        return (void *)-1;
+    // failed to allocate buffer, so free struct and return NULL
+        free(_buf);
+        return NULL;
     }
 
     _buf->fifo_count = 0;
@@ -42,7 +48,7 @@ int readFIFO(FIFO * fifo) {
     }
 
     retval = fifo->fifo_buf[fifo->fifo_first];
-    fifo->fifo_first = (fifo->fifo_first + 1) & fifo->fifo_size -1;
+    fifo->fifo_first = (fifo->fifo_first + 1) & (fifo->fifo_size - 1);
     fifo->fifo_count --;
     return retval;
 }
@@ -54,7 +60,7 @@ int writeFIFO(FIFO * fifo,UINT8 byte) {
     }
 
     fifo->fifo_buf[fifo->fifo_last] = byte;
-    fifo->fifo_last = (fifo->fifo_last + 1) & fifo->fifo_size - 1;
+    fifo->fifo_last = (fifo->fifo_last + 1) & (fifo->fifo_size - 1);
     fifo->fifo_count ++;
     return fifo->fifo_count;
 }

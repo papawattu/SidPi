@@ -14,6 +14,9 @@
 
 pthread_t sidThreadHandle;
 
+const int DATA[] = {11,9,10,22,27,17,3,2};
+const int ADDR[] = {23,24,25,8,7};
+
 typedef struct buffer {
 	unsigned char q[BUFFER_SIZE]; /* body of queue */
 	unsigned int first; /* position of first element */
@@ -46,8 +49,15 @@ void setupSid() {
 	if(sidSetup) return;
     
     fifo = initFIFO(BUFFER_SIZE);
+	if (fifo == NULL) {
+		fprintf(stderr, "setupSid: failed to initialize FIFO\n");
+		return;
+	}
 
-	mmapRPIDevices();
+	if (mmapRPIDevices() == -1) {
+		fprintf(stderr, "setupSid: failed to map devices, aborting.\n");
+		return;
+	}
 
 	generatePinTables();
 
@@ -82,12 +92,11 @@ void *sidThread() {
 
     while (1) {
 
+		pthread_mutex_lock(&queue);
 		if (FIFOCount(fifo) > 3 && playbackReady()) {
             gettimeofday(&t1, NULL);
 
 			//targetCycles = getRealSidClock();
-			
-            pthread_mutex_lock(&queue);
     
             reg = readFIFO(fifo);
 			val = readFIFO(fifo);
@@ -112,6 +121,7 @@ void *sidThread() {
 		
 
 		} else {
+			pthread_mutex_unlock(&queue);
 			usleep(100);
 		}
 	}
@@ -129,7 +139,7 @@ void stopPlayback() {
 	isPlaybackReady = 0;
 }
 void sidDelay(int cycles) {
-
+	delay((long) cycles);
 }
 void sidWrite(int reg, int value, int cycleHigh, int cycleLow) {
 	pthread_mutex_lock(&queue);
@@ -156,6 +166,7 @@ void delay(long howLong) {
 		sleeper.tv_sec = 0;
 		sleeper.tv_nsec = (long) (howLong * 1000);
 		nanosleep(&sleeper, NULL);
+		return;
 	}
 
 	while (timercmp (&tNow, &tEnd, <)) {
@@ -271,22 +282,23 @@ void generatePinTables() {
 
 	}
 }
-void mmapRPIDevices() {
+int mmapRPIDevices() {
 	if (map_peripheral(&gpio) == -1) {
 		printf(
 				"Failed to map the physical GPIO registers into the virtual memory space.\n");
-		return;
+		return -1;
 	}
 	if (map_peripheral(&gpio_clock) == -1) {
 		printf(
 				"Failed to map the physical Clock into the virtual memory space.\n");
-		return;
+		return -1;
 	}
 	if (map_peripheral(&gpio_timer) == -1) {
 		printf(
 				"Failed to map the physical Timer into the virtual memory space.\n");
-		return;
+		return -1;
 	}
+	return 0;
 }
 
 int empty(Buffer *q) {

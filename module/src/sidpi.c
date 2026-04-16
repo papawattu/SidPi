@@ -38,6 +38,7 @@
 extern unsigned int system_rev;
 
 static volatile __u32 * gpio, * gpio_clock, * gpio_timer;
+static unsigned long saved_peri_base;
 
 static unsigned char gpioToGPFSEL [] =
 {
@@ -107,7 +108,7 @@ static int device_open(struct inode *, struct file *);
 static int device_release(struct inode *, struct file *);
 static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
-static int sid_ioctl(struct file *, unsigned int ,unsigned long );
+static long sid_ioctl(struct file *, unsigned int ,unsigned long );
 
 /* Device variables */
 static struct class* sid_class = NULL;
@@ -133,7 +134,7 @@ static struct file_operations fops = {
 		.owner   = THIS_MODULE,
 		.read = device_read,
 		.write = device_write,
-		.unlocked_ioctl = (void *) sid_ioctl,
+		.unlocked_ioctl = sid_ioctl,
 		.open = device_open,
 		.release = device_release,
 };
@@ -184,15 +185,15 @@ static void writeData(struct SidDevice* pDevice, char* pcBuffer, int iSize)
 }
 
 
-static int sid_proc_show(struct file *m,char *buf,size_t count,loff_t *offp ) {
-  seq_printf((void *) m, "SIDPi module version 0.1 by Jamie Nuttall\n");
-  seq_printf((void *) m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
-  seq_printf((void *) m, "Pi Type is : %s\n", (piVersion==1?"Pi2":"Pi1"));
-  seq_printf((void *) m, "Speed fix is %s\n", (speedfix==1?"On":"Off"));
-  return count;
+static int sid_proc_show(struct seq_file *m, void *v) {
+  seq_printf(m, "SIDPi module version 0.1 by Jamie Nuttall\n");
+  seq_printf(m, "Interface : %s\n",(sidPiInterfaceType==SIDPI_PARALLEL_INTERFACE?"Parallel":"Serial"));
+  seq_printf(m, "Pi Type is : %s\n", (piVersion==1?"Pi2":"Pi1"));
+  seq_printf(m, "Speed fix is %s\n", (speedfix==1?"On":"Off"));
+  return 0;
 }
 static int sid_proc_open(struct inode *inode, struct  file *file) {
-	return single_open(file, (void *) sid_proc_show, NULL);
+	return single_open(file, sid_proc_show, NULL);
 }
 static const struct file_operations sid_proc_fops = {
   .owner = THIS_MODULE,
@@ -242,32 +243,32 @@ void setPinsToOutput2(void) {
 	for (i = 0; i < 8; i++) {
 		fSel = gpioToGPFSEL[DATA[i]];
 		shift = gpioToShift[DATA[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-				| (1 << shift)),(u32 *)gpio + fSel);
+		iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+				| (1 << shift),(u32 *)gpio + fSel);
 	}
 	for (i = 0; i < 5; i++) {
 		fSel = gpioToGPFSEL[ADDR[i]];
 		shift = gpioToShift[ADDR[i]];
-		iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-						| (1 << shift)),(u32 *) gpio + fSel);
+		iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+						| (1 << shift),(u32 *) gpio + fSel);
 	}
 	fSel = gpioToGPFSEL[CS];
 	shift = gpioToShift[CS];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-					| (1 << shift)),(u32 *) gpio + fSel);
+	iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+					| (1 << shift),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[RW];
 	shift = gpioToShift[RW];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-					| (1 << shift)),(u32 *) gpio + fSel);
+	iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+					| (1 << shift),(u32 *) gpio + fSel);
 
 	fSel = gpioToGPFSEL[RES];
 	shift = gpioToShift[RES];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-					| (1 << shift)),(u32 *) gpio + fSel);
+	iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+					| (1 << shift),(u32 *) gpio + fSel);
 	fSel = gpioToGPFSEL[CLK];
 	shift = gpioToShift[CLK];
-	iowrite32(ioread32((u32 *) gpio + fSel) & ((~(7 << shift))
-					| (4 << shift)),(u32 *) gpio + fSel);
+	iowrite32((ioread32((u32 *) gpio + fSel) & ~(7 << shift))
+					| (4 << shift),(u32 *) gpio + fSel);
 }
 
 void startSidClk(int freq) {
@@ -352,6 +353,16 @@ static int __init _sid_init_module(void)
     int retval;
     unsigned long mem,peri_base;
 	printk(KERN_INFO SIDPILOG "Module version %d by Jamie Nuttall\n",SIDPI_VERSION);
+
+      piVersion = ((system_rev & 0xFFFF) > 0x15?1:0);
+      
+      if(piVersion == 0) {
+          peri_base = BCM2708_PERI_BASE_1;
+      } else {
+          peri_base = BCM2708_PERI_BASE_2;
+      }
+      saved_peri_base = peri_base;
+
 	proc_create(PROC_FS_NAME, 0, NULL, &sid_proc_fops);
 	
 	/* First, see if we can dynamically allocate a major for our device */
@@ -394,26 +405,61 @@ static int __init _sid_init_module(void)
       sema_init(&g_sidDevice.lockWriter,      1);
       
       
-      piVersion = ((system_rev & 0xFFFF) > 0x15?1:0);
-      
-      if(piVersion == 0) {
-          peri_base = BCM2708_PERI_BASE_1;
-      } else {
-          peri_base = BCM2708_PERI_BASE_2;
-      }
-      
-      //printk(KERN_INFO "GPIO BASE %X", GPIO_BASE + peri_base);
       mem = (unsigned long) request_mem_region(GPIO_BASE + peri_base, 4096, "gpio");
+      if (!mem) {
+          printk(KERN_ERR SIDPILOG "Failed to request GPIO mem region\n");
+          retval = -EBUSY;
+          goto failed_devreg;
+      }
 	  gpio = ioremap(GPIO_BASE + peri_base, 4096);
+      if (!gpio) {
+          printk(KERN_ERR SIDPILOG "Failed to ioremap GPIO\n");
+          release_mem_region(GPIO_BASE + peri_base, 4096);
+          retval = -ENOMEM;
+          goto failed_devreg;
+      }
       //printk(KERN_INFO "GPIO MAPPPED OK %X\n",gpio);
       
       mem = (unsigned long) request_mem_region(GPIO_CLOCK + peri_base, 32, "gpioclk");
+      if (!mem) {
+          printk(KERN_ERR SIDPILOG "Failed to request GPIO clock mem region\n");
+          iounmap(gpio);
+          release_mem_region(GPIO_BASE + peri_base, 4096);
+          retval = -EBUSY;
+          goto failed_devreg;
+      }
 	  gpio_clock = ioremap(GPIO_CLOCK + peri_base, 32);
+      if (!gpio_clock) {
+          printk(KERN_ERR SIDPILOG "Failed to ioremap GPIO clock\n");
+          release_mem_region(GPIO_CLOCK + peri_base, 32);
+          iounmap(gpio);
+          release_mem_region(GPIO_BASE + peri_base, 4096);
+          retval = -ENOMEM;
+          goto failed_devreg;
+      }
 	  //printk(KERN_INFO "CLOCK MAPPPED OK %X\n",gpio_clock);
       
       mem = (unsigned long) request_mem_region(GPIO_TIMER + peri_base, 256, "gpiotimer");
-	  gpio_timer = ioremap(GPIO_TIMER + peri_base, 256); 
-      //printk(KERN_INFO "TIMER MAPPPED OK %X\n",gpio_timer);
+      if (!mem) {
+          printk(KERN_ERR SIDPILOG "Failed to request GPIO timer mem region\n");
+          iounmap(gpio_clock);
+          release_mem_region(GPIO_CLOCK + peri_base, 32);
+          iounmap(gpio);
+          release_mem_region(GPIO_BASE + peri_base, 4096);
+          retval = -EBUSY;
+          goto failed_devreg;
+      }
+	  gpio_timer = ioremap(GPIO_TIMER + peri_base, 256);
+      if (!gpio_timer) {
+          printk(KERN_ERR SIDPILOG "Failed to ioremap GPIO timer\n");
+          release_mem_region(GPIO_TIMER + peri_base, 256);
+          iounmap(gpio_clock);
+          release_mem_region(GPIO_CLOCK + peri_base, 32);
+          iounmap(gpio);
+          release_mem_region(GPIO_BASE + peri_base, 4096);
+          retval = -ENOMEM;
+          goto failed_devreg;
+      }
       
       setPinsToOutput2();
       generatePinTables();
@@ -450,6 +496,9 @@ static void __exit _sid_cleanup_module(void)
   	iounmap(gpio);
 	iounmap(gpio_clock);
 	iounmap(gpio_timer);
+	release_mem_region(GPIO_TIMER + saved_peri_base, 256);
+	release_mem_region(GPIO_CLOCK + saved_peri_base, 32);
+	release_mem_region(GPIO_BASE + saved_peri_base, 4096);
 
     device_destroy(sid_class, MKDEV(sid_major, 0));
 	class_destroy(sid_class);
@@ -473,7 +522,6 @@ static int device_release(struct inode *inode, struct file *file) {
 
 	printk(KERN_NOTICE SIDPILOG "SID device closed\n");
 
-    mutex_unlock(&sid_device_mutex);
 	return SUCCESS;
 }
 
@@ -556,7 +604,7 @@ ssize_t device_write(struct file* pFile, const char __user* pcUserData, size_t i
 
 }
 
-static int sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+static long sid_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 {
 
 	struct SidDevice *sid = file->private_data;

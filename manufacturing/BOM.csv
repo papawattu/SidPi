@@ -1,0 +1,19 @@
+Comment,Designator,Footprint,Value,Quantity,LCSC Part Number
+Level Shifter (Data Bus),U2,SOIC-20W,74HCT245D,1,C2655
+Level Shifter (Addr/Ctrl),U3,SOIC-20W,74HCT245D,1,C2655
+Boost Converter,U4,SOT-23-6,MT3608,1,C84817
+SMD Inductor 22uH,L1,IND-5X5,22uH,1,C339872
+Schottky Diode,D1,SOD-123,SS14,1,C2480
+Filter Cap (SID CAP1),C1,0805,2.2nF,1,C1804
+Filter Cap (SID CAP2),C2,0805,2.2nF,1,C1804
+Audio Coupling Cap,C3,0805,1uF,1,C28323
+VCC Decoupling Cap,C4,0805,100nF,1,C49678
+VDD Decoupling Cap,C5,0805,100nF,1,C49678
+Boost Input Cap,C6,0805,22uF,1,C45783
+Boost Output Cap,C7,0805,22uF,1,C45783
+Audio Pulldown Resistor,R1,R0805,1K,1,C17513
+Feedback Divider High,R2,R0805,150K,1,C17470
+Feedback Divider Low,R3,R0805,7.87K,1,C17673
+SID Chip (user-supplied),U$1,DIP-28 0.6in,MOS 6581,1,N/A - vintage part
+40-pin GPIO Header,SK1,2x20 PTH 2.54mm,GPIO Header,1,C2977
+3.5mm Audio Jack,J2,AUDIO-JACK-KIT,PJ-307,1,C381365

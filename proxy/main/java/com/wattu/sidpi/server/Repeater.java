@@ -21,12 +21,18 @@ public class Repeater implements Runnable {
 	private static byte command = 0;
 	private static int value = 0;
 	
-	public static void main(String[] args) throws IOException {
+    private static String sidHost;
+    private static int sidPort;
+
+    public static void main(String[] args) throws IOException {
         
-        if (args.length != 1) {
-            System.err.println("Usage: java EchoServer <port number>");
+        if (args.length < 1 || args.length > 2) {
+            System.err.println("Usage: java Repeater <host> [port]");
             System.exit(1);
         }
+        
+        sidHost = args[0];
+        sidPort = (args.length == 2) ? Integer.parseInt(args[1]) : 6581;
         
         Repeater repeater = new Repeater();
         Thread repeaterThread = new Thread(repeater);
@@ -82,7 +88,7 @@ public class Repeater implements Runnable {
         		PrintStream out = new PrintStream(clientSocket.getOutputStream());
         		BufferedInputStream in = new BufferedInputStream(clientSocket.getInputStream());
 		
-        		sidSocket = new Socket("192.168.1.108", 6581);
+        		sidSocket = new Socket(sidHost, sidPort);
         		System.out.println("Opening forwaring client socket");
         
         		PrintStream sidOut = new PrintStream(sidSocket.getOutputStream());
@@ -136,7 +142,7 @@ public class Repeater implements Runnable {
     }
     static void setLatency(int val) {
     	if(Repeater.command == 0) {
-    		Repeater.command = SET_THRESHOLD & 0xff;
+    		Repeater.command = SET_LATENCY & 0xff;
     		Repeater.value = val;
     	}
     }

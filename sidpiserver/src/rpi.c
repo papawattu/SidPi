@@ -37,6 +37,7 @@ int map_peripheral(struct bcm2835_peripheral *p)
 
    if (p->map == MAP_FAILED) {
         perror("mmap");
+        close(p->mem_fd);
         return -1;
    }
 

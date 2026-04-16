@@ -52,7 +52,10 @@ void setup_sid() {
 
 	int i, fSel, shift;
 
-	mmap_devices();
+	if (mmap_devices() == -1) {
+		fprintf(stderr, "setup_sid: failed to map devices, aborting.\n");
+		return;
+	}
 
 	set_output(SER);
 	set_output(RCLK);
@@ -111,22 +114,23 @@ void delay() {
 
 } // delay
 
-void mmap_devices() {
+int mmap_devices() {
 	if (map_peripheral(&gpio) == -1) {
 		printf(
 				"Failed to map the physical GPIO registers into the virtual memory space.\n");
-		return;
+		return -1;
 	}
 	if (map_peripheral(&gpio_clock) == -1) {
 		printf(
 				"Failed to map the physical Clock into the virtual memory space.\n");
-		return;
+		return -1;
 	}
 	if (map_peripheral(&gpio_timer) == -1) {
 		printf(
 				"Failed to map the physical Timer into the virtual memory space.\n");
-		return;
+		return -1;
 	}
+	return 0;
 } // mmap_devices
 void start_sid_clock(int freq) {
 	int divi, divr, divf;

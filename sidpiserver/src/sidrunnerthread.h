@@ -17,8 +17,8 @@
 
 #define DEFAULT_SID_SPEED_HZ 1000000
 
-const int DATA[] = {11,9,10,22,27,17,3,2};
-const int ADDR[] = {23,24,25,8,7};
+extern const int DATA[];
+extern const int ADDR[];
 
 void sidDelay(int cycles);
 void sidWrite(int reg,int value,int cycleHigh,int cycleLow);
@@ -28,7 +28,7 @@ void *sidThread();
 void delay(long cycles);
 void writeSid(int reg,int val);
 void startSidClk(int freq);
-void mmapRPIDevices();
+int mmapRPIDevices();
 void generatePinTables();
 void setPinsToOutput();
 int playbackReady();

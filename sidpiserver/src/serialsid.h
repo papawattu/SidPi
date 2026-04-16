@@ -24,6 +24,6 @@ void set_output(uint8_t);
 
 void start_sid_clock(int freq);
 
-void mmap_devices(void);
+int mmap_devices(void);
 
 #endif
