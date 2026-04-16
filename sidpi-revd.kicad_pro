@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <title>SidPi Rev d</title>
+  <date>2026-04-16</date>
+  <tool>KiCad PCBNew 6.0</tool>
+  
+  <general>
+    <source>schematic/sidpi-revd.brd</source>
+    <sheet>SidPi Rev d</sheet>
+    <title>SidPi - MOS 6581 SID Interface for Raspberry Pi</title>
+    <company>Jamie Nuttall 2014-2026</company>
+    <desc>Raspberry Pi HAT that interfaces a MOS 6581 SID chip for audio synthesis. Features 74HCT245 level shifters, MT3608 boost converter (5V→12V), and SMD optimization.</desc>
+  </general>
+  
+  <settings>
+    <page>A4</page>
+    <paper-size>mm</paper-size>
+    <unit>millimeters</unit>
+    <grid>0.25mm</grid>
+    <snapping>enabled</snapping>
+    <autorouter>
+      <strategy>Default</strategy>
+    </autorouter>
+  </settings>
+  
+  <classes>
+    <class name="default" width="0.25" clearance="0.25">
+      <net>DATA_BUS</net>
+      <net>ADDR_BUS</net>
+      <net>CONTROL</net>
+    </class>
+    <class name="VCC_5V" width="0.5" clearance="0.25">
+      <net>VCC</net>
+      <net>+3V3</net>
+    </class>
+    <class name="VDD_12V" width="0.5" clearance="0.25">
+      <net>VDD</net>
+    </class>
+  </classes>
+  
+  <netlist>
+    <net name="+3V3">
+      <part SK1:1</part>
+      <part SK1:17</part>
+      <part U2:1</part>
+      <part U3:1</part>
+    </net>
+    <net name="VCC">
+      <part SK1:2</part>
+      <part U$1:25</part>
+      <part U2:20</part>
+      <part U3:20</part>
+      <part U4:4</part>
+      <part U4:5</part>
+      <part C4:1</part>
+      <part C6:1</part>
+      <part L1:1</part>
+    </net>
+    <net name="VDD">
+      <part U$1:28</part>
+      <part D1:C</part>
+      <part R2:2</part>
+      <part C5:1</part>
+      <part C7:1</part>
+    </net>
+    <net name="GND">
+      <part SK1:6</part>
+      <part SK1:9</part>
+      <part SK1:14</part>
+      <part SK1:20</part>
+      <part SK1:25</part>
+      <part U$1:7</part>
+      <part U$1:14</part>
+      <part U2:10</part>
+      <part U2:19</part>
+      <part U3:10</part>
+      <part U3:19</part>
+      <part U4:2</part>
+      <part R1:1</part>
+      <part R3:1</part>
+      <part J2:SLEEVE</part>
+      <part C4:2</part>
+      <part C5:2</part>
+      <part C6:2</part>
+      <part C7:2</part>
+    </net>
+    <net name="/CS">
+      <part SK1:5</part>
+      <part U3:7</part>
+      <part U3:13</part>
+      <part U$1:8</part>
+    </net>
+    <net name="A3">
+      <part SK1:12</part>
+      <part U3:5</part>
+      <part U3:15</part>
+      <part U$1:12</part>
+    </net>
+    <net name="CAP1A">
+      <part U$1:1</part>
+      <part C1:1</part>
+    </net>
+    <net name="A4">
+      <part SK1:8</part>
+      <part U3:6</part>
+      <part U3:14</part>
+      <part U$1:13</part>
+    </net>
+    <net name="D7">
+      <part SK1:10</part>
+      <part U2:9</part>
+      <part U2:11</part>
+      <part U$1:22</part>
+    </net>
+    <net name="CAP2A">
+      <part U$1:3</part>
+      <part C2:1</part>
+    </net>
+    <net name="D6">
+      <part SK1:11</part>
+      <part U2:8</part>
+      <part U2:12</part>
+      <part U$1:21</part>
+    </net>
+    <net name="AUDIO_OUT">
+      <part C3:2</part>
+      <part J2:RING</part>
+      <part J2:TIP</part>
+    </net>
+    <net name="CLOCK">
+      <part SK1:7</part>
+      <part U3:8</part>
+      <part U3:12</part>
+      <part U$1:6</part>
+    </net>
+    <net name="D5">
+      <part SK1:13</part>
+      <part U2:7</part>
+      <part U2:13</part>
+      <part U$1:20</part>
+    </net>
+    <net name="D4">
+      <part SK1:15</part>
+      <part U2:6</part>
+      <part U2:14</part>
+      <part U$1:19</part>
+    </net>
+    <net name="D3">
+      <part SK1:18</part>
+      <part U2:5</part>
+      <part U2:15</part>
+      <part U$1:18</part>
+    </net>
+    <net name="D2">
+      <part SK1:19</part>
+      <part U2:4</part>
+      <part U2:16</part>
+      <part U$1:17</part>
+    </net>
+    <net name="D1">
+      <part SK1:21</part>
+      <part U2:3</part>
+      <part U2:17</part>
+      <part U$1:16</part>
+    </net>
+    <net name="CAP2B">
+      <part U$1:4</part>
+      <part C2:2</part>
+    </net>
+    <net name="CAP1B">
+      <part U$1:2</part>
+      <part C1:2</part>
+    </net>
+    <net name="D0">
+      <part SK1:23</part>
+      <part U2:2</part>
+      <part U2:18</part>
+      <part U$1:15</part>
+    </net>
+    <net name="A2">
+      <part SK1:16</part>
+      <part U3:4</part>
+      <part U3:16</part>
+      <part U$1:11</part>
+    </net>
+    <net name="N$23">
+      <part U$1:27</part>
+      <part C3:1</part>
+      <part R1:2</part>
+    </net>
+    <net name="A0">
+      <part SK1:24</part>
+      <part U3:2</part>
+      <part U3:18</part>
+      <part U$1:9</part>
+    </net>
+    <net name="A1">
+      <part SK1:22</part>
+      <part U3:3</part>
+      <part U3:17</part>
+      <part U$1:10</part>
+    </net>
+    <net name="RESET">
+      <part SK1:3</part>
+      <part U3:9</part>
+      <part U3:11</part>
+      <part U$1:5</part>
+    </net>
+    <net name="BOOST_OUT">
+      <part U4:1</part>
+      <part L1:2</part>
+      <part D1:A</part>
+    </net>
+    <net name="FEEDBACK">
+      <part U4:3</part>
+      <part R2:1</part>
+      <part R3:2</part>
+    </net>
+  </netlist>
+</project>
